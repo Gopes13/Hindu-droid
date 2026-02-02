@@ -1,0 +1,229 @@
+{
+  "festivals": [
+    {
+      "id": "makar_sankranti",
+      "names": {"en": "Makar Sankranti", "hi": "मकर संक्रांति"},
+      "description": {"en": "The Sun transitions into Capricorn (Makara). Marks the end of winter solstice and beginning of longer days. Celebrated with kite flying, til-gur sweets, and holy dips.", "hi": "सूर्य का मकर राशि में प्रवेश।"},
+      "rule": {"type": "solar", "solarEvent": "capricorn_ingress"},
+      "traditions": ["purnimant", "amant", "gujarati", "bengali", "tamil", "malayalam"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "vasant_panchami",
+      "names": {"en": "Vasant Panchami", "hi": "वसंत पंचमी"},
+      "description": {"en": "Celebrates the arrival of spring and is dedicated to Goddess Saraswati, the deity of knowledge, music, and art.", "hi": "वसंत ऋतु का आगमन और सरस्वती पूजा।"},
+      "rule": {"type": "tithi", "month": "magha", "paksha": "shukla", "tithi": 5},
+      "traditions": ["purnimant", "amant", "bengali"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "maha_shivaratri",
+      "names": {"en": "Maha Shivaratri", "hi": "महा शिवरात्रि", "sa": "महाशिवरात्रिः"},
+      "description": {"en": "The great night of Lord Shiva. Devotees observe fasting and night-long vigil. One of the most important Hindu festivals.", "hi": "भगवान शिव की महान रात्रि। उपवास और जागरण का पर्व।"},
+      "rule": {"type": "tithi", "month": "phalguna", "paksha": "krishna", "tithi": 14},
+      "traditions": ["purnimant", "amant", "gujarati", "bengali", "tamil", "malayalam"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "holika_dahan",
+      "names": {"en": "Holika Dahan", "hi": "होलिका दहन"},
+      "description": {"en": "The night before Holi. Bonfires are lit to symbolize the victory of good over evil, commemorating the story of Prahlad and Holika.", "hi": "होली की पूर्व संध्या। बुराई पर अच्छाई की जीत का प्रतीक।"},
+      "rule": {"type": "tithi", "month": "phalguna", "paksha": "shukla", "tithi": 15},
+      "traditions": ["purnimant", "amant", "gujarati"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "holi",
+      "names": {"en": "Holi", "hi": "होली"},
+      "description": {"en": "The festival of colors. Celebrated with colored powders, water, music, and sweets. Symbolizes the triumph of good over evil and the arrival of spring.", "hi": "रंगों का त्योहार। बुराई पर अच्छाई की जीत और वसंत के आगमन का उत्सव।"},
+      "rule": {"type": "tithi_offset", "month": "phalguna", "paksha": "shukla", "tithi": 15, "daysAfter": 1},
+      "traditions": ["purnimant", "amant", "gujarati"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "ugadi",
+      "names": {"en": "Ugadi / Gudi Padwa", "hi": "उगादि / गुड़ी पड़वा"},
+      "description": {"en": "Hindu New Year in many traditions. Marks the beginning of Chaitra month and a new Vikram Samvat year.", "hi": "हिंदू नव वर्ष। चैत्र मास और नए विक्रम संवत का आरंभ।"},
+      "rule": {"type": "tithi", "month": "chaitra", "paksha": "shukla", "tithi": 1},
+      "traditions": ["purnimant", "amant"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "ram_navami",
+      "names": {"en": "Ram Navami", "hi": "राम नवमी", "sa": "रामनवमी"},
+      "description": {"en": "Celebrates the birth of Lord Rama, the seventh avatar of Vishnu. Devotees fast, visit temples, and read the Ramayana.", "hi": "भगवान राम का जन्मोत्सव।"},
+      "rule": {"type": "tithi", "month": "chaitra", "paksha": "shukla", "tithi": 9},
+      "traditions": ["purnimant", "amant", "gujarati", "bengali", "tamil", "malayalam"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "hanuman_jayanti",
+      "names": {"en": "Hanuman Jayanti", "hi": "हनुमान जयंती"},
+      "description": {"en": "Celebrates the birth of Lord Hanuman, the devoted servant of Lord Rama.", "hi": "हनुमान जी का जन्मोत्सव।"},
+      "rule": {"type": "tithi", "month": "chaitra", "paksha": "shukla", "tithi": 15},
+      "traditions": ["purnimant", "amant"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "akshaya_tritiya",
+      "names": {"en": "Akshaya Tritiya", "hi": "अक्षय तृतीया"},
+      "description": {"en": "An extremely auspicious day. Believed that any activity started on this day never diminishes (akshaya = imperishable). Popular for gold purchases and new ventures.", "hi": "अत्यंत शुभ दिन। इस दिन शुरू किया गया कोई भी कार्य कभी क्षीण नहीं होता।"},
+      "rule": {"type": "tithi", "month": "vaishakha", "paksha": "shukla", "tithi": 3},
+      "traditions": ["purnimant", "amant", "gujarati"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "guru_purnima",
+      "names": {"en": "Guru Purnima", "hi": "गुरु पूर्णिमा"},
+      "description": {"en": "Day dedicated to spiritual and academic teachers (gurus). Celebrates Vyasa, the author of the Mahabharata.", "hi": "गुरुओं को समर्पित दिन। महर्षि वेद व्यास का जन्म दिवस।"},
+      "rule": {"type": "tithi", "month": "ashadha", "paksha": "shukla", "tithi": 15},
+      "traditions": ["purnimant", "amant", "gujarati", "bengali"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "nag_panchami",
+      "names": {"en": "Nag Panchami", "hi": "नाग पंचमी"},
+      "description": {"en": "Worship of serpent deities (Nagas). Devotees offer milk and prayers to snake idols and live cobras.", "hi": "नाग देवता की पूजा का पर्व।"},
+      "rule": {"type": "tithi", "month": "shravana", "paksha": "shukla", "tithi": 5},
+      "traditions": ["purnimant", "amant"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "raksha_bandhan",
+      "names": {"en": "Raksha Bandhan", "hi": "रक्षा बंधन"},
+      "description": {"en": "Sisters tie a protective thread (rakhi) on brothers' wrists, symbolizing love and duty of protection.", "hi": "भाई-बहन के प्रेम और रक्षा के बंधन का त्योहार।"},
+      "rule": {"type": "tithi", "month": "shravana", "paksha": "shukla", "tithi": 15},
+      "traditions": ["purnimant", "amant", "gujarati"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "krishna_janmashtami",
+      "names": {"en": "Krishna Janmashtami", "hi": "कृष्ण जन्माष्टमी", "sa": "कृष्णजन्माष्टमी"},
+      "description": {"en": "Celebrates the birth of Lord Krishna, the eighth avatar of Vishnu. Observed with fasting, devotional songs, and Dahi Handi.", "hi": "भगवान श्री कृष्ण का जन्मोत्सव।"},
+      "rule": {"type": "tithi", "month": "bhadrapada", "paksha": "krishna", "tithi": 8},
+      "traditions": ["purnimant", "amant", "gujarati", "bengali", "tamil", "malayalam"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "ganesh_chaturthi",
+      "names": {"en": "Ganesh Chaturthi", "hi": "गणेश चतुर्थी"},
+      "description": {"en": "Celebrates the birth of Lord Ganesha, the remover of obstacles. Grand celebrations with clay idols and visarjan (immersion).", "hi": "भगवान गणेश का जन्मोत्सव। विघ्नहर्ता की पूजा।"},
+      "rule": {"type": "tithi", "month": "bhadrapada", "paksha": "shukla", "tithi": 4},
+      "traditions": ["purnimant", "amant", "gujarati", "bengali", "tamil", "malayalam"],
+      "category": "major",
+      "durationDays": 10
+    },
+    {
+      "id": "anant_chaturdashi",
+      "names": {"en": "Anant Chaturdashi", "hi": "अनंत चतुर्दशी"},
+      "description": {"en": "Dedicated to Lord Vishnu's infinite form. Also the day of Ganesh Visarjan (immersion of Ganesh idols).", "hi": "भगवान विष्णु के अनंत रूप की पूजा। गणेश विसर्जन।"},
+      "rule": {"type": "tithi", "month": "bhadrapada", "paksha": "shukla", "tithi": 14},
+      "traditions": ["purnimant", "amant"],
+      "category": "moderate",
+      "durationDays": 1
+    },
+    {
+      "id": "navratri_start",
+      "names": {"en": "Sharad Navratri Begins", "hi": "शरद नवरात्रि आरंभ"},
+      "description": {"en": "Nine nights dedicated to Goddess Durga and her nine forms. Includes Garba, Dandiya, and devotional activities.", "hi": "देवी दुर्गा की नौ रातों का महापर्व।"},
+      "rule": {"type": "tithi", "month": "ashwin", "paksha": "shukla", "tithi": 1},
+      "traditions": ["purnimant", "amant", "gujarati", "bengali"],
+      "category": "major",
+      "durationDays": 9
+    },
+    {
+      "id": "dussehra",
+      "names": {"en": "Dussehra / Vijayadashami", "hi": "दशहरा / विजयादशमी"},
+      "description": {"en": "Celebrates Lord Rama's victory over Ravana. Effigies of Ravana are burned. Marks the triumph of good over evil.", "hi": "भगवान राम की रावण पर विजय का उत्सव।"},
+      "rule": {"type": "tithi", "month": "ashwin", "paksha": "shukla", "tithi": 10},
+      "traditions": ["purnimant", "amant", "gujarati", "bengali", "tamil", "malayalam"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "karwa_chauth",
+      "names": {"en": "Karwa Chauth", "hi": "करवा चौथ"},
+      "description": {"en": "Married women fast from sunrise to moonrise for the longevity and prosperity of their husbands.", "hi": "विवाहित महिलाओं का पति की लंबी उम्र के लिए व्रत।"},
+      "rule": {"type": "tithi", "month": "kartik", "paksha": "krishna", "tithi": 4},
+      "traditions": ["purnimant"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "dhanteras",
+      "names": {"en": "Dhanteras", "hi": "धनतेरस"},
+      "description": {"en": "First day of Diwali celebrations. Dedicated to Dhanvantari (god of Ayurveda) and Lakshmi. Auspicious for buying gold and utensils.", "hi": "दीपावली का पहला दिन। धन और स्वास्थ्य की पूजा।"},
+      "rule": {"type": "tithi", "month": "kartik", "paksha": "krishna", "tithi": 13},
+      "traditions": ["purnimant", "amant", "gujarati"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "narak_chaturdashi",
+      "names": {"en": "Narak Chaturdashi / Choti Diwali", "hi": "नरक चतुर्दशी / छोटी दिवाली"},
+      "description": {"en": "Celebrates Krishna's victory over the demon Narakasura. Early morning oil bath is traditional.", "hi": "भगवान कृष्ण की नरकासुर पर विजय।"},
+      "rule": {"type": "tithi", "month": "kartik", "paksha": "krishna", "tithi": 14},
+      "traditions": ["purnimant", "amant", "gujarati"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "diwali",
+      "names": {"en": "Diwali", "hi": "दीवाली", "sa": "दीपावली"},
+      "description": {"en": "The festival of lights. Celebrates Lord Rama's return to Ayodhya, the victory of light over darkness. Worship of Lakshmi and Ganesha.", "hi": "दीपों का त्योहार। भगवान राम की अयोध्या वापसी का उत्सव। लक्ष्मी-गणेश पूजन।"},
+      "rule": {"type": "tithi", "month": "kartik", "paksha": "krishna", "tithi": 30},
+      "traditions": ["purnimant", "amant", "gujarati", "bengali", "tamil", "malayalam"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "govardhan_puja",
+      "names": {"en": "Govardhan Puja / Annakut", "hi": "गोवर्धन पूजा / अन्नकूट"},
+      "description": {"en": "Commemorates Krishna lifting Govardhan Hill to protect villagers from Indra's wrath. A mountain of food is offered.", "hi": "भगवान कृष्ण द्वारा गोवर्धन पर्वत उठाने की कथा।"},
+      "rule": {"type": "tithi", "month": "kartik", "paksha": "shukla", "tithi": 1},
+      "traditions": ["purnimant", "amant", "gujarati"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "bhai_dooj",
+      "names": {"en": "Bhai Dooj", "hi": "भाई दूज"},
+      "description": {"en": "Sisters pray for their brothers' well-being. Brothers visit sisters and exchange gifts.", "hi": "भाई-बहन के प्रेम का त्योहार।"},
+      "rule": {"type": "tithi", "month": "kartik", "paksha": "shukla", "tithi": 2},
+      "traditions": ["purnimant", "amant"],
+      "category": "major",
+      "durationDays": 1
+    },
+    {
+      "id": "chhath_puja",
+      "names": {"en": "Chhath Puja", "hi": "छठ पूजा"},
+      "description": {"en": "Ancient Hindu festival dedicated to the Sun God (Surya) and Chhathi Maiya. Devotees stand in water and offer prayers to the setting and rising sun.", "hi": "सूर्य देव और छठी मैया को समर्पित प्राचीन पर्व।"},
+      "rule": {"type": "tithi", "month": "kartik", "paksha": "shukla", "tithi": 6},
+      "traditions": ["purnimant"],
+      "category": "major",
+      "durationDays": 2
+    },
+    {
+      "id": "dev_uthani_ekadashi",
+      "names": {"en": "Dev Uthani Ekadashi", "hi": "देव उठनी एकादशी"},
+      "description": {"en": "Lord Vishnu wakes from his four-month cosmic sleep (Chaturmas). Marks the beginning of the wedding season.", "hi": "भगवान विष्णु चार मास की निद्रा से जागते हैं। विवाह का मुहूर्त शुरू होता है।"},
+      "rule": {"type": "tithi", "month": "kartik", "paksha": "shukla", "tithi": 11},
+      "traditions": ["purnimant", "amant"],
+      "category": "moderate",
+      "durationDays": 1
+    }
+  ]
+}
