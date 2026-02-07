@@ -1,0 +1,144 @@
+package dev.gopes.hinducalendar.ui.festivals
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import dev.gopes.hinducalendar.data.model.FestivalCategory
+import dev.gopes.hinducalendar.data.model.FestivalOccurrence
+import dev.gopes.hinducalendar.data.model.PanchangDay
+import java.time.format.DateTimeFormatter
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FestivalListScreen(viewModel: FestivalListViewModel = hiltViewModel()) {
+    val festivals by viewModel.festivals.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    var selectedFestival by remember { mutableStateOf<FestivalOccurrence?>(null) }
+
+    Scaffold(
+        topBar = { TopAppBar(title = { Text("Upcoming Festivals") }) }
+    ) { padding ->
+        if (isLoading) {
+            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else if (festivals.isEmpty()) {
+            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                Text("No upcoming festivals found", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.padding(padding),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(festivals, key = { it.first.id }) { (occurrence, _) ->
+                    FestivalRow(
+                        occurrence = occurrence,
+                        onClick = { selectedFestival = occurrence }
+                    )
+                }
+            }
+        }
+    }
+
+    selectedFestival?.let { occurrence ->
+        FestivalDetailDialog(
+            festival = occurrence.festival,
+            onDismiss = { selectedFestival = null }
+        )
+    }
+}
+
+@Composable
+private fun FestivalRow(occurrence: FestivalOccurrence, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Date
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.width(50.dp)
+            ) {
+                Text(
+                    occurrence.date.dayOfMonth.toString(),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    occurrence.date.format(DateTimeFormatter.ofPattern("MMM")),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            }
+
+            Spacer(Modifier.width(16.dp))
+
+            // Festival info
+            Column(Modifier.weight(1f)) {
+                Text(
+                    occurrence.festival.displayName,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+                occurrence.festival.names.hi?.let {
+                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                }
+                Text(
+                    occurrence.festival.category.displayName,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                )
+            }
+
+            if (occurrence.festival.category == FestivalCategory.MAJOR) {
+                Icon(Icons.Filled.Star, contentDescription = "Major", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun FestivalDetailDialog(festival: dev.gopes.hinducalendar.data.model.Festival, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text("Close") }
+        },
+        title = {
+            Column {
+                Text(festival.displayName, fontWeight = FontWeight.Bold)
+                festival.names.hi?.let {
+                    Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                }
+            }
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(festival.description.en, style = MaterialTheme.typography.bodyMedium)
+                festival.description.hi?.let {
+                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+                }
+                AssistChip(
+                    onClick = {},
+                    label = { Text(festival.category.displayName) }
+                )
+            }
+        }
+    )
+}
