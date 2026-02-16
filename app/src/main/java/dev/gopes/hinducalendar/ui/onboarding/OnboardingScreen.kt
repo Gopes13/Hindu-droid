@@ -15,25 +15,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.gopes.hinducalendar.data.model.CalendarTradition
+import dev.gopes.hinducalendar.data.model.DharmaPath
 import dev.gopes.hinducalendar.data.model.HinduLocation
 
 @Composable
-fun OnboardingScreen(onComplete: (CalendarTradition, HinduLocation) -> Unit) {
+fun OnboardingScreen(onComplete: (CalendarTradition, HinduLocation, DharmaPath) -> Unit) {
     var step by remember { mutableIntStateOf(0) }
     var selectedTradition by remember { mutableStateOf(CalendarTradition.PURNIMANT) }
     var selectedLocation by remember { mutableStateOf(HinduLocation.DELHI) }
+    var selectedDharmaPath by remember { mutableStateOf(DharmaPath.GENERAL) }
 
     when (step) {
         0 -> WelcomeStep(onNext = { step = 1 })
-        1 -> TraditionStep(
-            selectedTradition = selectedTradition,
-            onSelect = { selectedTradition = it },
+        1 -> DharmaPathStep(
+            selectedPath = selectedDharmaPath,
+            onSelect = { selectedDharmaPath = it },
             onNext = { step = 2 }
         )
-        2 -> LocationStep(
+        2 -> TraditionStep(
+            selectedTradition = selectedTradition,
+            onSelect = { selectedTradition = it },
+            onNext = { step = 3 }
+        )
+        3 -> LocationStep(
             selectedLocation = selectedLocation,
             onSelect = { selectedLocation = it },
-            onComplete = { onComplete(selectedTradition, selectedLocation) }
+            onComplete = { onComplete(selectedTradition, selectedLocation, selectedDharmaPath) }
         )
     }
 }
@@ -61,6 +68,7 @@ private fun WelcomeStep(onNext: () -> Unit) {
         FeatureItem(Icons.Filled.Star, "Festival reminders")
         FeatureItem(Icons.Filled.Event, "Sync to your calendar")
         FeatureItem(Icons.Filled.LocationOn, "Location-accurate timings")
+        FeatureItem(Icons.Filled.MenuBook, "Daily sacred text readings")
 
         Spacer(Modifier.height(48.dp))
 
@@ -79,6 +87,65 @@ private fun FeatureItem(icon: ImageVector, text: String) {
         Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
         Spacer(Modifier.width(16.dp))
         Text(text, style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
+@Composable
+private fun DharmaPathStep(
+    selectedPath: DharmaPath,
+    onSelect: (DharmaPath) -> Unit,
+    onNext: () -> Unit
+) {
+    Column(Modifier.fillMaxSize().padding(24.dp)) {
+        Text(
+            "Your Spiritual Path",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            "Choose your tradition to personalize daily sacred text readings and content.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        )
+        Spacer(Modifier.height(16.dp))
+
+        LazyColumn(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(DharmaPath.entries) { path ->
+                Card(
+                    modifier = Modifier.fillMaxWidth().selectable(
+                        selected = path == selectedPath,
+                        onClick = { onSelect(path) }
+                    ),
+                    colors = if (path == selectedPath)
+                        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    else CardDefaults.cardColors()
+                ) {
+                    Column(Modifier.padding(16.dp)) {
+                        Text(
+                            path.displayName,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            path.description,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            "${path.availableTextIds.size} sacred texts available",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+        Button(onClick = onNext, modifier = Modifier.fillMaxWidth().height(52.dp)) {
+            Text("Continue")
+        }
     }
 }
 

@@ -105,7 +105,7 @@ class CalendarSyncService @Inject constructor(
         val endMillis = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
         val description = buildString {
-            appendLine(occurrence.festival.description.en)
+            appendLine(occurrence.festival.description["en"] ?: "")
             appendLine()
             appendLine("Hindu Date: ${panchang.hinduDate.displayString}")
             appendLine("Sunrise: ${panchang.sunrise}")

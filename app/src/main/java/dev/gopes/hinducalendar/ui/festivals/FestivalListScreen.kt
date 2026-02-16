@@ -96,7 +96,7 @@ private fun FestivalRow(occurrence: FestivalOccurrence, onClick: () -> Unit) {
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold
                 )
-                occurrence.festival.names.hi?.let {
+                occurrence.festival.names["hi"]?.let {
                     Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                 }
                 Text(
@@ -123,15 +123,15 @@ private fun FestivalDetailDialog(festival: dev.gopes.hinducalendar.data.model.Fe
         title = {
             Column {
                 Text(festival.displayName, fontWeight = FontWeight.Bold)
-                festival.names.hi?.let {
+                festival.names["hi"]?.let {
                     Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                 }
             }
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(festival.description.en, style = MaterialTheme.typography.bodyMedium)
-                festival.description.hi?.let {
+                Text(festival.description["en"] ?: "", style = MaterialTheme.typography.bodyMedium)
+                festival.description["hi"]?.let {
                     Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                 }
                 AssistChip(

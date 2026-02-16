@@ -3,6 +3,7 @@ package dev.gopes.hinducalendar.engine
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import com.google.gson.reflect.TypeToken
 import dev.gopes.hinducalendar.data.model.*
 import java.time.LocalDate
 
@@ -98,8 +99,8 @@ class FestivalRulesEngine(private val context: Context) {
             results.add(FestivalOccurrence(
                 festival = Festival(
                     id = "ekadashi_${hinduDate.month.number}_${hinduDate.paksha.key}",
-                    names = LocalizedName(en = name, hi = "एकादशी"),
-                    description = LocalizedName(en = "Ekadashi fasting day dedicated to Lord Vishnu."),
+                    names = mapOf("en" to name, "hi" to "एकादशी"),
+                    description = mapOf("en" to "Ekadashi fasting day dedicated to Lord Vishnu.", "hi" to "भगवान विष्णु को समर्पित एकादशी व्रत।"),
                     rule = FestivalRule(type = "tithi"),
                     traditions = listOf("purnimant", "amant", "gujarati", "bengali", "tamil", "malayalam"),
                     category = FestivalCategory.RECURRING
@@ -112,8 +113,8 @@ class FestivalRulesEngine(private val context: Context) {
             results.add(FestivalOccurrence(
                 festival = Festival(
                     id = "purnima_${hinduDate.month.number}",
-                    names = LocalizedName(en = "${hinduDate.month.displayName} Purnima", hi = "${hinduDate.month.hindiName} पूर्णिमा"),
-                    description = LocalizedName(en = "Full moon day of ${hinduDate.month.displayName}."),
+                    names = mapOf("en" to "${hinduDate.month.displayName} Purnima", "hi" to "${hinduDate.month.hindiName} पूर्णिमा"),
+                    description = mapOf("en" to "Full moon day of ${hinduDate.month.displayName}.", "hi" to "${hinduDate.month.hindiName} माह की पूर्णिमा।"),
                     rule = FestivalRule(type = "tithi"),
                     traditions = listOf("purnimant", "amant"),
                     category = FestivalCategory.RECURRING
@@ -126,8 +127,8 @@ class FestivalRulesEngine(private val context: Context) {
             results.add(FestivalOccurrence(
                 festival = Festival(
                     id = "amavasya_${hinduDate.month.number}",
-                    names = LocalizedName(en = "${hinduDate.month.displayName} Amavasya", hi = "${hinduDate.month.hindiName} अमावस्या"),
-                    description = LocalizedName(en = "New moon day of ${hinduDate.month.displayName}."),
+                    names = mapOf("en" to "${hinduDate.month.displayName} Amavasya", "hi" to "${hinduDate.month.hindiName} अमावस्या"),
+                    description = mapOf("en" to "New moon day of ${hinduDate.month.displayName}.", "hi" to "${hinduDate.month.hindiName} माह की अमावस्या।"),
                     rule = FestivalRule(type = "tithi"),
                     traditions = listOf("purnimant", "amant"),
                     category = FestivalCategory.RECURRING
@@ -140,8 +141,8 @@ class FestivalRulesEngine(private val context: Context) {
             results.add(FestivalOccurrence(
                 festival = Festival(
                     id = "pradosh_${hinduDate.month.number}_${hinduDate.paksha.key}",
-                    names = LocalizedName(en = "Pradosh Vrat", hi = "प्रदोष व्रत"),
-                    description = LocalizedName(en = "Twilight fast dedicated to Lord Shiva."),
+                    names = mapOf("en" to "Pradosh Vrat", "hi" to "प्रदोष व्रत"),
+                    description = mapOf("en" to "Twilight fast dedicated to Lord Shiva.", "hi" to "भगवान शिव को समर्पित प्रदोष काल का व्रत।"),
                     rule = FestivalRule(type = "tithi"),
                     traditions = listOf("purnimant", "amant"),
                     category = FestivalCategory.VRAT
@@ -160,17 +161,20 @@ private data class FestivalContainer(val festivals: List<FestivalJson>)
 
 private data class FestivalJson(
     val id: String,
-    val names: LocalizedNameJson,
-    val description: LocalizedNameJson,
+    val names: Map<String, String>,
+    val description: Map<String, String>,
     val rule: FestivalRuleJson,
     val traditions: List<String>,
     val category: String,
-    @SerializedName("durationDays") val durationDays: Int = 1
+    @SerializedName("durationDays") val durationDays: Int = 1,
+    val dharmaPath: List<String>? = null,
+    val stories: Map<String, String>? = null,
+    val significances: Map<String, String>? = null
 ) {
     fun toDomain() = Festival(
         id = id,
-        names = LocalizedName(names.en, names.hi, names.sa),
-        description = LocalizedName(description.en, description.hi, description.sa),
+        names = names,
+        description = description,
         rule = FestivalRule(rule.type, rule.month, rule.paksha, rule.tithi, rule.solarEvent, rule.daysAfter, rule.daysBefore),
         traditions = traditions,
         category = when (category) {
@@ -181,11 +185,12 @@ private data class FestivalJson(
             "vrat" -> FestivalCategory.VRAT
             else -> FestivalCategory.MODERATE
         },
-        durationDays = durationDays
+        durationDays = durationDays,
+        dharmaPath = dharmaPath,
+        stories = stories,
+        significances = significances
     )
 }
-
-private data class LocalizedNameJson(val en: String, val hi: String? = null, val sa: String? = null)
 
 private data class FestivalRuleJson(
     val type: String,

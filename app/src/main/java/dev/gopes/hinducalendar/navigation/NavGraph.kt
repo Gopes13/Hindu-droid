@@ -3,6 +3,7 @@ package dev.gopes.hinducalendar.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WbSunny
@@ -19,15 +20,17 @@ import dev.gopes.hinducalendar.ui.today.TodayPanchangScreen
 import dev.gopes.hinducalendar.ui.calendar.CalendarScreen
 import dev.gopes.hinducalendar.ui.festivals.FestivalListScreen
 import dev.gopes.hinducalendar.ui.settings.SettingsScreen
+import dev.gopes.hinducalendar.ui.texts.SacredTextsScreen
 
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
     data object Today : Screen("today", "Today", Icons.Filled.WbSunny)
+    data object Texts : Screen("texts", "Texts", Icons.Filled.MenuBook)
     data object Calendar : Screen("calendar", "Calendar", Icons.Filled.CalendarMonth)
     data object Festivals : Screen("festivals", "Festivals", Icons.Filled.Star)
     data object Settings : Screen("settings", "Settings", Icons.Filled.Settings)
 }
 
-private val screens = listOf(Screen.Today, Screen.Calendar, Screen.Festivals, Screen.Settings)
+private val screens = listOf(Screen.Today, Screen.Texts, Screen.Calendar, Screen.Festivals, Screen.Settings)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,6 +65,7 @@ fun NavGraph() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Today.route) { TodayPanchangScreen() }
+            composable(Screen.Texts.route) { SacredTextsScreen() }
             composable(Screen.Calendar.route) { CalendarScreen() }
             composable(Screen.Festivals.route) { FestivalListScreen() }
             composable(Screen.Settings.route) { SettingsScreen() }

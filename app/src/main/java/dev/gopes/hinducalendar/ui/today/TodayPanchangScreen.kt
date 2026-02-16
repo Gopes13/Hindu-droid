@@ -50,6 +50,9 @@ private fun PanchangContent(panchang: PanchangDay, modifier: Modifier) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // Daily Wisdom Briefing
+        DailyBriefingCard()
+
         // Hindu Date Header
         HinduDateHeader(panchang)
 

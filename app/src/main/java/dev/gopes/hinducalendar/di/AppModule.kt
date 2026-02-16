@@ -8,7 +8,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.gopes.hinducalendar.engine.FestivalRulesEngine
 import dev.gopes.hinducalendar.engine.PanchangService
+import dev.gopes.hinducalendar.engine.SacredTextService
 import dev.gopes.hinducalendar.service.CalendarSyncService
+import dev.gopes.hinducalendar.service.NotificationHelper
 import javax.inject.Singleton
 
 @Module
@@ -31,5 +33,17 @@ object AppModule {
     @Singleton
     fun provideCalendarSyncService(@ApplicationContext context: Context): CalendarSyncService {
         return CalendarSyncService(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSacredTextService(@ApplicationContext context: Context): SacredTextService {
+        return SacredTextService(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationHelper(@ApplicationContext context: Context): NotificationHelper {
+        return NotificationHelper(context)
     }
 }

@@ -4,22 +4,24 @@ import java.time.LocalDate
 
 data class Festival(
     val id: String,
-    val names: LocalizedName,
-    val description: LocalizedName,
+    val names: Map<String, String>,
+    val description: Map<String, String>,
     val rule: FestivalRule,
     val traditions: List<String>,
     val category: FestivalCategory,
-    val durationDays: Int = 1
+    val durationDays: Int = 1,
+    val dharmaPath: List<String>? = null,
+    val stories: Map<String, String>? = null,
+    val significances: Map<String, String>? = null
 ) {
-    val displayName: String get() = names.en
-    val hindiDisplayName: String get() = names.hi ?: names.en
-}
+    /** Backward-compatible English name. */
+    val displayName: String get() = names["en"] ?: ""
 
-data class LocalizedName(
-    val en: String,
-    val hi: String? = null,
-    val sa: String? = null
-)
+    fun displayName(language: AppLanguage): String = names.localized(language)
+    fun descriptionText(language: AppLanguage): String = description.localized(language)
+    fun story(language: AppLanguage): String = stories?.localized(language) ?: ""
+    fun significance(language: AppLanguage): String = significances?.localized(language) ?: ""
+}
 
 data class FestivalRule(
     val type: String,           // "tithi", "solar", "tithi_offset"
