@@ -17,6 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.data.model.SacredTextType
+import dev.gopes.hinducalendar.ui.components.*
+import dev.gopes.hinducalendar.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,19 +42,19 @@ fun SacredTextsScreen(viewModel: SacredTextsViewModel = hiltViewModel()) {
                         Icons.Filled.MenuBook,
                         contentDescription = null,
                         modifier = Modifier.size(64.dp),
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(16.dp))
                     Text(
                         "No texts available for your path.",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
                         "Update your Spiritual Path in Settings.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -76,7 +78,7 @@ fun SacredTextsScreen(viewModel: SacredTextsViewModel = hiltViewModel()) {
                     Text(
                         "Daily readings based on your spiritual path",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -90,22 +92,12 @@ fun SacredTextsScreen(viewModel: SacredTextsViewModel = hiltViewModel()) {
 
 @Composable
 private fun SacredTextCard(item: SacredTextItem) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { /* Navigate to detail view in future */ },
-        colors = if (item.isPrimary) {
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-            )
-        } else {
-            CardDefaults.cardColors()
-        }
+    SacredCard(
+        modifier = Modifier.clickable { /* Navigate to detail view in future */ },
+        isHighlighted = item.isPrimary
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Icon
@@ -116,7 +108,7 @@ private fun SacredTextCard(item: SacredTextItem) {
                 tint = if (item.isPrimary) {
                     MaterialTheme.colorScheme.primary
                 } else {
-                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    MaterialTheme.colorScheme.onSurfaceVariant
                 }
             )
             Spacer(Modifier.width(16.dp))
@@ -138,23 +130,28 @@ private fun SacredTextCard(item: SacredTextItem) {
                                     "Primary",
                                     style = MaterialTheme.typography.labelSmall
                                 )
-                            }
+                            },
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
                         )
                     }
                 }
                 Text(
                     item.progressLabel,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 if (item.totalCount > 0) {
                     Spacer(Modifier.height(4.dp))
                     LinearProgressIndicator(
-                        progress = { item.currentPosition.toFloat() / item.totalCount.toFloat() },
+                        progress = item.currentPosition.toFloat() / item.totalCount.toFloat(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(4.dp),
-                        trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
                     )
                 }
             }
@@ -164,7 +161,7 @@ private fun SacredTextCard(item: SacredTextItem) {
             Icon(
                 Icons.Filled.ChevronRight,
                 contentDescription = "Open",
-                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

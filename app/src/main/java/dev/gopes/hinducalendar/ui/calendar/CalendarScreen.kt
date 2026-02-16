@@ -19,12 +19,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.data.model.PanchangDay
+import dev.gopes.hinducalendar.ui.components.*
+import dev.gopes.hinducalendar.ui.theme.*
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -49,15 +50,16 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { viewModel.previousMonth() }) {
-                    Icon(Icons.Filled.ChevronLeft, "Previous month")
+                    Icon(Icons.Filled.ChevronLeft, "Previous month", tint = MaterialTheme.colorScheme.primary)
                 }
                 Text(
                     displayedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
                 )
                 IconButton(onClick = { viewModel.nextMonth() }) {
-                    Icon(Icons.Filled.ChevronRight, "Next month")
+                    Icon(Icons.Filled.ChevronRight, "Next month", tint = MaterialTheme.colorScheme.primary)
                 }
             }
 
@@ -69,7 +71,7 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -107,7 +109,7 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
                 }
             }
 
-            Divider()
+            Divider(color = MaterialTheme.colorScheme.outline)
 
             // Selected day detail
             selectedPanchang?.let { panchang ->
@@ -123,9 +125,9 @@ private fun DayCell(
     hasFestival: Boolean, hasMajorFestival: Boolean, onClick: () -> Unit
 ) {
     val bgColor = when {
-        isSelected -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-        isToday -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)
-        else -> Color.Transparent
+        isSelected -> MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+        isToday -> MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+        else -> MaterialTheme.colorScheme.surface
     }
 
     Column(
@@ -133,7 +135,13 @@ private fun DayCell(
             .size(40.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(bgColor)
-            .then(if (isToday) Modifier.border(1.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(8.dp)) else Modifier)
+            .then(
+                if (isToday) Modifier.border(
+                    1.dp,
+                    MaterialTheme.colorScheme.primary,
+                    RoundedCornerShape(8.dp)
+                ) else Modifier
+            )
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -141,12 +149,15 @@ private fun DayCell(
         Text(
             "$day",
             style = MaterialTheme.typography.bodySmall,
-            fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal
+            fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+            color = if (isToday || isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
         )
         if (hasFestival) {
             Box(
-                Modifier.size(4.dp).clip(CircleShape)
-                    .background(if (hasMajorFestival) MaterialTheme.colorScheme.primary else Color.Gray)
+                Modifier
+                    .size(4.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
             )
         }
     }
@@ -155,34 +166,54 @@ private fun DayCell(
 @Composable
 private fun DayDetailPanel(panchang: PanchangDay) {
     Column(
-        Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        Modifier.fillMaxWidth().padding(16.dp),
     ) {
-        Text(panchang.hinduDate.displayString, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-        Text(
-            panchang.date.format(DateTimeFormatter.ofPattern("EEE, MMM d, yyyy")),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-        )
+        SacredCard {
+            Text(
+                panchang.hinduDate.displayString,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                panchang.date.format(DateTimeFormatter.ofPattern("EEE, MMM d, yyyy")),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
 
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Tithi: ${panchang.tithiInfo.name}", style = MaterialTheme.typography.bodySmall)
-            Text("Nakshatra: ${panchang.nakshatraInfo.name}", style = MaterialTheme.typography.bodySmall)
-        }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Yoga: ${panchang.yogaInfo.name}", style = MaterialTheme.typography.bodySmall)
-            Text("Karana: ${panchang.karanaInfo.name}", style = MaterialTheme.typography.bodySmall)
-        }
+            Spacer(Modifier.height(8.dp))
 
-        val timeFmt = DateTimeFormatter.ofPattern("h:mm a")
-        Text("Sunrise: ${panchang.sunrise.format(timeFmt)}  |  Sunset: ${panchang.sunset.format(timeFmt)}",
-            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("Tithi: ${panchang.tithiInfo.name}", style = MaterialTheme.typography.bodySmall)
+                Text("Nakshatra: ${panchang.nakshatraInfo.name}", style = MaterialTheme.typography.bodySmall)
+            }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("Yoga: ${panchang.yogaInfo.name}", style = MaterialTheme.typography.bodySmall)
+                Text("Karana: ${panchang.karanaInfo.name}", style = MaterialTheme.typography.bodySmall)
+            }
 
-        panchang.festivals.forEach { occurrence ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(14.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(occurrence.festival.displayName, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
+            val timeFmt = DateTimeFormatter.ofPattern("h:mm a")
+            Text(
+                "Sunrise: ${panchang.sunrise.format(timeFmt)}  |  Sunset: ${panchang.sunset.format(timeFmt)}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            panchang.festivals.forEach { occurrence ->
+                Spacer(Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Filled.Star,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        occurrence.festival.displayName,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
         }
     }

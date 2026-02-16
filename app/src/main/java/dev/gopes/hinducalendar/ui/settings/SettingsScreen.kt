@@ -16,6 +16,8 @@ import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.ContentPreferences
 import dev.gopes.hinducalendar.data.model.DharmaPath
 import dev.gopes.hinducalendar.data.model.NotificationTime
+import dev.gopes.hinducalendar.ui.components.*
+import dev.gopes.hinducalendar.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,13 +78,13 @@ fun SettingsScreen() {
                             Text(
                                 selectedPath.description,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Icon(
                             Icons.Filled.ExpandMore,
                             contentDescription = "Change",
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     DropdownMenu(
@@ -100,7 +102,7 @@ fun SettingsScreen() {
                                         Text(
                                             path.description,
                                             style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
                                 },
@@ -133,13 +135,13 @@ fun SettingsScreen() {
                             Text(
                                 "Content and UI language",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Icon(
                             Icons.Filled.ExpandMore,
                             contentDescription = "Change language",
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     DropdownMenu(
@@ -202,7 +204,7 @@ fun SettingsScreen() {
                 Text(
                     "Month ends on Purnima (full moon)",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -212,7 +214,7 @@ fun SettingsScreen() {
                 Text(
                     "28.6139\u00B0N, 77.2090\u00B0E \u00B7 Asia/Kolkata",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -224,18 +226,25 @@ fun SettingsScreen() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text("Sync to Google Calendar", style = MaterialTheme.typography.bodyMedium)
-                    Switch(checked = syncEnabled, onCheckedChange = { syncEnabled = it })
+                    Switch(
+                        checked = syncEnabled,
+                        onCheckedChange = { syncEnabled = it },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                            checkedTrackColor = MaterialTheme.colorScheme.primary,
+                            uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    )
                 }
                 if (syncEnabled) {
                     Text(
                         "Festivals Only",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(8.dp))
-                    Button(onClick = { /* sync */ }, modifier = Modifier.fillMaxWidth()) {
-                        Text("Sync Now")
-                    }
+                    SacredButton(text = "Sync Now", onClick = { /* sync */ })
                 }
             }
 
@@ -247,18 +256,27 @@ fun SettingsScreen() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text("Festival Reminders", style = MaterialTheme.typography.bodyMedium)
-                    Switch(checked = notificationsEnabled, onCheckedChange = { notificationsEnabled = it })
+                    Switch(
+                        checked = notificationsEnabled,
+                        onCheckedChange = { notificationsEnabled = it },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                            checkedTrackColor = MaterialTheme.colorScheme.primary,
+                            uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    )
                 }
                 if (notificationsEnabled) {
                     Text(
                         "1 day before",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
                 Spacer(Modifier.height(12.dp))
-                HorizontalDivider()
+                Divider(color = MaterialTheme.colorScheme.outline)
                 Spacer(Modifier.height(12.dp))
 
                 // Notification Time Picker
@@ -274,7 +292,7 @@ fun SettingsScreen() {
                         Text(
                             "Morning notification with daily wisdom",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Text(
@@ -291,18 +309,13 @@ fun SettingsScreen() {
                 Text(
                     "Your daily reading positions are tracked automatically as you read.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(12.dp))
-                OutlinedButton(
-                    onClick = { showResetDialog = true },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text("Reset All Reading Progress")
-                }
+                SacredOutlineButton(
+                    text = "Reset All Reading Progress",
+                    onClick = { showResetDialog = true }
+                )
             }
 
             // About
@@ -393,11 +406,20 @@ private fun ContentToggleRow(
             Text(
                 description,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Spacer(Modifier.width(8.dp))
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                checkedTrackColor = MaterialTheme.colorScheme.primary,
+                uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        )
     }
 }
 
@@ -411,9 +433,7 @@ private fun SettingsSection(title: String, content: @Composable ColumnScope.() -
             color = MaterialTheme.colorScheme.primary
         )
         Spacer(Modifier.height(8.dp))
-        Card(Modifier.fillMaxWidth()) {
-            Column(Modifier.padding(16.dp), content = content)
-        }
+        SacredCard(content = content)
     }
 }
 
@@ -427,7 +447,7 @@ private fun SettingsRow(label: String, value: String) {
         Text(
             value,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

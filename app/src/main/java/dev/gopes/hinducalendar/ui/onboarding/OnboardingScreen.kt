@@ -1,5 +1,6 @@
 package dev.gopes.hinducalendar.ui.onboarding
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,13 +11,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.gopes.hinducalendar.data.model.CalendarTradition
 import dev.gopes.hinducalendar.data.model.DharmaPath
 import dev.gopes.hinducalendar.data.model.HinduLocation
+import dev.gopes.hinducalendar.ui.components.*
+import dev.gopes.hinducalendar.ui.theme.*
 
 @Composable
 fun OnboardingScreen(onComplete: (CalendarTradition, HinduLocation, DharmaPath) -> Unit) {
@@ -45,22 +52,54 @@ fun OnboardingScreen(onComplete: (CalendarTradition, HinduLocation, DharmaPath) 
     }
 }
 
+/**
+ * Returns the tradition-specific accent color for each DharmaPath.
+ */
+private fun dharmaPathAccentColor(path: DharmaPath): Color {
+    return when (path) {
+        DharmaPath.GENERAL -> TraditionGeneral
+        DharmaPath.VAISHNAV -> TraditionVaishnav
+        DharmaPath.SHAIV -> TraditionShaiv
+        DharmaPath.SHAKTA -> TraditionShakta
+        DharmaPath.SMARTA -> TraditionSmarta
+        DharmaPath.ISKCON -> TraditionISKCON
+        DharmaPath.SWAMINARAYAN -> TraditionSwaminarayan
+        DharmaPath.SIKH -> TraditionSikh
+        DharmaPath.JAIN -> TraditionJain
+    }
+}
+
 @Composable
 private fun WelcomeStep(onNext: () -> Unit) {
+    val gradient = Brush.linearGradient(listOf(DeepSaffron, DivineGold))
+
     Column(
-        modifier = Modifier.fillMaxSize().padding(32.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(gradient)
+            .padding(32.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            Icons.Filled.WbSunny,
-            contentDescription = null,
-            modifier = Modifier.size(80.dp),
-            tint = MaterialTheme.colorScheme.primary
+        // Om symbol instead of WbSunny icon
+        Text(
+            "\u0950",
+            fontSize = 120.sp,
+            fontFamily = FontFamily.Serif,
+            color = Color.White
         )
         Spacer(Modifier.height(24.dp))
-        Text("Hindu Calendar", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold)
-        Text("हिन्दू पंचांग", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+        Text(
+            "Hindu Calendar",
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+        Text(
+            "\u0939\u093F\u0928\u094D\u0926\u0942 \u092A\u0902\u091A\u093E\u0902\u0917",
+            style = MaterialTheme.typography.titleLarge,
+            color = Color.White.copy(alpha = 0.8f)
+        )
 
         Spacer(Modifier.height(32.dp))
 
@@ -72,8 +111,16 @@ private fun WelcomeStep(onNext: () -> Unit) {
 
         Spacer(Modifier.height(48.dp))
 
-        Button(onClick = onNext, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-            Text("Get Started", style = MaterialTheme.typography.titleMedium)
+        // White filled button on gradient background
+        Button(
+            onClick = onNext,
+            modifier = Modifier.fillMaxWidth().height(52.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.White,
+                contentColor = DeepSaffron
+            )
+        ) {
+            Text("Get Started", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -84,9 +131,9 @@ private fun FeatureItem(icon: ImageVector, text: String) {
         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
+        Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
         Spacer(Modifier.width(16.dp))
-        Text(text, style = MaterialTheme.typography.bodyLarge)
+        Text(text, style = MaterialTheme.typography.bodyLarge, color = Color.White)
     }
 }
 
@@ -105,47 +152,44 @@ private fun DharmaPathStep(
         Text(
             "Choose your tradition to personalize daily sacred text readings and content.",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(Modifier.height(16.dp))
 
         LazyColumn(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(DharmaPath.entries) { path ->
-                Card(
-                    modifier = Modifier.fillMaxWidth().selectable(
+                val accentColor = dharmaPathAccentColor(path)
+                SacredCard(
+                    modifier = Modifier.selectable(
                         selected = path == selectedPath,
                         onClick = { onSelect(path) }
                     ),
-                    colors = if (path == selectedPath)
-                        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                    else CardDefaults.cardColors()
+                    accentColor = accentColor,
+                    isHighlighted = path == selectedPath
                 ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text(
-                            path.displayName,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Text(
-                            path.description,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            "${path.availableTextIds.size} sacred texts available",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-                        )
-                    }
+                    Text(
+                        path.displayName,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = if (path == selectedPath) accentColor else MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        path.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        "${path.availableTextIds.size} sacred texts available",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = accentColor.copy(alpha = 0.7f)
+                    )
                 }
             }
         }
 
         Spacer(Modifier.height(16.dp))
-        Button(onClick = onNext, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-            Text("Continue")
-        }
+        SacredButton(text = "Continue", onClick = onNext)
     }
 }
 
@@ -160,33 +204,36 @@ private fun TraditionStep(
         Text(
             "This determines which calendar system and regional festivals to show.",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(Modifier.height(16.dp))
 
         LazyColumn(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(CalendarTradition.entries) { tradition ->
-                Card(
-                    modifier = Modifier.fillMaxWidth().selectable(
+                SacredCard(
+                    modifier = Modifier.selectable(
                         selected = tradition == selectedTradition,
                         onClick = { onSelect(tradition) }
                     ),
-                    colors = if (tradition == selectedTradition)
-                        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                    else CardDefaults.cardColors()
+                    isHighlighted = tradition == selectedTradition
                 ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text(tradition.displayName, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Medium)
-                        Text(tradition.description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
-                    }
+                    Text(
+                        tradition.displayName,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = if (tradition == selectedTradition) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        tradition.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
 
         Spacer(Modifier.height(16.dp))
-        Button(onClick = onNext, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-            Text("Continue")
-        }
+        SacredButton(text = "Continue", onClick = onNext)
     }
 }
 
@@ -201,34 +248,34 @@ private fun LocationStep(
         Text(
             "Used for sunrise/sunset times and accurate Panchang calculations.",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(Modifier.height(16.dp))
 
         LazyColumn(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             items(HinduLocation.ALL_PRESETS) { location ->
-                Card(
-                    modifier = Modifier.fillMaxWidth().selectable(
+                SacredCard(
+                    modifier = Modifier.selectable(
                         selected = location == selectedLocation,
                         onClick = { onSelect(location) }
                     ),
-                    colors = if (location == selectedLocation)
-                        CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                    else CardDefaults.cardColors()
+                    isHighlighted = location == selectedLocation
                 ) {
-                    Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Column {
-                            Text(location.cityName ?: "Unknown", style = MaterialTheme.typography.bodyLarge)
-                            Text(location.timeZoneId, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
-                        }
-                    }
+                    Text(
+                        location.cityName ?: "Unknown",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = if (location == selectedLocation) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        location.timeZoneId,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
 
         Spacer(Modifier.height(16.dp))
-        Button(onClick = onComplete, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-            Text("Start Using Hindu Calendar")
-        }
+        SacredButton(text = "Start Using Hindu Calendar", onClick = onComplete)
     }
 }

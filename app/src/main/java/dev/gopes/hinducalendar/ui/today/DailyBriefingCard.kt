@@ -10,13 +10,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.engine.DailyVerse
+import dev.gopes.hinducalendar.ui.components.*
+import dev.gopes.hinducalendar.ui.theme.*
 
 @Composable
 fun DailyBriefingCard(viewModel: DailyBriefingViewModel = hiltViewModel()) {
@@ -26,50 +26,41 @@ fun DailyBriefingCard(viewModel: DailyBriefingViewModel = hiltViewModel()) {
         return
     }
 
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f)
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Header
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Filled.AutoAwesome,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    "Daily Wisdom",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.tertiary
-                )
-            }
+    SacredHighlightCard(accentColor = MaterialTheme.colorScheme.tertiary) {
+        // Header
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                Icons.Filled.AutoAwesome,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                "Daily Wisdom",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.tertiary
+            )
+        }
 
-            // Primary Verse
-            uiState.primaryVerse?.let { verse ->
-                VerseSection(verse, isPrimary = true)
-            }
+        Spacer(Modifier.height(12.dp))
 
-            // Divider between primary and secondary
-            if (uiState.primaryVerse != null && uiState.secondaryVerse != null) {
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.15f)
-                )
-            }
+        // Primary Verse
+        uiState.primaryVerse?.let { verse ->
+            VerseSection(verse, isPrimary = true)
+        }
 
-            // Secondary Verse
-            uiState.secondaryVerse?.let { verse ->
-                VerseSection(verse, isPrimary = false)
-            }
+        // Divider between primary and secondary
+        if (uiState.primaryVerse != null && uiState.secondaryVerse != null) {
+            Spacer(Modifier.height(12.dp))
+            DecorativeDivider(style = DividerStyle.DOT)
+            Spacer(Modifier.height(4.dp))
+        }
+
+        // Secondary Verse
+        uiState.secondaryVerse?.let { verse ->
+            VerseSection(verse, isPrimary = false)
         }
     }
 }
@@ -91,7 +82,7 @@ private fun VerseSection(verse: DailyVerse, isPrimary: Boolean) {
                     tint = if (isPrimary) {
                         MaterialTheme.colorScheme.primary
                     } else {
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        MaterialTheme.colorScheme.onSurfaceVariant
                     }
                 )
                 Spacer(Modifier.width(6.dp))
@@ -109,7 +100,7 @@ private fun VerseSection(verse: DailyVerse, isPrimary: Boolean) {
             Text(
                 "${verse.position}/${verse.totalCount}",
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -117,15 +108,14 @@ private fun VerseSection(verse: DailyVerse, isPrimary: Boolean) {
         Text(
             verse.subtitle,
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        // Sanskrit / original text
+        // Sanskrit / original text — using SacredTypography
         verse.sanskrit?.let { sanskrit ->
             Text(
                 sanskrit,
-                style = MaterialTheme.typography.bodyMedium,
-                fontStyle = FontStyle.Italic,
+                style = SacredTypography.sacredMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis

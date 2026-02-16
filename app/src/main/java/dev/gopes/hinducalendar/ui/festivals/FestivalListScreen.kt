@@ -16,6 +16,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.data.model.FestivalCategory
 import dev.gopes.hinducalendar.data.model.FestivalOccurrence
 import dev.gopes.hinducalendar.data.model.PanchangDay
+import dev.gopes.hinducalendar.ui.components.*
+import dev.gopes.hinducalendar.ui.theme.*
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,11 +32,14 @@ fun FestivalListScreen(viewModel: FestivalListViewModel = hiltViewModel()) {
     ) { padding ->
         if (isLoading) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else if (festivals.isEmpty()) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Text("No upcoming festivals found", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+                Text(
+                    "No upcoming festivals found",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         } else {
             LazyColumn(
@@ -62,11 +67,10 @@ fun FestivalListScreen(viewModel: FestivalListViewModel = hiltViewModel()) {
 
 @Composable
 private fun FestivalRow(occurrence: FestivalOccurrence, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)
+    SacredCard(
+        modifier = Modifier.clickable(onClick = onClick)
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Date
@@ -83,7 +87,7 @@ private fun FestivalRow(occurrence: FestivalOccurrence, onClick: () -> Unit) {
                 Text(
                     occurrence.date.format(DateTimeFormatter.ofPattern("MMM")),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -97,17 +101,26 @@ private fun FestivalRow(occurrence: FestivalOccurrence, onClick: () -> Unit) {
                     fontWeight = FontWeight.SemiBold
                 )
                 occurrence.festival.names["hi"]?.let {
-                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
                 }
                 Text(
                     occurrence.festival.category.displayName,
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
             if (occurrence.festival.category == FestivalCategory.MAJOR) {
-                Icon(Icons.Filled.Star, contentDescription = "Major", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                Icon(
+                    Icons.Filled.Star,
+                    contentDescription = "Major",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
             }
         }
     }
@@ -124,7 +137,11 @@ private fun FestivalDetailDialog(festival: dev.gopes.hinducalendar.data.model.Fe
             Column {
                 Text(festival.displayName, fontWeight = FontWeight.Bold)
                 festival.names["hi"]?.let {
-                    Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
                 }
             }
         },
@@ -132,11 +149,19 @@ private fun FestivalDetailDialog(festival: dev.gopes.hinducalendar.data.model.Fe
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(festival.description["en"] ?: "", style = MaterialTheme.typography.bodyMedium)
                 festival.description["hi"]?.let {
-                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
                 AssistChip(
                     onClick = {},
-                    label = { Text(festival.category.displayName) }
+                    label = { Text(festival.category.displayName) },
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                 )
             }
         }
