@@ -13,10 +13,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.*
 import dev.gopes.hinducalendar.ui.components.*
 import dev.gopes.hinducalendar.ui.theme.*
@@ -30,7 +34,7 @@ fun TodayPanchangScreen(viewModel: TodayPanchangViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Today's Panchang") })
+            TopAppBar(title = { Text(stringResource(R.string.today_panchang)) })
         }
     ) { padding ->
         if (isLoading) {
@@ -121,18 +125,18 @@ private fun HinduDateHeader(panchang: PanchangDay) {
 private fun SunMoonCard(panchang: PanchangDay) {
     val timeFmt = DateTimeFormatter.ofPattern("h:mm a")
     SacredCard {
-        Text("Sun & Moon", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.section_sun_moon), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, modifier = Modifier.semantics { heading() })
         Spacer(Modifier.height(8.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-            TimeItem(Icons.Filled.WbSunny, "Sunrise", panchang.sunrise.format(timeFmt), SunriseColor)
-            TimeItem(Icons.Filled.WbTwilight, "Sunset", panchang.sunset.format(timeFmt), SunsetColor)
+            TimeItem(Icons.Filled.WbSunny, stringResource(R.string.today_sunrise), panchang.sunrise.format(timeFmt), SunriseColor)
+            TimeItem(Icons.Filled.WbTwilight, stringResource(R.string.today_sunset), panchang.sunset.format(timeFmt), SunsetColor)
         }
         panchang.moonrise?.let { moonrise ->
             Spacer(Modifier.height(8.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                TimeItem(Icons.Filled.NightsStay, "Moonrise", moonrise.format(timeFmt), MoonriseColor)
+                TimeItem(Icons.Filled.NightsStay, stringResource(R.string.today_moonrise), moonrise.format(timeFmt), MoonriseColor)
                 panchang.moonset?.let { moonset ->
-                    TimeItem(Icons.Filled.Nightlight, "Moonset", moonset.format(timeFmt), MoonsetColor)
+                    TimeItem(Icons.Filled.Nightlight, stringResource(R.string.today_moonset), moonset.format(timeFmt), MoonsetColor)
                 }
             }
         }
@@ -151,12 +155,12 @@ private fun TimeItem(icon: ImageVector, label: String, time: String, tint: andro
 @Composable
 private fun PanchangElementsCard(panchang: PanchangDay) {
     SacredCard {
-        Text("Panchang", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.section_panchang), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, modifier = Modifier.semantics { heading() })
         Spacer(Modifier.height(8.dp))
-        ElementRow("Tithi", panchang.tithiInfo.name, panchang.tithiInfo.timeRangeString)
-        ElementRow("Nakshatra", panchang.nakshatraInfo.name, panchang.nakshatraInfo.timeRangeString)
-        ElementRow("Yoga", panchang.yogaInfo.name, null)
-        ElementRow("Karana", panchang.karanaInfo.name, null)
+        ElementRow(stringResource(R.string.panchang_tithi), panchang.tithiInfo.name, panchang.tithiInfo.timeRangeString)
+        ElementRow(stringResource(R.string.panchang_nakshatra), panchang.nakshatraInfo.name, panchang.nakshatraInfo.timeRangeString)
+        ElementRow(stringResource(R.string.panchang_yoga), panchang.yogaInfo.name, null)
+        ElementRow(stringResource(R.string.panchang_karana), panchang.karanaInfo.name, null)
     }
 }
 
@@ -181,14 +185,14 @@ private fun ElementRow(label: String, value: String, detail: String?) {
 private fun InauspiciousPeriodsCard(panchang: PanchangDay) {
     SacredCard(accentColor = MaterialTheme.colorScheme.error) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Inauspicious Periods", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.section_inauspicious_periods), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, modifier = Modifier.semantics { heading() })
             Spacer(Modifier.width(8.dp))
-            Icon(Icons.Filled.Warning, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
+            Icon(Icons.Filled.Warning, contentDescription = "Inauspicious periods", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(16.dp))
         }
         Spacer(Modifier.height(8.dp))
-        panchang.rahuKaal?.let { PeriodRow("Rahu Kaal", it.displayString, MaterialTheme.colorScheme.error) }
-        panchang.yamaghanda?.let { PeriodRow("Yamaghanda", it.displayString, MaterialTheme.colorScheme.primary) }
-        panchang.gulikaKaal?.let { PeriodRow("Gulika Kaal", it.displayString, MaterialTheme.colorScheme.tertiary) }
+        panchang.rahuKaal?.let { PeriodRow(stringResource(R.string.panchang_rahu_kaal), it.displayString, MaterialTheme.colorScheme.error) }
+        panchang.yamaghanda?.let { PeriodRow(stringResource(R.string.panchang_yamaghanda), it.displayString, MaterialTheme.colorScheme.primary) }
+        panchang.gulikaKaal?.let { PeriodRow(stringResource(R.string.panchang_gulika), it.displayString, MaterialTheme.colorScheme.tertiary) }
     }
 }
 
@@ -211,9 +215,9 @@ private fun AuspiciousPeriodCard(period: TimePeriod) {
     SacredHighlightCard(accentColor = AuspiciousGreen) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.AutoAwesome, contentDescription = null, tint = AuspiciousGreen)
+                Icon(Icons.Filled.AutoAwesome, contentDescription = "Auspicious period", tint = AuspiciousGreen)
                 Spacer(Modifier.width(8.dp))
-                Text("Abhijit Muhurta", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                Text(stringResource(R.string.panchang_abhijit), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
             }
             Text(period.displayString, style = MaterialTheme.typography.bodyMedium, color = AuspiciousGreen)
         }
@@ -224,9 +228,9 @@ private fun AuspiciousPeriodCard(period: TimePeriod) {
 private fun FestivalsCard(festivals: List<FestivalOccurrence>) {
     SacredHighlightCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Today's Festivals", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.section_today_festivals), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, modifier = Modifier.semantics { heading() })
             Spacer(Modifier.width(8.dp))
-            Icon(Icons.Filled.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
+            Icon(Icons.Filled.Star, contentDescription = "Today's festivals", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
         }
         Spacer(Modifier.height(8.dp))
         festivals.forEach { occurrence ->
@@ -238,7 +242,7 @@ private fun FestivalsCard(festivals: List<FestivalOccurrence>) {
                 if (occurrence.festival.category == FestivalCategory.MAJOR) {
                     AssistChip(
                         onClick = {},
-                        label = { Text("Major", style = MaterialTheme.typography.labelSmall) },
+                        label = { Text(stringResource(R.string.festival_major), style = MaterialTheme.typography.labelSmall) },
                         colors = AssistChipDefaults.assistChipColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                             labelColor = MaterialTheme.colorScheme.onPrimaryContainer

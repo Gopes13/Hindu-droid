@@ -74,4 +74,100 @@
     <string name="common_search">தேடு</string>
     <string name="common_share">பகிரவும்</string>
     <string name="common_of">இன்</string>
+    <string name="common_close">மூடு</string>
+
+    <!-- Today Panchang Screen -->
+    <string name="section_sun_moon">சூரியன் &amp; சந்திரன்</string>
+    <string name="section_panchang">பஞ்சாங்கம்</string>
+    <string name="section_inauspicious_periods">அசுப காலங்கள்</string>
+    <string name="section_today_festivals">இன்றைய திருவிழாக்கள்</string>
+    <string name="festival_major">முக்கிய</string>
+
+    <!-- Settings Screen -->
+    <string name="setting_spiritual_path">ஆன்மீக பாதை</string>
+    <string name="setting_content_and_ui_language">உள்ளடக்கம் மற்றும் UI மொழி</string>
+    <string name="setting_change">மாற்று</string>
+    <string name="setting_change_language">மொழி மாற்று</string>
+    <string name="setting_daily_content">தினசரி உள்ளடக்கம்</string>
+    <string name="setting_panchang_notification">பஞ்சாங்க அறிவிப்பு</string>
+    <string name="setting_panchang_notification_desc">அறிவிப்பில் திதி, நட்சத்திரம் சேர்க்கவும்</string>
+    <string name="setting_primary_sacred_text">முதன்மை புனித நூல்</string>
+    <string name="setting_primary_text_desc">%s முதன்மை நூலிலிருந்து தினசரி வசனம்</string>
+    <string name="setting_festival_stories">திருவிழா கதைகள்</string>
+    <string name="setting_festival_stories_desc">திருவிழா நாட்களில் கதைகள் மற்றும் முக்கியத்துவம்</string>
+    <string name="setting_secondary_text">இரண்டாம் நிலை உரை</string>
+    <string name="setting_secondary_text_desc">இரண்டாம் நிலை நூலிலிருந்து கூடுதல் வாசிப்பு</string>
+    <string name="setting_calendar_tradition">நாட்காட்டி பாரம்பரியம்</string>
+    <string name="setting_north_indian_purnimant">வட இந்திய (பூர்ணிமாந்த்)</string>
+    <string name="setting_month_ends_purnima">மாதம் பூர்ணிமையில் முடிவடைகிறது</string>
+    <string name="setting_sync_to_google">Google காலெண்டருக்கு ஒத்திசைக்கவும்</string>
+    <string name="setting_festivals_only">திருவிழாக்கள் மட்டும்</string>
+    <string name="setting_sync_now">இப்போது ஒத்திசைக்கவும்</string>
+    <string name="setting_festival_reminders">திருவிழா நினைவூட்டல்கள்</string>
+    <string name="setting_one_day_before">1 நாளுக்கு முன்</string>
+    <string name="setting_daily_briefing_time">தினசரி சுருக்க நேரம்</string>
+    <string name="setting_morning_notification">தினசரி ஞானத்துடன் காலை அறிவிப்பு</string>
+    <string name="setting_reading_progress">வாசிப்பு முன்னேற்றம்</string>
+    <string name="setting_reading_progress_desc">நீங்கள் படிக்கும்போது உங்கள் தினசரி வாசிப்பு நிலைகள் தானாகவே கண்காணிக்கப்படுகின்றன.</string>
+    <string name="setting_reset_reading">அனைத்து வாசிப்பு முன்னேற்றத்தையும் மீட்டமைக்கவும்</string>
+    <string name="setting_reset_dialog_title">வாசிப்பு முன்னேற்றத்தை மீட்டமைக்கவா?</string>
+    <string name="setting_reset_dialog_body">இது அனைத்து வாசிப்பு நிலைகளையும் தொடக்கத்திற்கு மீட்டமைக்கும். இந்தச் செயலை மீட்டெடுக்க முடியாது.</string>
+    <string name="setting_reset">மீட்டமை</string>
+    <string name="setting_calculation_method">கணக்கீட்டு முறை</string>
+    <string name="setting_drik_ganit">திருக் கணிதம்</string>
+    <string name="setting_ayanamsa">அயனாம்சம்</string>
+    <string name="setting_lahiri">லாஹிரி (சித்ரபக்ஷ)</string>
+    <string name="setting_set_briefing_time">தினசரி சுருக்க நேரத்தை அமைக்கவும்</string>
+
+    <!-- Calendar Screen -->
+    <string name="cd_previous_month">முந்தைய மாதம்</string>
+    <string name="cd_next_month">அடுத்த மாதம்</string>
+
+    <!-- Daily Briefing -->
+    <string name="daily_wisdom">தினசரி ஞானம்</string>
+
+    <!-- Festival List Screen -->
+    <string name="no_upcoming_festivals">வரவிருக்கும் திருவிழாக்கள் எதுவும் இல்லை</string>
+
+    <!-- Sacred Texts Screen -->
+    <string name="sacred_texts_title">புனித நூல்கள்</string>
+    <string name="no_texts_for_path">உங்கள் பாதைக்கு நூல்கள் எதுவும் கிடைக்கவில்லை.</string>
+    <string name="update_path_in_settings">அமைப்புகளில் உங்கள் ஆன்மீக பாதையைப் புதுப்பிக்கவும்.</string>
+    <string name="your_path_texts">உங்கள் %s நூல்கள்</string>
+    <string name="daily_readings_desc">உங்கள் ஆன்மீக பாதையின் அடிப்படையில் தினசரி வாசிப்புகள்</string>
+    <string name="text_primary">முதன்மை</string>
+    <string name="cd_open">திற</string>
+    <string name="texts_position_of">நிலை %1$d / %2$d</string>
+    <string name="texts_position">நிலை %1$d</string>
+    <string name="sacred_texts_available">%d புனித நூல்கள் கிடைக்கும்</string>
+
+    <!-- Onboarding Screen -->
+    <string name="app_name_display">இந்து நாட்காட்டி</string>
+    <string name="onboarding_get_started">தொடங்கு</string>
+    <string name="onboarding_full_panchang">முழு தினசரி பஞ்சாங்கம்</string>
+    <string name="onboarding_festival_reminders">திருவிழா நினைவூட்டல்கள்</string>
+    <string name="onboarding_sync_calendar">உங்கள் நாட்காட்டிக்கு ஒத்திசைக்கவும்</string>
+    <string name="onboarding_location_timings">இருப்பிட-துல்லிய நேரங்கள்</string>
+    <string name="onboarding_daily_readings">தினசரி புனித நூல் வாசிப்புகள்</string>
+    <string name="onboarding_spiritual_path">உங்கள் ஆன்மீக பாதை</string>
+    <string name="onboarding_path_desc">தினசரி புனித நூல் வாசிப்புகள் மற்றும் உள்ளடக்கத்தை தனிப்பயனாக்க உங்கள் பாரம்பரியத்தைத் தேர்ந்தெடுக்கவும்.</string>
+    <string name="onboarding_continue">தொடரவும்</string>
+    <string name="onboarding_select_tradition">உங்கள் பாரம்பரியத்தைத் தேர்ந்தெடுக்கவும்</string>
+    <string name="onboarding_tradition_desc">எந்த நாட்காட்டி முறை மற்றும் பிராந்திய திருவிழாக்களைக் காட்ட வேண்டும் என்பதை இது தீர்மானிக்கிறது.</string>
+    <string name="onboarding_set_location">உங்கள் இருப்பிடத்தை அமைக்கவும்</string>
+    <string name="onboarding_location_desc">சூரிய உதயம்/அஸ்தமன நேரங்கள் மற்றும் துல்லியமான பஞ்சாங்க கணக்கீடுகளுக்குப் பயன்படுத்தப்படுகிறது.</string>
+    <string name="onboarding_unknown_location">தெரியாத</string>
+    <string name="onboarding_start_using">இந்து நாட்காட்டியைப் பயன்படுத்தத் தொடங்கு</string>
+
+    <!-- Greeting Banner -->
+    <string name="greeting_good_morning">காலை வணக்கம்</string>
+    <string name="greeting_good_afternoon">மதிய வணக்கம்</string>
+    <string name="greeting_good_evening">மாலை வணக்கம்</string>
+    <string name="greeting_namaste">நமஸ்தே</string>
+
+    <!-- Notification Worker -->
+    <string name="notif_daily_wisdom">தினசரி ஞானம்</string>
+    <string name="notif_channel_name">தினசரி சுருக்கம்</string>
+    <string name="notif_channel_description">தினசரி பஞ்சாங்கம் மற்றும் புனித நூல் ஞானத்துடன் காலை அறிவிப்பு</string>
+    <string name="notif_fallback_body">இன்றைய பஞ்சாங்கம் மற்றும் புனித வாசிப்புகளுக்கு செயலியைத் திறக்கவும்.</string>
 </resources>

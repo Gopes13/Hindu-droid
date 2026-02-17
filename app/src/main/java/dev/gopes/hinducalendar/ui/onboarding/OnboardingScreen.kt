@@ -14,11 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.CalendarTradition
 import dev.gopes.hinducalendar.data.model.DharmaPath
 import dev.gopes.hinducalendar.data.model.HinduLocation
@@ -90,7 +92,7 @@ private fun WelcomeStep(onNext: () -> Unit) {
         )
         Spacer(Modifier.height(24.dp))
         Text(
-            "Hindu Calendar",
+            stringResource(R.string.app_name_display),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = Color.White
@@ -103,11 +105,11 @@ private fun WelcomeStep(onNext: () -> Unit) {
 
         Spacer(Modifier.height(32.dp))
 
-        FeatureItem(Icons.Filled.CalendarMonth, "Full daily Panchang")
-        FeatureItem(Icons.Filled.Star, "Festival reminders")
-        FeatureItem(Icons.Filled.Event, "Sync to your calendar")
-        FeatureItem(Icons.Filled.LocationOn, "Location-accurate timings")
-        FeatureItem(Icons.Filled.MenuBook, "Daily sacred text readings")
+        FeatureItem(Icons.Filled.CalendarMonth, stringResource(R.string.onboarding_full_panchang))
+        FeatureItem(Icons.Filled.Star, stringResource(R.string.onboarding_festival_reminders))
+        FeatureItem(Icons.Filled.Event, stringResource(R.string.onboarding_sync_calendar))
+        FeatureItem(Icons.Filled.LocationOn, stringResource(R.string.onboarding_location_timings))
+        FeatureItem(Icons.Filled.MenuBook, stringResource(R.string.onboarding_daily_readings))
 
         Spacer(Modifier.height(48.dp))
 
@@ -120,7 +122,7 @@ private fun WelcomeStep(onNext: () -> Unit) {
                 contentColor = DeepSaffron
             )
         ) {
-            Text("Get Started", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.onboarding_get_started), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -145,12 +147,12 @@ private fun DharmaPathStep(
 ) {
     Column(Modifier.fillMaxSize().padding(24.dp)) {
         Text(
-            "Your Spiritual Path",
+            stringResource(R.string.onboarding_spiritual_path),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Text(
-            "Choose your tradition to personalize daily sacred text readings and content.",
+            stringResource(R.string.onboarding_path_desc),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -180,7 +182,7 @@ private fun DharmaPathStep(
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "${path.availableTextIds.size} sacred texts available",
+                        stringResource(R.string.sacred_texts_available, path.availableTextIds.size),
                         style = MaterialTheme.typography.labelSmall,
                         color = accentColor.copy(alpha = 0.7f)
                     )
@@ -189,7 +191,7 @@ private fun DharmaPathStep(
         }
 
         Spacer(Modifier.height(16.dp))
-        SacredButton(text = "Continue", onClick = onNext)
+        SacredButton(text = stringResource(R.string.onboarding_continue), onClick = onNext)
     }
 }
 
@@ -200,9 +202,9 @@ private fun TraditionStep(
     onNext: () -> Unit
 ) {
     Column(Modifier.fillMaxSize().padding(24.dp)) {
-        Text("Select Your Tradition", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.onboarding_select_tradition), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
         Text(
-            "This determines which calendar system and regional festivals to show.",
+            stringResource(R.string.onboarding_tradition_desc),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -233,7 +235,7 @@ private fun TraditionStep(
         }
 
         Spacer(Modifier.height(16.dp))
-        SacredButton(text = "Continue", onClick = onNext)
+        SacredButton(text = stringResource(R.string.onboarding_continue), onClick = onNext)
     }
 }
 
@@ -244,9 +246,9 @@ private fun LocationStep(
     onComplete: () -> Unit
 ) {
     Column(Modifier.fillMaxSize().padding(24.dp)) {
-        Text("Set Your Location", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.onboarding_set_location), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
         Text(
-            "Used for sunrise/sunset times and accurate Panchang calculations.",
+            stringResource(R.string.onboarding_location_desc),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -262,7 +264,7 @@ private fun LocationStep(
                     isHighlighted = location == selectedLocation
                 ) {
                     Text(
-                        location.cityName ?: "Unknown",
+                        location.cityName ?: stringResource(R.string.onboarding_unknown_location),
                         style = MaterialTheme.typography.bodyLarge,
                         color = if (location == selectedLocation) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
@@ -276,6 +278,6 @@ private fun LocationStep(
         }
 
         Spacer(Modifier.height(16.dp))
-        SacredButton(text = "Start Using Hindu Calendar", onClick = onComplete)
+        SacredButton(text = stringResource(R.string.onboarding_start_using), onClick = onComplete)
     }
 }

@@ -74,4 +74,100 @@
     <string name="common_search">Search</string>
     <string name="common_share">Share</string>
     <string name="common_of">of</string>
+    <string name="common_close">Close</string>
+
+    <!-- Today Panchang Screen -->
+    <string name="section_sun_moon">Sun &amp; Moon</string>
+    <string name="section_panchang">Panchang</string>
+    <string name="section_inauspicious_periods">Inauspicious Periods</string>
+    <string name="section_today_festivals">Today\'s Festivals</string>
+    <string name="festival_major">Major</string>
+
+    <!-- Settings Screen -->
+    <string name="setting_spiritual_path">Spiritual Path</string>
+    <string name="setting_content_and_ui_language">Content and UI language</string>
+    <string name="setting_change">Change</string>
+    <string name="setting_change_language">Change language</string>
+    <string name="setting_daily_content">Daily Content</string>
+    <string name="setting_panchang_notification">Panchang Notification</string>
+    <string name="setting_panchang_notification_desc">Include Tithi, Nakshatra in notification</string>
+    <string name="setting_primary_sacred_text">Primary Sacred Text</string>
+    <string name="setting_primary_text_desc">Daily verse from %s primary text</string>
+    <string name="setting_festival_stories">Festival Stories</string>
+    <string name="setting_festival_stories_desc">Stories and significance on festival days</string>
+    <string name="setting_secondary_text">Secondary Text</string>
+    <string name="setting_secondary_text_desc">Additional reading from secondary text</string>
+    <string name="setting_calendar_tradition">Calendar Tradition</string>
+    <string name="setting_north_indian_purnimant">North Indian (Purnimant)</string>
+    <string name="setting_month_ends_purnima">Month ends on Purnima (full moon)</string>
+    <string name="setting_sync_to_google">Sync to Google Calendar</string>
+    <string name="setting_festivals_only">Festivals Only</string>
+    <string name="setting_sync_now">Sync Now</string>
+    <string name="setting_festival_reminders">Festival Reminders</string>
+    <string name="setting_one_day_before">1 day before</string>
+    <string name="setting_daily_briefing_time">Daily Briefing Time</string>
+    <string name="setting_morning_notification">Morning notification with daily wisdom</string>
+    <string name="setting_reading_progress">Reading Progress</string>
+    <string name="setting_reading_progress_desc">Your daily reading positions are tracked automatically as you read.</string>
+    <string name="setting_reset_reading">Reset All Reading Progress</string>
+    <string name="setting_reset_dialog_title">Reset Reading Progress?</string>
+    <string name="setting_reset_dialog_body">This will reset all reading positions back to the beginning. This action cannot be undone.</string>
+    <string name="setting_reset">Reset</string>
+    <string name="setting_calculation_method">Calculation Method</string>
+    <string name="setting_drik_ganit">Drik Ganit</string>
+    <string name="setting_ayanamsa">Ayanamsa</string>
+    <string name="setting_lahiri">Lahiri (Chitrapaksha)</string>
+    <string name="setting_set_briefing_time">Set Daily Briefing Time</string>
+
+    <!-- Calendar Screen -->
+    <string name="cd_previous_month">Previous month</string>
+    <string name="cd_next_month">Next month</string>
+
+    <!-- Daily Briefing -->
+    <string name="daily_wisdom">Daily Wisdom</string>
+
+    <!-- Festival List Screen -->
+    <string name="no_upcoming_festivals">No upcoming festivals found</string>
+
+    <!-- Sacred Texts Screen -->
+    <string name="sacred_texts_title">Sacred Texts</string>
+    <string name="no_texts_for_path">No texts available for your path.</string>
+    <string name="update_path_in_settings">Update your Spiritual Path in Settings.</string>
+    <string name="your_path_texts">Your %s Texts</string>
+    <string name="daily_readings_desc">Daily readings based on your spiritual path</string>
+    <string name="text_primary">Primary</string>
+    <string name="cd_open">Open</string>
+    <string name="texts_position_of">Position %1$d of %2$d</string>
+    <string name="texts_position">Position %1$d</string>
+    <string name="sacred_texts_available">%d sacred texts available</string>
+
+    <!-- Onboarding Screen -->
+    <string name="app_name_display">Hindu Calendar</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_full_panchang">Full daily Panchang</string>
+    <string name="onboarding_festival_reminders">Festival reminders</string>
+    <string name="onboarding_sync_calendar">Sync to your calendar</string>
+    <string name="onboarding_location_timings">Location-accurate timings</string>
+    <string name="onboarding_daily_readings">Daily sacred text readings</string>
+    <string name="onboarding_spiritual_path">Your Spiritual Path</string>
+    <string name="onboarding_path_desc">Choose your tradition to personalize daily sacred text readings and content.</string>
+    <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_select_tradition">Select Your Tradition</string>
+    <string name="onboarding_tradition_desc">This determines which calendar system and regional festivals to show.</string>
+    <string name="onboarding_set_location">Set Your Location</string>
+    <string name="onboarding_location_desc">Used for sunrise/sunset times and accurate Panchang calculations.</string>
+    <string name="onboarding_unknown_location">Unknown</string>
+    <string name="onboarding_start_using">Start Using Hindu Calendar</string>
+
+    <!-- Greeting Banner -->
+    <string name="greeting_good_morning">Good Morning</string>
+    <string name="greeting_good_afternoon">Good Afternoon</string>
+    <string name="greeting_good_evening">Good Evening</string>
+    <string name="greeting_namaste">Namaste</string>
+
+    <!-- Notification Worker -->
+    <string name="notif_daily_wisdom">Daily Wisdom</string>
+    <string name="notif_channel_name">Daily Briefing</string>
+    <string name="notif_channel_description">Morning notification with daily Panchang and sacred text wisdom</string>
+    <string name="notif_fallback_body">Open the app for today\'s Panchang and sacred readings.</string>
 </resources>

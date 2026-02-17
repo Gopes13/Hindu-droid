@@ -74,4 +74,100 @@
     <string name="common_search">সন্ধান</string>
     <string name="common_share">ভাগ-বতৰা কৰা</string>
     <string name="common_of">ৰ</string>
+    <string name="common_close">বন্ধ কৰক</string>
+
+    <!-- Today Panchang Screen -->
+    <string name="section_sun_moon">সূৰ্য আৰু চন্দ্ৰ</string>
+    <string name="section_panchang">পঞ্চাং</string>
+    <string name="section_inauspicious_periods">অশুভ সময়</string>
+    <string name="section_today_festivals">আজিৰ উৎসৱ</string>
+    <string name="festival_major">প্ৰধান</string>
+
+    <!-- Settings Screen -->
+    <string name="setting_spiritual_path">আধ্যাত্মিক পথ</string>
+    <string name="setting_content_and_ui_language">বিষয়বস্তু আৰু UI ভাষা</string>
+    <string name="setting_change">সলনি কৰক</string>
+    <string name="setting_change_language">ভাষা সলনি কৰক</string>
+    <string name="setting_daily_content">দৈনিক বিষয়বস্তু</string>
+    <string name="setting_panchang_notification">পঞ্চাং জাননী</string>
+    <string name="setting_panchang_notification_desc">জাননীত তিথি, নক্ষত্ৰ অন্তৰ্ভুক্ত কৰক</string>
+    <string name="setting_primary_sacred_text">প্ৰাথমিক পবিত্ৰ গ্ৰন্থ</string>
+    <string name="setting_primary_text_desc">%s প্ৰাথমিক গ্ৰন্থৰ পৰা দৈনিক শ্লোক</string>
+    <string name="setting_festival_stories">উৎসৱৰ কাহিনী</string>
+    <string name="setting_festival_stories_desc">উৎসৱৰ দিনত কাহিনী আৰু তাৎপৰ্য্য</string>
+    <string name="setting_secondary_text">মাধ্যমিক পাঠ্য</string>
+    <string name="setting_secondary_text_desc">মাধ্যমিক গ্ৰন্থৰ পৰা অতিৰিক্ত পঢ়া</string>
+    <string name="setting_calendar_tradition">কেলেণ্ডাৰ পৰম্পৰা</string>
+    <string name="setting_north_indian_purnimant">উত্তৰ ভাৰতীয় (পূৰ্ণিমান্ত)</string>
+    <string name="setting_month_ends_purnima">মাহ পূৰ্ণিমাত শেষ হয়</string>
+    <string name="setting_sync_to_google">Google কেলেণ্ডাৰলৈ ছিঙ্ক কৰক</string>
+    <string name="setting_festivals_only">কেৱল উৎসৱ</string>
+    <string name="setting_sync_now">এতিয়া ছিঙ্ক কৰক</string>
+    <string name="setting_festival_reminders">উৎসৱ সোঁৱৰণী</string>
+    <string name="setting_one_day_before">১ দিন আগতে</string>
+    <string name="setting_daily_briefing_time">দৈনিক ব্ৰিফিং সময়</string>
+    <string name="setting_morning_notification">দৈনিক জ্ঞানসহ ৰাতিপুৱাৰ জাননী</string>
+    <string name="setting_reading_progress">পঢ়াৰ অগ্ৰগতি</string>
+    <string name="setting_reading_progress_desc">আপুনি পঢ়াৰ সময়ত আপোনাৰ দৈনিক পঢ়াৰ স্থিতি স্বয়ংক্ৰিয়ভাৱে ট্ৰেক হয়।</string>
+    <string name="setting_reset_reading">সকলো পঢ়াৰ অগ্ৰগতি ৰিছেট কৰক</string>
+    <string name="setting_reset_dialog_title">পঢ়াৰ অগ্ৰগতি ৰিছেট কৰিবনে?</string>
+    <string name="setting_reset_dialog_body">ইয়াৰ ফলত সকলো পঢ়াৰ স্থিতি আৰম্ভণিলৈ ৰিছেট হ\'ব। এই কাৰ্য্য পূৰ্বাবস্থালৈ ঘূৰাব নোৱাৰি।</string>
+    <string name="setting_reset">ৰিছেট</string>
+    <string name="setting_calculation_method">গণনা পদ্ধতি</string>
+    <string name="setting_drik_ganit">দৃক গণিত</string>
+    <string name="setting_ayanamsa">অয়নাংশ</string>
+    <string name="setting_lahiri">লাহিৰী (চিত্ৰপক্ষ)</string>
+    <string name="setting_set_briefing_time">দৈনিক ব্ৰিফিং সময় ছেট কৰক</string>
+
+    <!-- Calendar Screen -->
+    <string name="cd_previous_month">পূৰ্বৱৰ্তী মাহ</string>
+    <string name="cd_next_month">পৰৱৰ্তী মাহ</string>
+
+    <!-- Daily Briefing -->
+    <string name="daily_wisdom">দৈনিক জ্ঞান</string>
+
+    <!-- Festival List Screen -->
+    <string name="no_upcoming_festivals">কোনো আগন্তুক উৎসৱ পোৱা নগ\'ল</string>
+
+    <!-- Sacred Texts Screen -->
+    <string name="sacred_texts_title">পবিত্ৰ গ্ৰন্থ</string>
+    <string name="no_texts_for_path">আপোনাৰ পথৰ বাবে কোনো গ্ৰন্থ উপলব্ধ নহয়।</string>
+    <string name="update_path_in_settings">ছেটিংছত আপোনাৰ আধ্যাত্মিক পথ আপডেট কৰক।</string>
+    <string name="your_path_texts">আপোনাৰ %s গ্ৰন্থ</string>
+    <string name="daily_readings_desc">আপোনাৰ আধ্যাত্মিক পথৰ ওপৰত ভিত্তি কৰি দৈনিক পঢ়া</string>
+    <string name="text_primary">প্ৰাথমিক</string>
+    <string name="cd_open">খোলক</string>
+    <string name="texts_position_of">স্থিতি %1$d / %2$d</string>
+    <string name="texts_position">স্থিতি %1$d</string>
+    <string name="sacred_texts_available">%d পবিত্ৰ গ্ৰন্থ উপলব্ধ</string>
+
+    <!-- Onboarding Screen -->
+    <string name="app_name_display">হিন্দু কেলেণ্ডাৰ</string>
+    <string name="onboarding_get_started">আৰম্ভ কৰক</string>
+    <string name="onboarding_full_panchang">সম্পূৰ্ণ দৈনিক পঞ্চাং</string>
+    <string name="onboarding_festival_reminders">উৎসৱ সোঁৱৰণী</string>
+    <string name="onboarding_sync_calendar">আপোনাৰ কেলেণ্ডাৰলৈ ছিঙ্ক কৰক</string>
+    <string name="onboarding_location_timings">অৱস্থান-সঠিক সময়</string>
+    <string name="onboarding_daily_readings">দৈনিক পবিত্ৰ গ্ৰন্থ পঢ়া</string>
+    <string name="onboarding_spiritual_path">আপোনাৰ আধ্যাত্মিক পথ</string>
+    <string name="onboarding_path_desc">দৈনিক পবিত্ৰ গ্ৰন্থ পঢ়া আৰু বিষয়বস্তু ব্যক্তিগতকৰণ কৰিবলৈ আপোনাৰ পৰম্পৰা বাছনি কৰক।</string>
+    <string name="onboarding_continue">অব্যাহত ৰাখক</string>
+    <string name="onboarding_select_tradition">আপোনাৰ পৰম্পৰা বাছনি কৰক</string>
+    <string name="onboarding_tradition_desc">কোনটো কেলেণ্ডাৰ ব্যৱস্থা আৰু আঞ্চলিক উৎসৱ দেখুৱাব লাগে সেইটো নিৰ্ধাৰণ কৰে।</string>
+    <string name="onboarding_set_location">আপোনাৰ অৱস্থান ছেট কৰক</string>
+    <string name="onboarding_location_desc">সূৰ্য্য উদয়/অস্ত সময় আৰু সঠিক পঞ্চাং গণনাৰ বাবে ব্যৱহৃত হয়।</string>
+    <string name="onboarding_unknown_location">অজ্ঞাত</string>
+    <string name="onboarding_start_using">হিন্দু কেলেণ্ডাৰ ব্যৱহাৰ আৰম্ভ কৰক</string>
+
+    <!-- Greeting Banner -->
+    <string name="greeting_good_morning">শুভ ৰাতিপুৱা</string>
+    <string name="greeting_good_afternoon">শুভ আবেলি</string>
+    <string name="greeting_good_evening">শুভ সন্ধিয়া</string>
+    <string name="greeting_namaste">নমস্তে</string>
+
+    <!-- Notification Worker -->
+    <string name="notif_daily_wisdom">দৈনিক জ্ঞান</string>
+    <string name="notif_channel_name">দৈনিক ব্ৰিফিং</string>
+    <string name="notif_channel_description">দৈনিক পঞ্চাং আৰু পবিত্ৰ গ্ৰন্থ জ্ঞানসহ ৰাতিপুৱাৰ জাননী</string>
+    <string name="notif_fallback_body">আজিৰ পঞ্চাং আৰু পবিত্ৰ পঢ়াৰ বাবে এপ খোলক।</string>
 </resources>

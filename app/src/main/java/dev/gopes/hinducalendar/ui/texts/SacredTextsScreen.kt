@@ -13,9 +13,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.SacredTextType
 import dev.gopes.hinducalendar.ui.components.*
 import dev.gopes.hinducalendar.ui.theme.*
@@ -27,7 +29,7 @@ fun SacredTextsScreen(viewModel: SacredTextsViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Sacred Texts") })
+            TopAppBar(title = { Text(stringResource(R.string.sacred_texts_title)) })
         }
     ) { padding ->
         if (uiState.availableTexts.isEmpty()) {
@@ -46,13 +48,13 @@ fun SacredTextsScreen(viewModel: SacredTextsViewModel = hiltViewModel()) {
                     )
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        "No texts available for your path.",
+                        stringResource(R.string.no_texts_for_path),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "Update your Spiritual Path in Settings.",
+                        stringResource(R.string.update_path_in_settings),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -69,14 +71,14 @@ fun SacredTextsScreen(viewModel: SacredTextsViewModel = hiltViewModel()) {
             ) {
                 item {
                     Text(
-                        "Your ${uiState.dharmaPathName} Texts",
+                        stringResource(R.string.your_path_texts, uiState.dharmaPathName),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Daily readings based on your spiritual path",
+                        stringResource(R.string.daily_readings_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -127,7 +129,7 @@ private fun SacredTextCard(item: SacredTextItem) {
                             onClick = {},
                             label = {
                                 Text(
-                                    "Primary",
+                                    stringResource(R.string.text_primary),
                                     style = MaterialTheme.typography.labelSmall
                                 )
                             },
@@ -160,7 +162,7 @@ private fun SacredTextCard(item: SacredTextItem) {
             Spacer(Modifier.width(8.dp))
             Icon(
                 Icons.Filled.ChevronRight,
-                contentDescription = "Open",
+                contentDescription = stringResource(R.string.cd_open),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

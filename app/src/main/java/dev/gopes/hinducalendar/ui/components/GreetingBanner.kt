@@ -14,7 +14,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.ui.theme.*
 import java.util.Calendar
 
@@ -28,10 +30,10 @@ fun GreetingBanner(
 ) {
     val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
     val (sanskrit, english, icon) = when (hour) {
-        in 4..11 -> Triple("शुभ प्रभात", "Good Morning", Icons.Filled.WbSunny)
-        in 12..16 -> Triple("शुभ अपराह्न", "Good Afternoon", Icons.Filled.LightMode)
-        in 17..20 -> Triple("शुभ संध्या", "Good Evening", Icons.Filled.WbTwilight)
-        else -> Triple("नमस्ते", "Namaste", Icons.Filled.NightsStay)
+        in 4..11 -> Triple("\u0936\u0941\u092D \u092A\u094D\u0930\u092D\u093E\u0924", stringResource(R.string.greeting_good_morning), Icons.Filled.WbSunny)
+        in 12..16 -> Triple("\u0936\u0941\u092D \u0905\u092A\u0930\u093E\u0939\u094D\u0928", stringResource(R.string.greeting_good_afternoon), Icons.Filled.LightMode)
+        in 17..20 -> Triple("\u0936\u0941\u092D \u0938\u0902\u0927\u094D\u092F\u093E", stringResource(R.string.greeting_good_evening), Icons.Filled.WbTwilight)
+        else -> Triple("\u0928\u092E\u0938\u094D\u0924\u0947", stringResource(R.string.greeting_namaste), Icons.Filled.NightsStay)
     }
 
     val gradientColors = if (isDarkTheme) {

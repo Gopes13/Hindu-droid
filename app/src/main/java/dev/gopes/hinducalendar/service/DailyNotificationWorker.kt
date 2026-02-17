@@ -28,8 +28,6 @@ class DailyNotificationWorker(
 
     companion object {
         const val CHANNEL_ID = "daily_briefing"
-        const val CHANNEL_NAME = "Daily Briefing"
-        const val CHANNEL_DESCRIPTION = "Morning notification with daily Panchang and sacred text wisdom"
         const val NOTIFICATION_ID = 1001
         const val WORK_NAME = "daily_briefing_notification"
     }
@@ -49,7 +47,7 @@ class DailyNotificationWorker(
             )
 
             val title = buildString {
-                append("Daily Wisdom")
+                append(appContext.getString(R.string.notif_daily_wisdom))
                 dailyContent.primaryVerse?.let {
                     append(" - ${it.title}")
                 }
@@ -61,7 +59,7 @@ class DailyNotificationWorker(
                     append("\n")
                     append(verse.translation.take(150))
                     if (verse.translation.length > 150) append("...")
-                } ?: append("Open the app for today's Panchang and sacred readings.")
+                } ?: append(appContext.getString(R.string.notif_fallback_body))
             }
 
             // Build the intent to open the app
@@ -98,10 +96,10 @@ class DailyNotificationWorker(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                CHANNEL_NAME,
+                appContext.getString(R.string.notif_channel_name),
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
-                description = CHANNEL_DESCRIPTION
+                description = appContext.getString(R.string.notif_channel_description)
             }
             val notificationManager =
                 appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -74,4 +74,100 @@
     <string name="common_search">શોધો</string>
     <string name="common_share">શેર કરો</string>
     <string name="common_of">ના</string>
+    <string name="common_close">બંધ કરો</string>
+
+    <!-- Today Panchang Screen -->
+    <string name="section_sun_moon">સૂર્ય અને ચંદ્ર</string>
+    <string name="section_panchang">પંચાંગ</string>
+    <string name="section_inauspicious_periods">અશુભ સમય</string>
+    <string name="section_today_festivals">આજના તહેવારો</string>
+    <string name="festival_major">મુખ્ય</string>
+
+    <!-- Settings Screen -->
+    <string name="setting_spiritual_path">આધ્યાત્મિક માર્ગ</string>
+    <string name="setting_content_and_ui_language">સામગ્રી અને UI ભાષા</string>
+    <string name="setting_change">બદલો</string>
+    <string name="setting_change_language">ભાષા બદલો</string>
+    <string name="setting_daily_content">દૈનિક સામગ્રી</string>
+    <string name="setting_panchang_notification">પંચાંગ સૂચના</string>
+    <string name="setting_panchang_notification_desc">સૂચનામાં તિથિ, નક્ષત્ર શામેલ કરો</string>
+    <string name="setting_primary_sacred_text">પ્રાથમિક પવિત્ર ગ્રંથ</string>
+    <string name="setting_primary_text_desc">%s પ્રાથમિક ગ્રંથમાંથી દૈનિક શ્લોક</string>
+    <string name="setting_festival_stories">ઉત્સવની વાર્તાઓ</string>
+    <string name="setting_festival_stories_desc">ઉત્સવના દિવસે વાર્તાઓ અને મહત્વ</string>
+    <string name="setting_secondary_text">ગૌણ લખાણ</string>
+    <string name="setting_secondary_text_desc">ગૌણ ગ્રંથમાંથી વધારાનું વાંચન</string>
+    <string name="setting_calendar_tradition">કેલેન્ડર પરંપરા</string>
+    <string name="setting_north_indian_purnimant">ઉત્તર ભારતીય (પૂર્ણિમાંત)</string>
+    <string name="setting_month_ends_purnima">મહિનો પૂર્ણિમા પર સમાપ્ત થાય છે</string>
+    <string name="setting_sync_to_google">Google કૅલેન્ડરમાં સમન્વયિત કરો</string>
+    <string name="setting_festivals_only">ફક્ત તહેવારો</string>
+    <string name="setting_sync_now">હવે સમન્વયિત કરો</string>
+    <string name="setting_festival_reminders">તહેવાર રિમાઇન્ડર્સ</string>
+    <string name="setting_one_day_before">1 દિવસ પહેલાં</string>
+    <string name="setting_daily_briefing_time">દૈનિક બ્રીફિંગ સમય</string>
+    <string name="setting_morning_notification">દૈનિક જ્ઞાન સાથે સવારની સૂચના</string>
+    <string name="setting_reading_progress">વાંચન પ્રગતિ</string>
+    <string name="setting_reading_progress_desc">તમારી દૈનિક વાંચન સ્થિતિ વાંચતી વખતે આપમેળે ટ્રેક થાય છે.</string>
+    <string name="setting_reset_reading">બધી વાંચન પ્રગતિ રીસેટ કરો</string>
+    <string name="setting_reset_dialog_title">વાંચન પ્રગતિ રીસેટ કરવી?</string>
+    <string name="setting_reset_dialog_body">આ બધી વાંચન સ્થિતિઓને શરૂઆતમાં રીસેટ કરશે. આ ક્રિયા પૂર્વવત કરી શકાતી નથી.</string>
+    <string name="setting_reset">રીસેટ</string>
+    <string name="setting_calculation_method">ગણતરી પદ્ધતિ</string>
+    <string name="setting_drik_ganit">દૃક્ ગણિત</string>
+    <string name="setting_ayanamsa">અયનાંશ</string>
+    <string name="setting_lahiri">લાહિરી (ચિત્રપક્ષ)</string>
+    <string name="setting_set_briefing_time">દૈનિક બ્રીફિંગ સમય સેટ કરો</string>
+
+    <!-- Calendar Screen -->
+    <string name="cd_previous_month">ગત મહિનો</string>
+    <string name="cd_next_month">આગળનો મહિનો</string>
+
+    <!-- Daily Briefing -->
+    <string name="daily_wisdom">દૈનિક જ્ઞાન</string>
+
+    <!-- Festival List Screen -->
+    <string name="no_upcoming_festivals">કોઈ આગામી તહેવાર મળ્યો નથી</string>
+
+    <!-- Sacred Texts Screen -->
+    <string name="sacred_texts_title">પવિત્ર ગ્રંથો</string>
+    <string name="no_texts_for_path">તમારા માર્ગ માટે કોઈ ગ્રંથ ઉપલબ્ધ નથી.</string>
+    <string name="update_path_in_settings">સેટિંગ્સમાં તમારો આધ્યાત્મિક માર્ગ અપડેટ કરો.</string>
+    <string name="your_path_texts">તમારા %s ગ્રંથો</string>
+    <string name="daily_readings_desc">તમારા આધ્યાત્મિક માર્ગ પર આધારિત દૈનિક વાંચન</string>
+    <string name="text_primary">પ્રાથમિક</string>
+    <string name="cd_open">ખોલો</string>
+    <string name="texts_position_of">સ્થિતિ %1$d / %2$d</string>
+    <string name="texts_position">સ્થિતિ %1$d</string>
+    <string name="sacred_texts_available">%d પવિત્ર ગ્રંથો ઉપલબ્ધ</string>
+
+    <!-- Onboarding Screen -->
+    <string name="app_name_display">હિન્દુ કૅલેન્ડર</string>
+    <string name="onboarding_get_started">શરૂ કરો</string>
+    <string name="onboarding_full_panchang">પૂર્ણ દૈનિક પંચાંગ</string>
+    <string name="onboarding_festival_reminders">તહેવાર રિમાઇન્ડર્સ</string>
+    <string name="onboarding_sync_calendar">તમારા કૅલેન્ડરમાં સમન્વયિત કરો</string>
+    <string name="onboarding_location_timings">સ્થાન-સચોટ સમય</string>
+    <string name="onboarding_daily_readings">દૈનિક પવિત્ર ગ્રંથ વાંચન</string>
+    <string name="onboarding_spiritual_path">તમારો આધ્યાત્મિક માર્ગ</string>
+    <string name="onboarding_path_desc">દૈનિક પવિત્ર ગ્રંથ વાંચન અને સામગ્રીને વ્યક્તિગત બનાવવા તમારી પરંપરા પસંદ કરો.</string>
+    <string name="onboarding_continue">ચાલુ રાખો</string>
+    <string name="onboarding_select_tradition">તમારી પરંપરા પસંદ કરો</string>
+    <string name="onboarding_tradition_desc">આ નક્કી કરે છે કે કઈ કૅલેન્ડર પ્રણાલી અને પ્રાદેશિક તહેવારો બતાવવા.</string>
+    <string name="onboarding_set_location">તમારું સ્થાન સેટ કરો</string>
+    <string name="onboarding_location_desc">સૂર્યોદય/સૂર્યાસ્ત સમય અને ચોક્કસ પંચાંગ ગણતરી માટે ઉપયોગ થાય છે.</string>
+    <string name="onboarding_unknown_location">અજ્ઞાત</string>
+    <string name="onboarding_start_using">હિન્દુ કૅલેન્ડર વાપરવાનું શરૂ કરો</string>
+
+    <!-- Greeting Banner -->
+    <string name="greeting_good_morning">શુભ સવાર</string>
+    <string name="greeting_good_afternoon">શુભ બપોર</string>
+    <string name="greeting_good_evening">શુભ સાંજ</string>
+    <string name="greeting_namaste">નમસ્તે</string>
+
+    <!-- Notification Worker -->
+    <string name="notif_daily_wisdom">દૈનિક જ્ઞાન</string>
+    <string name="notif_channel_name">દૈનિક બ્રીફિંગ</string>
+    <string name="notif_channel_description">દૈનિક પંચાંગ અને પવિત્ર ગ્રંથ જ્ઞાન સાથે સવારની સૂચના</string>
+    <string name="notif_fallback_body">આજનો પંચાંગ અને પવિત્ર વાંચન માટે ઍપ ખોલો.</string>
 </resources>

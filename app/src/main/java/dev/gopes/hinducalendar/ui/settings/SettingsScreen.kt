@@ -10,8 +10,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.ContentPreferences
 import dev.gopes.hinducalendar.data.model.DharmaPath
@@ -49,7 +51,7 @@ fun SettingsScreen() {
     var showResetDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Settings") }) }
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.settings_title)) }) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -60,7 +62,7 @@ fun SettingsScreen() {
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             // Spiritual Path
-            SettingsSection("Spiritual Path") {
+            SettingsSection(stringResource(R.string.setting_spiritual_path)) {
                 Box {
                     Row(
                         modifier = Modifier
@@ -83,7 +85,7 @@ fun SettingsScreen() {
                         }
                         Icon(
                             Icons.Filled.ExpandMore,
-                            contentDescription = "Change",
+                            contentDescription = stringResource(R.string.setting_change),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -117,7 +119,7 @@ fun SettingsScreen() {
             }
 
             // Language
-            SettingsSection("Language") {
+            SettingsSection(stringResource(R.string.settings_language)) {
                 Box {
                     Row(
                         modifier = Modifier
@@ -133,14 +135,14 @@ fun SettingsScreen() {
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
-                                "Content and UI language",
+                                stringResource(R.string.setting_content_and_ui_language),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Icon(
                             Icons.Filled.ExpandMore,
-                            contentDescription = "Change language",
+                            contentDescription = stringResource(R.string.setting_change_language),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -167,49 +169,49 @@ fun SettingsScreen() {
             }
 
             // Content Preferences
-            SettingsSection("Daily Content") {
+            SettingsSection(stringResource(R.string.setting_daily_content)) {
                 ContentToggleRow(
-                    label = "Panchang Notification",
-                    description = "Include Tithi, Nakshatra in notification",
+                    label = stringResource(R.string.setting_panchang_notification),
+                    description = stringResource(R.string.setting_panchang_notification_desc),
                     checked = panchangNotif,
                     onCheckedChange = { panchangNotif = it }
                 )
                 ContentToggleRow(
-                    label = "Primary Sacred Text",
-                    description = "Daily verse from ${selectedPath.displayName} primary text",
+                    label = stringResource(R.string.setting_primary_sacred_text),
+                    description = stringResource(R.string.setting_primary_text_desc, selectedPath.displayName),
                     checked = primaryText,
                     onCheckedChange = { primaryText = it }
                 )
                 ContentToggleRow(
-                    label = "Festival Stories",
-                    description = "Stories and significance on festival days",
+                    label = stringResource(R.string.setting_festival_stories),
+                    description = stringResource(R.string.setting_festival_stories_desc),
                     checked = festivalStories,
                     onCheckedChange = { festivalStories = it }
                 )
                 ContentToggleRow(
-                    label = "Secondary Text",
-                    description = "Additional reading from secondary text",
+                    label = stringResource(R.string.setting_secondary_text),
+                    description = stringResource(R.string.setting_secondary_text_desc),
                     checked = secondaryText,
                     onCheckedChange = { secondaryText = it }
                 )
             }
 
             // Tradition
-            SettingsSection("Calendar Tradition") {
+            SettingsSection(stringResource(R.string.setting_calendar_tradition)) {
                 Text(
-                    "North Indian (Purnimant)",
+                    stringResource(R.string.setting_north_indian_purnimant),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    "Month ends on Purnima (full moon)",
+                    stringResource(R.string.setting_month_ends_purnima),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
             // Location
-            SettingsSection("Location") {
+            SettingsSection(stringResource(R.string.settings_location)) {
                 Text("New Delhi", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
                 Text(
                     "28.6139\u00B0N, 77.2090\u00B0E \u00B7 Asia/Kolkata",
@@ -219,13 +221,13 @@ fun SettingsScreen() {
             }
 
             // Calendar Sync
-            SettingsSection("Calendar Sync") {
+            SettingsSection(stringResource(R.string.settings_calendar_sync)) {
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Sync to Google Calendar", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.setting_sync_to_google), style = MaterialTheme.typography.bodyMedium)
                     Switch(
                         checked = syncEnabled,
                         onCheckedChange = { syncEnabled = it },
@@ -239,23 +241,23 @@ fun SettingsScreen() {
                 }
                 if (syncEnabled) {
                     Text(
-                        "Festivals Only",
+                        stringResource(R.string.setting_festivals_only),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(Modifier.height(8.dp))
-                    SacredButton(text = "Sync Now", onClick = { /* sync */ })
+                    SacredButton(text = stringResource(R.string.setting_sync_now), onClick = { /* sync */ })
                 }
             }
 
             // Notifications
-            SettingsSection("Notifications") {
+            SettingsSection(stringResource(R.string.settings_notifications)) {
                 Row(
                     Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Festival Reminders", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.setting_festival_reminders), style = MaterialTheme.typography.bodyMedium)
                     Switch(
                         checked = notificationsEnabled,
                         onCheckedChange = { notificationsEnabled = it },
@@ -269,7 +271,7 @@ fun SettingsScreen() {
                 }
                 if (notificationsEnabled) {
                     Text(
-                        "1 day before",
+                        stringResource(R.string.setting_one_day_before),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -288,9 +290,9 @@ fun SettingsScreen() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text("Daily Briefing Time", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.setting_daily_briefing_time), style = MaterialTheme.typography.bodyMedium)
                         Text(
-                            "Morning notification with daily wisdom",
+                            stringResource(R.string.setting_morning_notification),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -305,24 +307,24 @@ fun SettingsScreen() {
             }
 
             // Reading Progress
-            SettingsSection("Reading Progress") {
+            SettingsSection(stringResource(R.string.setting_reading_progress)) {
                 Text(
-                    "Your daily reading positions are tracked automatically as you read.",
+                    stringResource(R.string.setting_reading_progress_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(12.dp))
                 SacredOutlineButton(
-                    text = "Reset All Reading Progress",
+                    text = stringResource(R.string.setting_reset_reading),
                     onClick = { showResetDialog = true }
                 )
             }
 
             // About
-            SettingsSection("About") {
-                SettingsRow("Version", "1.0.0")
-                SettingsRow("Calculation Method", "Drik Ganit")
-                SettingsRow("Ayanamsa", "Lahiri (Chitrapaksha)")
+            SettingsSection(stringResource(R.string.settings_about)) {
+                SettingsRow(stringResource(R.string.settings_version), "1.0.0")
+                SettingsRow(stringResource(R.string.setting_calculation_method), stringResource(R.string.setting_drik_ganit))
+                SettingsRow(stringResource(R.string.setting_ayanamsa), stringResource(R.string.setting_lahiri))
             }
         }
     }
@@ -336,7 +338,7 @@ fun SettingsScreen() {
         )
         AlertDialog(
             onDismissRequest = { showTimePicker = false },
-            title = { Text("Set Daily Briefing Time") },
+            title = { Text(stringResource(R.string.setting_set_briefing_time)) },
             text = {
                 Box(
                     modifier = Modifier.fillMaxWidth(),
@@ -351,12 +353,12 @@ fun SettingsScreen() {
                     notifMinute = timePickerState.minute
                     showTimePicker = false
                 }) {
-                    Text("OK")
+                    Text(stringResource(R.string.common_ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showTimePicker = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
         )
@@ -366,21 +368,21 @@ fun SettingsScreen() {
     if (showResetDialog) {
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
-            title = { Text("Reset Reading Progress?") },
+            title = { Text(stringResource(R.string.setting_reset_dialog_title)) },
             text = {
-                Text("This will reset all reading positions back to the beginning. This action cannot be undone.")
+                Text(stringResource(R.string.setting_reset_dialog_body))
             },
             confirmButton = {
                 TextButton(onClick = {
                     // In production, reset the persisted reading progress
                     showResetDialog = false
                 }) {
-                    Text("Reset", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.setting_reset), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showResetDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
         )

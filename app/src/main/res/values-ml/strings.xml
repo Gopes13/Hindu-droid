@@ -74,4 +74,100 @@
     <string name="common_search">തിരയുക</string>
     <string name="common_share">പങ്കിടുക</string>
     <string name="common_of">യുടെ</string>
+    <string name="common_close">അടയ്ക്കുക</string>
+
+    <!-- Today Panchang Screen -->
+    <string name="section_sun_moon">സൂര്യനും ചന്ദ്രനും</string>
+    <string name="section_panchang">പഞ്ചാംഗം</string>
+    <string name="section_inauspicious_periods">അശുഭ സമയങ്ങൾ</string>
+    <string name="section_today_festivals">ഇന്നത്തെ ഉത്സവങ്ങൾ</string>
+    <string name="festival_major">പ്രധാന</string>
+
+    <!-- Settings Screen -->
+    <string name="setting_spiritual_path">ആത്മീയ പാത</string>
+    <string name="setting_content_and_ui_language">ഉള്ളടക്കവും UI ഭാഷയും</string>
+    <string name="setting_change">മാറ്റുക</string>
+    <string name="setting_change_language">ഭാഷ മാറ്റുക</string>
+    <string name="setting_daily_content">ദൈനംദിന ഉള്ളടക്കം</string>
+    <string name="setting_panchang_notification">പഞ്ചാംഗ അറിയിപ്പ്</string>
+    <string name="setting_panchang_notification_desc">അറിയിപ്പിൽ തിഥി, നക്ഷത്രം ഉൾപ്പെടുത്തുക</string>
+    <string name="setting_primary_sacred_text">പ്രാഥമിക പവിത്ര ഗ്രന്ഥം</string>
+    <string name="setting_primary_text_desc">%s പ്രാഥമിക ഗ്രന്ഥത്തിൽ നിന്ന് ദൈനംദിന ശ്ലോകം</string>
+    <string name="setting_festival_stories">ഉത്സവ കഥകൾ</string>
+    <string name="setting_festival_stories_desc">ഉത്സവ ദിനങ്ങളിൽ കഥകളും പ്രാധാന്യവും</string>
+    <string name="setting_secondary_text">ദ്വിതീയ വാചകം</string>
+    <string name="setting_secondary_text_desc">ദ്വിതീയ ഗ്രന്ഥത്തിൽ നിന്ന് അധിക വായന</string>
+    <string name="setting_calendar_tradition">കലണ്ടർ പാരമ്പര്യം</string>
+    <string name="setting_north_indian_purnimant">ഉത്തര ഭാരതീയ (പൂർണ്ണിമാന്ത)</string>
+    <string name="setting_month_ends_purnima">മാസം പൂർണ്ണിമയിൽ അവസാനിക്കുന്നു</string>
+    <string name="setting_sync_to_google">Google കലണ്ടറിലേക്ക് സമന്വയിപ്പിക്കുക</string>
+    <string name="setting_festivals_only">ഉത്സവങ്ങൾ മാത്രം</string>
+    <string name="setting_sync_now">ഇപ്പോൾ സമന്വയിപ്പിക്കുക</string>
+    <string name="setting_festival_reminders">ഉത്സവ ഓർമ്മപ്പെടുത്തലുകൾ</string>
+    <string name="setting_one_day_before">1 ദിവസം മുമ്പ്</string>
+    <string name="setting_daily_briefing_time">ദൈനംദിന ബ്രീഫിംഗ് സമയം</string>
+    <string name="setting_morning_notification">ദൈനംദിന ജ്ഞാനത്തോടെ രാവിലെ അറിയിപ്പ്</string>
+    <string name="setting_reading_progress">വായന പുരോഗതി</string>
+    <string name="setting_reading_progress_desc">നിങ്ങൾ വായിക്കുമ്പോൾ നിങ്ങളുടെ ദൈനംദിന വായന സ്ഥാനങ്ങൾ സ്വയമേവ ട്രാക്ക് ചെയ്യപ്പെടുന്നു.</string>
+    <string name="setting_reset_reading">എല്ലാ വായന പുരോഗതിയും പുനഃസജ്ജമാക്കുക</string>
+    <string name="setting_reset_dialog_title">വായന പുരോഗതി പുനഃസജ്ജമാക്കണോ?</string>
+    <string name="setting_reset_dialog_body">ഇത് എല്ലാ വായന സ്ഥാനങ്ങളും ആരംഭത്തിലേക്ക് പുനഃസജ്ജമാക്കും. ഈ പ്രവർത്തനം പഴയപടിയാക്കാൻ കഴിയില്ല.</string>
+    <string name="setting_reset">പുനഃസജ്ജമാക്കുക</string>
+    <string name="setting_calculation_method">കണക്കുകൂട്ടൽ രീതി</string>
+    <string name="setting_drik_ganit">ദൃക് ഗണിതം</string>
+    <string name="setting_ayanamsa">അയനാംശം</string>
+    <string name="setting_lahiri">ലാഹിരി (ചിത്രപക്ഷ)</string>
+    <string name="setting_set_briefing_time">ദൈനംദിന ബ്രീഫിംഗ് സമയം സെറ്റ് ചെയ്യുക</string>
+
+    <!-- Calendar Screen -->
+    <string name="cd_previous_month">മുമ്പത്തെ മാസം</string>
+    <string name="cd_next_month">അടുത്ത മാസം</string>
+
+    <!-- Daily Briefing -->
+    <string name="daily_wisdom">ദൈനംദിന ജ്ഞാനം</string>
+
+    <!-- Festival List Screen -->
+    <string name="no_upcoming_festivals">വരാനിരിക്കുന്ന ഉത്സവങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല</string>
+
+    <!-- Sacred Texts Screen -->
+    <string name="sacred_texts_title">വിശുദ്ധ ഗ്രന്ഥങ്ങൾ</string>
+    <string name="no_texts_for_path">നിങ്ങളുടെ പാതയ്ക്ക് ഗ്രന്ഥങ്ങൾ ലഭ്യമല്ല.</string>
+    <string name="update_path_in_settings">ക്രമീകരണങ്ങളിൽ നിങ്ങളുടെ ആത്മീയ പാത അപ്ഡേറ്റ് ചെയ്യുക.</string>
+    <string name="your_path_texts">നിങ്ങളുടെ %s ഗ്രന്ഥങ്ങൾ</string>
+    <string name="daily_readings_desc">നിങ്ങളുടെ ആത്മീയ പാതയെ അടിസ്ഥാനമാക്കിയുള്ള ദൈനംദിന വായന</string>
+    <string name="text_primary">പ്രാഥമിക</string>
+    <string name="cd_open">തുറക്കുക</string>
+    <string name="texts_position_of">സ്ഥാനം %1$d / %2$d</string>
+    <string name="texts_position">സ്ഥാനം %1$d</string>
+    <string name="sacred_texts_available">%d വിശുദ്ധ ഗ്രന്ഥങ്ങൾ ലഭ്യം</string>
+
+    <!-- Onboarding Screen -->
+    <string name="app_name_display">ഹിന്ദു കലണ്ടർ</string>
+    <string name="onboarding_get_started">ആരംഭിക്കുക</string>
+    <string name="onboarding_full_panchang">പൂർണ്ണ ദൈനംദിന പഞ്ചാംഗം</string>
+    <string name="onboarding_festival_reminders">ഉത്സവ ഓർമ്മപ്പെടുത്തലുകൾ</string>
+    <string name="onboarding_sync_calendar">നിങ്ങളുടെ കലണ്ടറിലേക്ക് സമന്വയിപ്പിക്കുക</string>
+    <string name="onboarding_location_timings">സ്ഥാന-കൃത്യ സമയങ്ങൾ</string>
+    <string name="onboarding_daily_readings">ദൈനംദിന വിശുദ്ധ ഗ്രന്ഥ വായന</string>
+    <string name="onboarding_spiritual_path">നിങ്ങളുടെ ആത്മീയ പാത</string>
+    <string name="onboarding_path_desc">ദൈനംദിന വിശുദ്ധ ഗ്രന്ഥ വായനയും ഉള്ളടക്കവും വ്യക്തിഗതമാക്കാൻ നിങ്ങളുടെ പാരമ്പര്യം തിരഞ്ഞെടുക്കുക.</string>
+    <string name="onboarding_continue">തുടരുക</string>
+    <string name="onboarding_select_tradition">നിങ്ങളുടെ പാരമ്പര്യം തിരഞ്ഞെടുക്കുക</string>
+    <string name="onboarding_tradition_desc">ഏത് കലണ്ടർ സിസ്റ്റവും പ്രാദേശിക ഉത്സവങ്ങളും കാണിക്കണമെന്ന് ഇത് നിർണ്ണയിക്കുന്നു.</string>
+    <string name="onboarding_set_location">നിങ്ങളുടെ സ്ഥാനം സെറ്റ് ചെയ്യുക</string>
+    <string name="onboarding_location_desc">സൂര്യോദയം/സൂര്യാസ്തമയ സമയങ്ങൾക്കും കൃത്യമായ പഞ്ചാംഗ കണക്കുകൂട്ടലുകൾക്കും ഉപയോഗിക്കുന്നു.</string>
+    <string name="onboarding_unknown_location">അജ്ഞാതം</string>
+    <string name="onboarding_start_using">ഹിന്ദു കലണ്ടർ ഉപയോഗിക്കാൻ ആരംഭിക്കുക</string>
+
+    <!-- Greeting Banner -->
+    <string name="greeting_good_morning">സുപ്രഭാതം</string>
+    <string name="greeting_good_afternoon">ശുഭ ഉച്ചയ്ക്ക്</string>
+    <string name="greeting_good_evening">ശുഭ സന്ധ്യ</string>
+    <string name="greeting_namaste">നമസ്തേ</string>
+
+    <!-- Notification Worker -->
+    <string name="notif_daily_wisdom">ദൈനംദിന ജ്ഞാനം</string>
+    <string name="notif_channel_name">ദൈനംദിന ബ്രീഫിംഗ്</string>
+    <string name="notif_channel_description">ദൈനംദിന പഞ്ചാംഗവും വിശുദ്ധ ഗ്രന്ഥ ജ്ഞാനവും ഉള്ള രാവിലെ അറിയിപ്പ്</string>
+    <string name="notif_fallback_body">ഇന്നത്തെ പഞ്ചാംഗവും വിശുദ്ധ വായനയ്ക്കും ആപ്പ് തുറക്കുക.</string>
 </resources>

@@ -10,10 +10,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.engine.DailyVerse
 import dev.gopes.hinducalendar.ui.components.*
 import dev.gopes.hinducalendar.ui.theme.*
@@ -37,7 +39,7 @@ fun DailyBriefingCard(viewModel: DailyBriefingViewModel = hiltViewModel()) {
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                "Daily Wisdom",
+                stringResource(R.string.daily_wisdom),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.tertiary

@@ -1,5 +1,6 @@
 package dev.gopes.hinducalendar.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -11,23 +12,25 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.ui.today.TodayPanchangScreen
 import dev.gopes.hinducalendar.ui.calendar.CalendarScreen
 import dev.gopes.hinducalendar.ui.festivals.FestivalListScreen
 import dev.gopes.hinducalendar.ui.settings.SettingsScreen
 import dev.gopes.hinducalendar.ui.texts.SacredTextsScreen
 
-sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
-    data object Today : Screen("today", "Today", Icons.Filled.WbSunny)
-    data object Texts : Screen("texts", "Texts", Icons.Filled.MenuBook)
-    data object Calendar : Screen("calendar", "Calendar", Icons.Filled.CalendarMonth)
-    data object Festivals : Screen("festivals", "Festivals", Icons.Filled.Star)
-    data object Settings : Screen("settings", "Settings", Icons.Filled.Settings)
+sealed class Screen(val route: String, @StringRes val titleRes: Int, val icon: ImageVector) {
+    data object Today : Screen("today", R.string.tab_today, Icons.Filled.WbSunny)
+    data object Texts : Screen("texts", R.string.tab_texts, Icons.Filled.MenuBook)
+    data object Calendar : Screen("calendar", R.string.tab_calendar, Icons.Filled.CalendarMonth)
+    data object Festivals : Screen("festivals", R.string.tab_festivals, Icons.Filled.Star)
+    data object Settings : Screen("settings", R.string.tab_settings, Icons.Filled.Settings)
 }
 
 private val screens = listOf(Screen.Today, Screen.Texts, Screen.Calendar, Screen.Festivals, Screen.Settings)
@@ -46,9 +49,10 @@ fun NavGraph() {
                 contentColor = MaterialTheme.colorScheme.onSurface
             ) {
                 screens.forEach { screen ->
+                    val title = stringResource(screen.titleRes)
                     NavigationBarItem(
-                        icon = { Icon(screen.icon, contentDescription = screen.title) },
-                        label = { Text(screen.title) },
+                        icon = { Icon(screen.icon, contentDescription = title) },
+                        label = { Text(title) },
                         selected = currentRoute == screen.route,
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = MaterialTheme.colorScheme.primary,

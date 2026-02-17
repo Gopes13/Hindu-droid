@@ -19,10 +19,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.PanchangDay
 import dev.gopes.hinducalendar.ui.components.*
 import dev.gopes.hinducalendar.ui.theme.*
@@ -40,7 +42,7 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
     val selectedPanchang by viewModel.selectedPanchang.collectAsState()
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Calendar") }) }
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.tab_calendar)) }) }
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
             // Month navigation
@@ -50,7 +52,7 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { viewModel.previousMonth() }) {
-                    Icon(Icons.Filled.ChevronLeft, "Previous month", tint = MaterialTheme.colorScheme.primary)
+                    Icon(Icons.Filled.ChevronLeft, stringResource(R.string.cd_previous_month), tint = MaterialTheme.colorScheme.primary)
                 }
                 Text(
                     displayedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
@@ -59,7 +61,7 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
                     color = MaterialTheme.colorScheme.primary
                 )
                 IconButton(onClick = { viewModel.nextMonth() }) {
-                    Icon(Icons.Filled.ChevronRight, "Next month", tint = MaterialTheme.colorScheme.primary)
+                    Icon(Icons.Filled.ChevronRight, stringResource(R.string.cd_next_month), tint = MaterialTheme.colorScheme.primary)
                 }
             }
 
@@ -183,17 +185,17 @@ private fun DayDetailPanel(panchang: PanchangDay) {
             Spacer(Modifier.height(8.dp))
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Tithi: ${panchang.tithiInfo.name}", style = MaterialTheme.typography.bodySmall)
-                Text("Nakshatra: ${panchang.nakshatraInfo.name}", style = MaterialTheme.typography.bodySmall)
+                Text("${stringResource(R.string.panchang_tithi)}: ${panchang.tithiInfo.name}", style = MaterialTheme.typography.bodySmall)
+                Text("${stringResource(R.string.panchang_nakshatra)}: ${panchang.nakshatraInfo.name}", style = MaterialTheme.typography.bodySmall)
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Yoga: ${panchang.yogaInfo.name}", style = MaterialTheme.typography.bodySmall)
-                Text("Karana: ${panchang.karanaInfo.name}", style = MaterialTheme.typography.bodySmall)
+                Text("${stringResource(R.string.panchang_yoga)}: ${panchang.yogaInfo.name}", style = MaterialTheme.typography.bodySmall)
+                Text("${stringResource(R.string.panchang_karana)}: ${panchang.karanaInfo.name}", style = MaterialTheme.typography.bodySmall)
             }
 
             val timeFmt = DateTimeFormatter.ofPattern("h:mm a")
             Text(
-                "Sunrise: ${panchang.sunrise.format(timeFmt)}  |  Sunset: ${panchang.sunset.format(timeFmt)}",
+                "${stringResource(R.string.today_sunrise)}: ${panchang.sunrise.format(timeFmt)}  |  ${stringResource(R.string.today_sunset)}: ${panchang.sunset.format(timeFmt)}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

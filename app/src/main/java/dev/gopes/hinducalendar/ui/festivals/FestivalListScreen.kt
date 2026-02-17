@@ -10,9 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.FestivalCategory
 import dev.gopes.hinducalendar.data.model.FestivalOccurrence
 import dev.gopes.hinducalendar.data.model.PanchangDay
@@ -28,7 +30,7 @@ fun FestivalListScreen(viewModel: FestivalListViewModel = hiltViewModel()) {
     var selectedFestival by remember { mutableStateOf<FestivalOccurrence?>(null) }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Upcoming Festivals") }) }
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.festivals_upcoming)) }) }
     ) { padding ->
         if (isLoading) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
@@ -37,7 +39,7 @@ fun FestivalListScreen(viewModel: FestivalListViewModel = hiltViewModel()) {
         } else if (festivals.isEmpty()) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                 Text(
-                    "No upcoming festivals found",
+                    stringResource(R.string.no_upcoming_festivals),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -117,7 +119,7 @@ private fun FestivalRow(occurrence: FestivalOccurrence, onClick: () -> Unit) {
             if (occurrence.festival.category == FestivalCategory.MAJOR) {
                 Icon(
                     Icons.Filled.Star,
-                    contentDescription = "Major",
+                    contentDescription = stringResource(R.string.festival_major),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(20.dp)
                 )
@@ -131,7 +133,7 @@ private fun FestivalDetailDialog(festival: dev.gopes.hinducalendar.data.model.Fe
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Close") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_close)) }
         },
         title = {
             Column {

@@ -49,7 +49,7 @@ fun SacredButton(
             if (icon != null) {
                 Icon(
                     imageVector = icon,
-                    contentDescription = null,
+                    contentDescription = text,
                     tint = Color.White,
                     modifier = Modifier.size(20.dp)
                 )
@@ -84,7 +84,7 @@ fun SacredOutlineButton(
         )
     ) {
         if (icon != null) {
-            Icon(icon, contentDescription = null, Modifier.size(20.dp))
+            Icon(icon, contentDescription = text, Modifier.size(20.dp))
             Spacer(Modifier.width(8.dp))
         }
         Text(text, style = MaterialTheme.typography.headlineSmall)
