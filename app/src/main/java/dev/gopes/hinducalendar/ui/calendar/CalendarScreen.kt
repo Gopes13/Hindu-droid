@@ -159,7 +159,10 @@ private fun DayCell(
                 Modifier
                     .size(4.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(
+                        if (hasMajorFestival) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
             )
         }
     }

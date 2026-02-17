@@ -28,6 +28,7 @@
     <string name="festivals_all">All Festivals</string>
     <string name="festival_story">Story</string>
     <string name="festival_significance">Significance</string>
+    <string name="festival_did_you_know">Did You Know?</string>
     <string name="festival_traditions">Traditions</string>
     <string name="festival_duration">Duration</string>
     <string name="festival_days">days</string>
@@ -118,6 +119,11 @@
     <string name="setting_ayanamsa">Ayanamsa</string>
     <string name="setting_lahiri">Lahiri (Chitrapaksha)</string>
     <string name="setting_set_briefing_time">Set Daily Briefing Time</string>
+    <string name="setting_select_location">Select Location</string>
+    <string name="setting_location_desc">Used for sunrise/sunset times and accurate Panchang calculations.</string>
+    <string name="setting_search_city">Search city\u2026</string>
+    <string name="setting_daily_wisdom_text">Daily Wisdom Text</string>
+    <string name="setting_wisdom_other_texts">Other Texts</string>
 
     <!-- Calendar Screen -->
     <string name="cd_previous_month">Previous month</string>
@@ -125,6 +131,11 @@
 
     <!-- Daily Briefing -->
     <string name="daily_wisdom">Daily Wisdom</string>
+    <string name="briefing_text_completed">You completed %s!</string>
+    <string name="briefing_text_completed_subtitle">Choose your next reading to continue your journey.</string>
+    <string name="briefing_choose_next">Choose Next Text</string>
+    <string name="briefing_loading_error">Unable to load today\'s wisdom content.</string>
+    <string name="briefing_load_wisdom">Load Today\'s Wisdom</string>
 
     <!-- Festival List Screen -->
     <string name="no_upcoming_festivals">No upcoming festivals found</string>

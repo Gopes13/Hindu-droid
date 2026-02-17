@@ -75,7 +75,7 @@ fun LevelUpCelebration(
         contentAlignment = Alignment.Center
     ) {
         // Confetti
-        ConfettiOverlay(trigger = appeared)
+        ConfettiOverlay(isActive = appeared)
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

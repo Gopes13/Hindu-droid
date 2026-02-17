@@ -23,4 +23,10 @@ enum class DharmaPath(val displayName: String, val description: String, val prim
             SIKH -> listOf("japji_sahib", "sukhmani", "gurbani")
             JAIN -> listOf("tattvartha_sutra", "jain_prayers")
         }
+
+    /** Texts from this path that are suitable for daily wisdom reading. */
+    val availableWisdomTexts: List<SacredTextType>
+        get() = availableTextIds.mapNotNull { id ->
+            SacredTextType.entries.find { it.jsonFileName == id }
+        }.filter { it.isWisdomEligible }
 }

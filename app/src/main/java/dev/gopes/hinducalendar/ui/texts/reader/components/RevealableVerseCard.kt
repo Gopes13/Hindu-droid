@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.TextFormat
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.Translate
@@ -37,6 +38,9 @@ fun RevealableVerseCard(
     translation: String,
     explanation: String?,
     names: List<Pair<String, String>>? = null,
+    onFullyRevealed: (() -> Unit)? = null,
+    onExplanationReveal: (() -> Unit)? = null,
+    onShare: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     var showTransliteration by remember { mutableStateOf(false) }
@@ -53,6 +57,10 @@ fun RevealableVerseCard(
     val totalSections = sections.size
     val revealedCount = sections.count { it }
     val fullyRevealed = totalSections > 0 && revealedCount >= totalSections
+
+    LaunchedEffect(fullyRevealed) {
+        if (fullyRevealed) onFullyRevealed?.invoke()
+    }
 
     SacredCard(modifier = modifier, isHighlighted = fullyRevealed) {
         // Header
@@ -73,6 +81,18 @@ fun RevealableVerseCard(
                 )
             }
             Spacer(Modifier.weight(1f))
+            if (onShare != null) {
+                Icon(
+                    Icons.Filled.Share,
+                    contentDescription = stringResource(R.string.common_share),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(CircleShape)
+                        .clickable { onShare() }
+                )
+                Spacer(Modifier.width(8.dp))
+            }
             if (fullyRevealed) {
                 Icon(
                     Icons.Filled.CheckCircle,
@@ -170,7 +190,10 @@ fun RevealableVerseCard(
             icon = Icons.Filled.Lightbulb,
             content = explanation,
             revealed = showExplanation,
-            onReveal = { showExplanation = true }
+            onReveal = {
+                showExplanation = true
+                onExplanationReveal?.invoke()
+            }
         )
     }
 }

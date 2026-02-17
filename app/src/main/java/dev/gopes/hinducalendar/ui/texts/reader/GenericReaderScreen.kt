@@ -152,7 +152,7 @@ private fun EpisodeContent(data: EpisodeTextData, lang: AppLanguage, modifier: M
                 episode.relatedVerse?.let { rv ->
                     if (rv.sanskrit.isNotBlank()) {
                         Spacer(Modifier.height(12.dp))
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Divider(color = MaterialTheme.colorScheme.outlineVariant)
                         Spacer(Modifier.height(12.dp))
                         Text(
                             rv.sanskrit,
@@ -215,7 +215,7 @@ private fun ShlokaContent(data: ShlokaTextData, lang: AppLanguage, modifier: Mod
                             fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Spacer(Modifier.height(8.dp))
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    Divider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(Modifier.height(8.dp))
                     Text(ds.translation(lang), style = MaterialTheme.typography.bodyMedium, lineHeight = 22.sp)
                 }
@@ -320,7 +320,7 @@ private fun ChapterContent(data: ChapterTextData, lang: AppLanguage, modifier: M
                             fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Spacer(Modifier.height(8.dp))
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    Divider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(Modifier.height(8.dp))
                     Text(kav.translation(lang), style = MaterialTheme.typography.bodyMedium, lineHeight = 22.sp)
                 }
@@ -357,7 +357,7 @@ private fun ChapterContent(data: ChapterTextData, lang: AppLanguage, modifier: M
                 // Key verses
                 chapter.keyVerses?.forEach { kv ->
                     Spacer(Modifier.height(12.dp))
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    Divider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(Modifier.height(12.dp))
                     Text(kv.sanskrit, style = MaterialTheme.typography.bodyMedium, lineHeight = 24.sp)
                     kv.transliteration?.let {
@@ -473,7 +473,7 @@ private fun GurbaniContent(data: GurbaniData, lang: AppLanguage, modifier: Modif
                     lineHeight = 22.sp
                 )
                 Spacer(Modifier.height(12.dp))
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Divider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(Modifier.height(12.dp))
                 Text(
                     shabad.translation(lang),
@@ -535,7 +535,7 @@ private fun SukhmaniContent(data: SukhmaniData, lang: AppLanguage, modifier: Mod
                     Text(salok.transliteration, style = MaterialTheme.typography.bodySmall,
                         fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(Modifier.height(8.dp))
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    Divider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(Modifier.height(8.dp))
                     Text(salok.translation(lang), style = MaterialTheme.typography.bodyMedium, lineHeight = 22.sp)
                 }
@@ -682,7 +682,7 @@ private fun DiscourseContent(data: DiscourseTextData, lang: AppLanguage, modifie
                 val question = discourse.keyQuestion(lang)
                 if (question.isNotBlank()) {
                     Spacer(Modifier.height(12.dp))
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    Divider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(Modifier.height(8.dp))
                     Text(
                         stringResource(R.string.reader_key_question),
@@ -744,7 +744,7 @@ private fun JainContent(data: JainPrayersData, lang: AppLanguage, modifier: Modi
                             fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Spacer(Modifier.height(8.dp))
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    Divider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(Modifier.height(8.dp))
                     Text(nm.translation(lang), style = MaterialTheme.typography.bodyMedium, lineHeight = 22.sp)
 

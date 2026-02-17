@@ -106,6 +106,54 @@ class GamificationViewModel @Inject constructor(
     fun dismissMilestone() { milestoneEvent = null }
     fun clearNewBadges() { newBadges = emptyList() }
 
+    fun recordVerseView() {
+        if (!gamificationData.isEnabled) return
+        viewModelScope.launch {
+            val updated = gamificationService.rewardVerseView(gamificationData)
+            preferencesRepository.update { it.copy(gamificationData = updated) }
+            gamificationData = updated
+        }
+    }
+
+    fun recordVerseRead() {
+        if (!gamificationData.isEnabled) return
+        viewModelScope.launch {
+            val oldLevel = gamificationData.currentLevel
+            val updated = gamificationService.rewardVerseRead(gamificationData)
+            val (badgeChecked, newBadgeIds) = gamificationService.checkAndAwardBadges(updated, streakData)
+            preferencesRepository.update { it.copy(gamificationData = badgeChecked) }
+            gamificationData = badgeChecked
+            if (badgeChecked.currentLevel > oldLevel) {
+                levelUpEvent = oldLevel to badgeChecked.currentLevel
+            }
+            if (newBadgeIds.isNotEmpty()) {
+                newBadges = newBadgeIds
+            }
+        }
+    }
+
+    fun recordExplanationView() {
+        if (!gamificationData.isEnabled) return
+        viewModelScope.launch {
+            val updated = gamificationService.trackExplanationView(gamificationData)
+            preferencesRepository.update { it.copy(gamificationData = updated) }
+            gamificationData = updated
+        }
+    }
+
+    fun recordFestivalStoryRead(festivalId: String) {
+        if (!gamificationData.isEnabled) return
+        viewModelScope.launch {
+            val updated = gamificationService.rewardFestivalStory(gamificationData, festivalId)
+            val (badgeChecked, newBadgeIds) = gamificationService.checkAndAwardBadges(updated, streakData)
+            preferencesRepository.update { it.copy(gamificationData = badgeChecked) }
+            gamificationData = badgeChecked
+            if (newBadgeIds.isNotEmpty()) {
+                newBadges = newBadgeIds
+            }
+        }
+    }
+
     fun toggleGamification(enabled: Boolean) {
         viewModelScope.launch {
             val updated = gamificationData.copy(isEnabled = enabled)

@@ -99,7 +99,7 @@ fun JapjiReaderScreen(
                             lineHeight = 22.sp
                         )
                         Spacer(Modifier.height(8.dp))
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Divider(color = MaterialTheme.colorScheme.outlineVariant)
                         Spacer(Modifier.height(8.dp))
                         Text(
                             mm.translation(lang),

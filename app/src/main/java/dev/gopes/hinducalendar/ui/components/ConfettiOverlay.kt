@@ -35,8 +35,8 @@ private data class Particle(
 )
 
 @Composable
-fun ConfettiOverlay(trigger: Boolean) {
-    if (!trigger) return
+fun ConfettiOverlay(isActive: Boolean, onFinished: () -> Unit = {}) {
+    if (!isActive) return
 
     val particles = remember {
         List(35) {
@@ -51,21 +51,13 @@ fun ConfettiOverlay(trigger: Boolean) {
         }
     }
 
-    val progress by rememberInfiniteTransition(label = "confetti").animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = LinearOutSlowInEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "confettiProgress"
-    )
-
-    // Use a single-shot animation instead
     val animProgress = remember { Animatable(0f) }
-    LaunchedEffect(trigger) {
-        animProgress.snapTo(0f)
-        animProgress.animateTo(1f, tween(2000, easing = LinearOutSlowInEasing))
+    LaunchedEffect(isActive) {
+        if (isActive) {
+            animProgress.snapTo(0f)
+            animProgress.animateTo(1f, tween(2000, easing = LinearOutSlowInEasing))
+            onFinished()
+        }
     }
 
     Canvas(Modifier.fillMaxSize()) {

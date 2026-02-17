@@ -35,7 +35,8 @@ class FestivalRulesEngine(private val context: Context) {
         val results = mutableListOf<FestivalOccurrence>()
 
         for (festival in festivals) {
-            if (tradition.key !in festival.traditions) continue
+            val traditionOk = festival.category == FestivalCategory.MAJOR || tradition.key in festival.traditions
+            if (!traditionOk) continue
             if (matchesFestival(festival, hinduDate, jdTT)) {
                 results.add(FestivalOccurrence(festival, date))
             }

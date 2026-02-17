@@ -6,16 +6,26 @@ data class UserPreferences(
     val syncToCalendar: Boolean = true,
     val syncOption: CalendarSyncOption = CalendarSyncOption.FESTIVALS_ONLY,
     val notificationsEnabled: Boolean = true,
-    val reminderTiming: ReminderTiming = ReminderTiming.DAY_BEFORE,
+    val reminderTimings: List<ReminderTiming> = listOf(ReminderTiming.DAY_BEFORE),
     val language: AppLanguage = AppLanguage.ENGLISH,
     val dharmaPath: DharmaPath = DharmaPath.GENERAL,
+    val activeWisdomText: SacredTextType? = null,
     val contentPreferences: ContentPreferences = ContentPreferences(),
     val notificationTime: NotificationTime = NotificationTime(),
     val readingProgress: ReadingProgress = ReadingProgress(),
     val bookmarks: BookmarkCollection = BookmarkCollection(),
     val gamificationData: GamificationData = GamificationData(),
     val streakData: StreakData = StreakData()
-)
+) {
+    /** Returns the active wisdom text, falling back to the dharma path's primary text. */
+    val effectiveWisdomText: SacredTextType
+        get() {
+            val active = activeWisdomText
+            if (active != null && active.isWisdomEligible) return active
+            return SacredTextType.entries.find { it.jsonFileName == dharmaPath.primaryTextId }
+                ?: SacredTextType.GITA
+        }
+}
 
 enum class CalendarSyncOption(val displayName: String) {
     FESTIVALS_ONLY("Festivals Only"),
@@ -25,6 +35,7 @@ enum class CalendarSyncOption(val displayName: String) {
 
 enum class ReminderTiming(val displayName: String) {
     MORNING_OF("Morning of the event"),
+    EVENING_BEFORE("Evening before (6:00 PM)"),
     DAY_BEFORE("1 day before"),
     TWO_DAYS_BEFORE("2 days before")
 }

@@ -25,9 +25,9 @@ data class GitaVerse(
 
 data class GitaChapter(
     @SerializedName("chapter") val chapter: Int,
-    @SerializedName("title") val title: String? = null,
-    @SerializedName("sanskrit_title") val sanskritTitle: String? = null,
-    @SerializedName("verse_count") val verseCount: Int,
+    @SerializedName("titleEnglish") val title: String? = null,
+    @SerializedName("titleSanskrit") val sanskritTitle: String? = null,
+    @SerializedName("totalVerses") val verseCount: Int,
     @SerializedName("verses") val verses: List<GitaVerse>
 )
 
@@ -52,7 +52,7 @@ data class ChalisaVerse(
 data class ChalisaData(
     @SerializedName("dohas") val dohas: List<ChalisaVerse> = emptyList(),
     @SerializedName("chaupais") val chaupais: List<ChalisaVerse> = emptyList(),
-    @SerializedName("closingDoha") val closingDoha: ChalisaVerse? = null
+    @SerializedName("doha_closing") val closingDoha: ChalisaVerse? = null
 ) {
     val allVerses: List<ChalisaVerse>
         get() = dohas + chaupais + listOfNotNull(closingDoha)
@@ -491,6 +491,7 @@ class SacredTextService @Inject constructor(
     fun getGitaVerseSequential(globalIndex: Int, lang: AppLanguage = AppLanguage.ENGLISH): DailyVerse? {
         val gita = loadGita() ?: return null
         val total = gita.totalVerses
+        if (total <= 0) return null
         val safeIndex = ((globalIndex - 1) % total) + 1
 
         var runningCount = 0
@@ -522,6 +523,7 @@ class SacredTextService @Inject constructor(
         val chalisa = loadChalisa() ?: return null
         val allVerses = chalisa.allVerses
         val total = allVerses.size
+        if (total <= 0) return null
         val safeIndex = ((index - 1) % total)
         val verse = allVerses.getOrNull(safeIndex) ?: return null
         return DailyVerse(
@@ -543,6 +545,7 @@ class SacredTextService @Inject constructor(
     fun getJapjiPauri(number: Int, lang: AppLanguage = AppLanguage.ENGLISH): DailyVerse? {
         val japji = loadJapji() ?: return null
         val total = japji.pauris.size
+        if (total <= 0) return null
         val safeNumber = ((number - 1) % total) + 1
         val pauri = japji.pauris.firstOrNull { it.pauri == safeNumber } ?: return null
         return DailyVerse(

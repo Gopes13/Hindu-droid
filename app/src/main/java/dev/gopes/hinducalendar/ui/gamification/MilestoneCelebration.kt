@@ -65,7 +65,7 @@ fun MilestoneCelebration(
             ) { onDismiss() },
         contentAlignment = Alignment.Center
     ) {
-        ConfettiOverlay(trigger = appeared)
+        ConfettiOverlay(isActive = appeared)
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

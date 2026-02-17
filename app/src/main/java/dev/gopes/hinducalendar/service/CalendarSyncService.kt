@@ -73,46 +73,46 @@ class CalendarSyncService @Inject constructor(
         }
     }
 
-    fun syncDay(panchang: PanchangDay, syncOption: CalendarSyncOption, reminderTiming: ReminderTiming) {
+    fun syncDay(panchang: PanchangDay, syncOption: CalendarSyncOption, reminderTimings: List<ReminderTiming>) {
         val calendarId = getOrCreateCalendarId() ?: return
 
         // Sync festivals based on option
         val festivalsToSync = filterFestivals(panchang.festivals, syncOption)
         for (occurrence in festivalsToSync) {
-            insertEvent(calendarId, occurrence, panchang, reminderTiming)
+            insertEvent(calendarId, occurrence, panchang, reminderTimings)
         }
 
         // For FESTIVALS_AND_TITHIS: also add important tithi events
         if (syncOption == CalendarSyncOption.FESTIVALS_AND_TITHIS ||
             syncOption == CalendarSyncOption.FULL_PANCHANG) {
             if (isImportantTithi(panchang.tithiInfo.name)) {
-                insertTithiEvent(calendarId, panchang, reminderTiming)
+                insertTithiEvent(calendarId, panchang, reminderTimings)
             }
         }
 
         // For FULL_PANCHANG: add daily panchang summary event
         if (syncOption == CalendarSyncOption.FULL_PANCHANG) {
-            insertPanchangSummaryEvent(calendarId, panchang, reminderTiming)
+            insertPanchangSummaryEvent(calendarId, panchang)
         }
     }
 
-    fun syncMonth(panchangDays: List<PanchangDay>, syncOption: CalendarSyncOption, reminderTiming: ReminderTiming) {
+    fun syncMonth(panchangDays: List<PanchangDay>, syncOption: CalendarSyncOption, reminderTimings: List<ReminderTiming>) {
         val calendarId = getOrCreateCalendarId() ?: return
         for (day in panchangDays) {
             val festivalsToSync = filterFestivals(day.festivals, syncOption)
             for (occurrence in festivalsToSync) {
-                insertEvent(calendarId, occurrence, day, reminderTiming)
+                insertEvent(calendarId, occurrence, day, reminderTimings)
             }
 
             if (syncOption == CalendarSyncOption.FESTIVALS_AND_TITHIS ||
                 syncOption == CalendarSyncOption.FULL_PANCHANG) {
                 if (isImportantTithi(day.tithiInfo.name)) {
-                    insertTithiEvent(calendarId, day, reminderTiming)
+                    insertTithiEvent(calendarId, day, reminderTimings)
                 }
             }
 
             if (syncOption == CalendarSyncOption.FULL_PANCHANG) {
-                insertPanchangSummaryEvent(calendarId, day, reminderTiming)
+                insertPanchangSummaryEvent(calendarId, day)
             }
         }
     }
@@ -139,16 +139,17 @@ class CalendarSyncService @Inject constructor(
 
     /** Compute reminder offset in minutes for all-day events based on ReminderTiming. */
     private fun reminderMinutes(timing: ReminderTiming): Int = when (timing) {
-        ReminderTiming.MORNING_OF -> 0           // alert at start of all-day event
-        ReminderTiming.DAY_BEFORE -> 24 * 60     // 24 hours before
-        ReminderTiming.TWO_DAYS_BEFORE -> 48 * 60 // 48 hours before
+        ReminderTiming.MORNING_OF -> 0              // alert at start of all-day event
+        ReminderTiming.EVENING_BEFORE -> 18 * 60    // 6 PM day before (18 hours before midnight)
+        ReminderTiming.DAY_BEFORE -> 24 * 60        // 24 hours before
+        ReminderTiming.TWO_DAYS_BEFORE -> 48 * 60   // 48 hours before
     }
 
     private fun insertEvent(
         calendarId: Long,
         occurrence: FestivalOccurrence,
         panchang: PanchangDay,
-        reminderTiming: ReminderTiming
+        reminderTimings: List<ReminderTiming>
     ) {
         try {
             val resolver = context.contentResolver
@@ -210,14 +211,14 @@ class CalendarSyncService @Inject constructor(
 
             val eventUri = resolver.insert(CalendarContract.Events.CONTENT_URI, values)
             eventUri?.lastPathSegment?.toLongOrNull()?.let { insertedEventId ->
-                addReminder(resolver, insertedEventId, reminderTiming)
+                addReminders(resolver, insertedEventId, reminderTimings)
             }
         } catch (e: Exception) {
             Timber.e(e, "Failed to insert calendar event: %s", occurrence.festival.displayName)
         }
     }
 
-    private fun insertTithiEvent(calendarId: Long, panchang: PanchangDay, reminderTiming: ReminderTiming) {
+    private fun insertTithiEvent(calendarId: Long, panchang: PanchangDay, reminderTimings: List<ReminderTiming>) {
         try {
             val resolver = context.contentResolver
             val eventId = "hindu_tithi_${panchang.tithiInfo.name}_${panchang.id}"
@@ -258,14 +259,14 @@ class CalendarSyncService @Inject constructor(
 
             val eventUri = resolver.insert(CalendarContract.Events.CONTENT_URI, values)
             eventUri?.lastPathSegment?.toLongOrNull()?.let { insertedEventId ->
-                addReminder(resolver, insertedEventId, reminderTiming)
+                addReminders(resolver, insertedEventId, reminderTimings)
             }
         } catch (e: Exception) {
             Timber.e(e, "Failed to insert tithi event for %s", panchang.date)
         }
     }
 
-    private fun insertPanchangSummaryEvent(calendarId: Long, panchang: PanchangDay, reminderTiming: ReminderTiming) {
+    private fun insertPanchangSummaryEvent(calendarId: Long, panchang: PanchangDay) {
         try {
             val resolver = context.contentResolver
             val eventId = "hindu_panchang_${panchang.id}"
@@ -320,17 +321,19 @@ class CalendarSyncService @Inject constructor(
         }
     }
 
-    private fun addReminder(
+    private fun addReminders(
         resolver: android.content.ContentResolver,
         eventId: Long,
-        timing: ReminderTiming
+        timings: List<ReminderTiming>
     ) {
-        val reminder = ContentValues().apply {
-            put(CalendarContract.Reminders.EVENT_ID, eventId)
-            put(CalendarContract.Reminders.MINUTES, reminderMinutes(timing))
-            put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT)
+        for (timing in timings) {
+            val reminder = ContentValues().apply {
+                put(CalendarContract.Reminders.EVENT_ID, eventId)
+                put(CalendarContract.Reminders.MINUTES, reminderMinutes(timing))
+                put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT)
+            }
+            resolver.insert(CalendarContract.Reminders.CONTENT_URI, reminder)
         }
-        resolver.insert(CalendarContract.Reminders.CONTENT_URI, reminder)
     }
 
     fun removeAllEvents() {

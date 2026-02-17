@@ -186,7 +186,7 @@ fun SadhanaJourneyScreen(
 
             // ── Badges ──────────────────────────────────────────────────
             item {
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Divider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(Modifier.height(8.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

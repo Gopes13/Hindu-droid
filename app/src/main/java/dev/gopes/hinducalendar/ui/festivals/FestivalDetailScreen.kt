@@ -25,7 +25,8 @@ import dev.gopes.hinducalendar.ui.components.*
 fun FestivalDetailScreen(
     festivalId: String,
     onBack: () -> Unit,
-    viewModel: FestivalListViewModel = hiltViewModel()
+    viewModel: FestivalListViewModel = hiltViewModel(),
+    gamificationViewModel: dev.gopes.hinducalendar.ui.gamification.GamificationViewModel = hiltViewModel()
 ) {
     val festivals by viewModel.festivals.collectAsState()
     val language by viewModel.language.collectAsState()
@@ -70,6 +71,7 @@ fun FestivalDetailScreen(
                             FestivalCategory.MAJOR -> Icons.Filled.Star
                             FestivalCategory.VRAT -> Icons.Filled.Spa
                             FestivalCategory.RECURRING -> Icons.Filled.Refresh
+                            FestivalCategory.REGIONAL -> Icons.Filled.LocationOn
                             else -> Icons.Filled.Celebration
                         },
                         contentDescription = null,
@@ -162,23 +164,23 @@ fun FestivalDetailScreen(
                 }
             }
 
-            // Significance section
+            // "Did You Know?" section (was Significance)
             val significance = festival.significance(language)
             if (significance.isNotEmpty()) {
-                SacredCard {
+                SacredHighlightCard {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             Icons.Filled.Lightbulb,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.tertiary,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            stringResource(R.string.festival_significance),
+                            stringResource(R.string.festival_did_you_know),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.tertiary
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                     Spacer(Modifier.height(8.dp))
@@ -186,6 +188,9 @@ fun FestivalDetailScreen(
                         significance,
                         style = MaterialTheme.typography.bodyMedium
                     )
+                }
+                LaunchedEffect(festivalId) {
+                    gamificationViewModel.recordFestivalStoryRead(festivalId)
                 }
             }
 

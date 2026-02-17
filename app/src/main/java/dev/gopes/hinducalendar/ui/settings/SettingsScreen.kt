@@ -35,8 +35,9 @@ fun SettingsScreen(
     var languageDropdownExpanded by remember { mutableStateOf(false) }
     var traditionDropdownExpanded by remember { mutableStateOf(false) }
     var syncOptionDropdownExpanded by remember { mutableStateOf(false) }
-    var reminderDropdownExpanded by remember { mutableStateOf(false) }
+    var wisdomDropdownExpanded by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
+    var showLocationPicker by remember { mutableStateOf(false) }
     var showResetDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -252,18 +253,104 @@ fun SettingsScreen(
 
             // Location
             SettingsSection(stringResource(R.string.settings_location)) {
-                Text(
-                    prefs.location.cityName ?: "Unknown",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    "%.4f\u00B0N, %.4f\u00B0E \u00B7 ${prefs.location.timeZoneId}".format(
-                        prefs.location.latitude, prefs.location.longitude
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            prefs.location.cityName ?: "Unknown",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            "%.4f\u00B0N, %.4f\u00B0E \u00B7 ${prefs.location.timeZoneId}".format(
+                                prefs.location.latitude, prefs.location.longitude
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    TextButton(onClick = { showLocationPicker = true }) {
+                        Text(
+                            stringResource(R.string.setting_change),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+
+            // Daily Wisdom Text
+            SettingsSection(stringResource(R.string.setting_daily_wisdom_text)) {
+                Box {
+                    val pathTexts = prefs.dharmaPath.availableWisdomTexts
+                    val allWisdomTexts = SacredTextType.entries.filter { it.isWisdomEligible }
+                    val otherTexts = allWisdomTexts.filter { it !in pathTexts }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { wisdomDropdownExpanded = true },
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            prefs.effectiveWisdomText.displayName,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Icon(
+                            Icons.Filled.ExpandMore,
+                            contentDescription = stringResource(R.string.setting_change),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = wisdomDropdownExpanded,
+                        onDismissRequest = { wisdomDropdownExpanded = false }
+                    ) {
+                        // Path texts first
+                        pathTexts.forEach { textType ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        textType.displayName,
+                                        fontWeight = if (textType == prefs.effectiveWisdomText) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                },
+                                onClick = {
+                                    viewModel.updateActiveWisdomText(textType)
+                                    wisdomDropdownExpanded = false
+                                }
+                            )
+                        }
+                        // Divider + other texts
+                        if (otherTexts.isNotEmpty()) {
+                            HorizontalDivider()
+                            Text(
+                                stringResource(R.string.setting_wisdom_other_texts),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                            )
+                            otherTexts.forEach { textType ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            textType.displayName,
+                                            fontWeight = if (textType == prefs.effectiveWisdomText) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                    },
+                                    onClick = {
+                                        viewModel.updateActiveWisdomText(textType)
+                                        wisdomDropdownExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
             // Calendar Sync
@@ -359,52 +446,38 @@ fun SettingsScreen(
                     )
                 }
                 if (prefs.notificationsEnabled) {
-                    // Reminder Timing Picker
-                    Box {
+                    // Reminder Timing Toggles (multi-select, matching iOS)
+                    ReminderTiming.entries.forEach { timing ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { reminderDropdownExpanded = true }
                                 .padding(vertical = 4.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                prefs.reminderTiming.displayName,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                timing.displayName,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.weight(1f)
                             )
-                            Icon(
-                                Icons.Filled.ExpandMore,
-                                contentDescription = stringResource(R.string.setting_change),
-                                modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = reminderDropdownExpanded,
-                            onDismissRequest = { reminderDropdownExpanded = false }
-                        ) {
-                            ReminderTiming.entries.forEach { timing ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            timing.displayName,
-                                            fontWeight = if (timing == prefs.reminderTiming) FontWeight.Bold else FontWeight.Normal
-                                        )
-                                    },
-                                    onClick = {
-                                        viewModel.updateReminderTiming(timing)
-                                        reminderDropdownExpanded = false
-                                    }
+                            Switch(
+                                checked = timing in prefs.reminderTimings,
+                                onCheckedChange = { enabled ->
+                                    viewModel.toggleReminderTiming(timing, enabled)
+                                },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                                    checkedTrackColor = MaterialTheme.colorScheme.primary,
+                                    uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
                                 )
-                            }
+                            )
                         }
                     }
                 }
 
                 Spacer(Modifier.height(12.dp))
-                Divider(color = MaterialTheme.colorScheme.outline)
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                 Spacer(Modifier.height(12.dp))
 
                 // Notification Time Picker
@@ -574,6 +647,15 @@ fun SettingsScreen(
                     Text(stringResource(R.string.common_cancel))
                 }
             }
+        )
+    }
+
+    // Location Picker Bottom Sheet
+    if (showLocationPicker) {
+        LocationPickerSheet(
+            currentLocation = prefs.location,
+            onLocationSelected = { viewModel.updateLocation(it) },
+            onDismiss = { showLocationPicker = false }
         )
     }
 }

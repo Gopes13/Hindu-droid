@@ -104,7 +104,11 @@ private fun PanchangContent(
         }
 
         // Greeting Banner
-        GreetingBanner(isDarkTheme = isDark)
+        GreetingBanner(
+            isDarkTheme = isDark,
+            gamificationData = gamificationViewModel?.gamificationData,
+            streakData = gamificationViewModel?.streakData
+        )
 
         // Daily Wisdom Briefing
         DailyBriefingCard()

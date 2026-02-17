@@ -62,9 +62,26 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun updateReminderTiming(timing: ReminderTiming) {
+    fun toggleReminderTiming(timing: ReminderTiming, enabled: Boolean) {
         viewModelScope.launch {
-            preferencesRepository.update { it.copy(reminderTiming = timing) }
+            preferencesRepository.update { prefs ->
+                val current = prefs.reminderTimings.toMutableList()
+                if (enabled && timing !in current) current.add(timing)
+                if (!enabled) current.remove(timing)
+                prefs.copy(reminderTimings = current)
+            }
+        }
+    }
+
+    fun updateActiveWisdomText(textType: SacredTextType?) {
+        viewModelScope.launch {
+            preferencesRepository.update { it.copy(activeWisdomText = textType) }
+        }
+    }
+
+    fun updateLocation(location: HinduLocation) {
+        viewModelScope.launch {
+            preferencesRepository.update { it.copy(location = location) }
         }
     }
 
@@ -101,7 +118,7 @@ class SettingsViewModel @Inject constructor(
                     prefs.tradition
                 )
             }
-            calendarSyncService.syncMonth(panchangDays, prefs.syncOption, prefs.reminderTiming)
+            calendarSyncService.syncMonth(panchangDays, prefs.syncOption, prefs.reminderTimings)
         }
     }
 }

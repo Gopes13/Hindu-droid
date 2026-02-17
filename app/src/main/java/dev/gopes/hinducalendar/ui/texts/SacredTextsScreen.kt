@@ -144,17 +144,29 @@ private fun SacredTextCard(item: SacredTextItem, onTextClick: (SacredTextType) -
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icon
-            Icon(
-                imageVector = iconForText(item.textType),
-                contentDescription = item.textType.displayName,
-                modifier = Modifier.size(40.dp),
-                tint = if (item.isPrimary) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
+            // Circular progress ring with icon
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.size(44.dp)) {
+                if (item.totalCount > 0) {
+                    CircularProgressIndicator(
+                        progress = item.currentPosition.toFloat() / item.totalCount.toFloat(),
+                        modifier = Modifier.fillMaxSize(),
+                        strokeWidth = 3.dp,
+                        color = if (item.isPrimary) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
+                        trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
+                    )
                 }
-            )
+                Icon(
+                    imageVector = iconForText(item.textType),
+                    contentDescription = item.textType.displayName,
+                    modifier = Modifier.size(24.dp),
+                    tint = if (item.isPrimary) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                )
+            }
             Spacer(Modifier.width(16.dp))
 
             // Text info
@@ -187,17 +199,6 @@ private fun SacredTextCard(item: SacredTextItem, onTextClick: (SacredTextType) -
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                if (item.totalCount > 0) {
-                    Spacer(Modifier.height(4.dp))
-                    LinearProgressIndicator(
-                        progress = item.currentPosition.toFloat() / item.totalCount.toFloat(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(4.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-                    )
-                }
             }
 
             // Arrow

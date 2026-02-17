@@ -3,6 +3,7 @@ package dev.gopes.hinducalendar.ui.texts.reader
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -24,12 +25,13 @@ import androidx.compose.ui.unit.sp
 import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.ui.components.SacredHighlightCard
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun StudyModeScreen(
     verses: List<StudyVerse>,
     startIndex: Int = 0,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onDeepStudy: (() -> Unit)? = null
 ) {
     if (verses.isEmpty()) {
         onDismiss()
@@ -44,12 +46,28 @@ fun StudyModeScreen(
     var showTransliteration by remember { mutableStateOf(false) }
     var showTranslation by remember { mutableStateOf(false) }
     var showExplanation by remember { mutableStateOf(false) }
+    var deepStudySeconds by remember { mutableIntStateOf(0) }
+    var deepStudyAwarded by remember { mutableStateOf(false) }
 
-    // Reset reveals on page change
+    // Reset reveals and timer on page change
     LaunchedEffect(pagerState.currentPage) {
         showTransliteration = false
         showTranslation = false
         showExplanation = false
+        deepStudySeconds = 0
+        deepStudyAwarded = false
+    }
+
+    // Deep study timer — ticks every second
+    LaunchedEffect(pagerState.currentPage) {
+        while (true) {
+            kotlinx.coroutines.delay(1000)
+            deepStudySeconds++
+            if (deepStudySeconds >= 15 && !deepStudyAwarded) {
+                deepStudyAwarded = true
+                onDeepStudy?.invoke()
+            }
+        }
     }
 
     val currentVerse = verses.getOrNull(pagerState.currentPage)
@@ -62,7 +80,7 @@ fun StudyModeScreen(
         ) {
             // Progress bar
             LinearProgressIndicator(
-                progress = { (pagerState.currentPage + 1f) / verses.size },
+                progress = (pagerState.currentPage + 1f) / verses.size,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(3.dp),
@@ -151,7 +169,7 @@ fun StudyModeScreen(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Spacer(Modifier.height(16.dp))
-                            HorizontalDivider()
+                            Divider()
                             Spacer(Modifier.height(16.dp))
                             Text(
                                 verse.translation,

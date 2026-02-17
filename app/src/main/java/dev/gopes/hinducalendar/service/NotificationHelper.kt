@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.work.*
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.NotificationTime
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
@@ -37,10 +38,10 @@ class NotificationHelper @Inject constructor(
             // Daily Briefing channel
             val dailyChannel = NotificationChannel(
                 CHANNEL_ID_DAILY,
-                DailyNotificationWorker.CHANNEL_NAME,
+                context.getString(R.string.notif_channel_name),
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
-                description = DailyNotificationWorker.CHANNEL_DESCRIPTION
+                description = context.getString(R.string.notif_channel_description)
             }
             notificationManager.createNotificationChannel(dailyChannel)
 

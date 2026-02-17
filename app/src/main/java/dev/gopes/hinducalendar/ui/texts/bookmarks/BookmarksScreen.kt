@@ -172,7 +172,7 @@ private fun BookmarkCard(
 
         bookmark.note?.takeIf { it.isNotBlank() }?.let {
             Spacer(Modifier.height(8.dp))
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            Divider(color = MaterialTheme.colorScheme.outlineVariant)
             Spacer(Modifier.height(8.dp))
             Text(
                 it,
