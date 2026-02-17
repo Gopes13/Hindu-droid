@@ -1,16 +1,22 @@
 package dev.gopes.hinducalendar.ui.onboarding
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -21,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.CalendarTradition
 import dev.gopes.hinducalendar.data.model.DharmaPath
 import dev.gopes.hinducalendar.data.model.HinduLocation
@@ -28,28 +35,34 @@ import dev.gopes.hinducalendar.ui.components.*
 import dev.gopes.hinducalendar.ui.theme.*
 
 @Composable
-fun OnboardingScreen(onComplete: (CalendarTradition, HinduLocation, DharmaPath) -> Unit) {
+fun OnboardingScreen(onComplete: (CalendarTradition, HinduLocation, DharmaPath, AppLanguage) -> Unit) {
     var step by remember { mutableIntStateOf(0) }
+    var selectedLanguage by remember { mutableStateOf(AppLanguage.ENGLISH) }
     var selectedTradition by remember { mutableStateOf(CalendarTradition.PURNIMANT) }
     var selectedLocation by remember { mutableStateOf(HinduLocation.DELHI) }
     var selectedDharmaPath by remember { mutableStateOf(DharmaPath.GENERAL) }
 
     when (step) {
-        0 -> WelcomeStep(onNext = { step = 1 })
-        1 -> DharmaPathStep(
+        0 -> LanguageStep(
+            selectedLanguage = selectedLanguage,
+            onSelect = { selectedLanguage = it },
+            onNext = { step = 1 }
+        )
+        1 -> WelcomeStep(onNext = { step = 2 })
+        2 -> DharmaPathStep(
             selectedPath = selectedDharmaPath,
             onSelect = { selectedDharmaPath = it },
-            onNext = { step = 2 }
-        )
-        2 -> TraditionStep(
-            selectedTradition = selectedTradition,
-            onSelect = { selectedTradition = it },
             onNext = { step = 3 }
         )
-        3 -> LocationStep(
+        3 -> TraditionStep(
+            selectedTradition = selectedTradition,
+            onSelect = { selectedTradition = it },
+            onNext = { step = 4 }
+        )
+        4 -> LocationStep(
             selectedLocation = selectedLocation,
             onSelect = { selectedLocation = it },
-            onComplete = { onComplete(selectedTradition, selectedLocation, selectedDharmaPath) }
+            onComplete = { onComplete(selectedTradition, selectedLocation, selectedDharmaPath, selectedLanguage) }
         )
     }
 }
@@ -68,6 +81,81 @@ private fun dharmaPathAccentColor(path: DharmaPath): Color {
         DharmaPath.SWAMINARAYAN -> TraditionSwaminarayan
         DharmaPath.SIKH -> TraditionSikh
         DharmaPath.JAIN -> TraditionJain
+    }
+}
+
+@Composable
+private fun LanguageStep(
+    selectedLanguage: AppLanguage,
+    onSelect: (AppLanguage) -> Unit,
+    onNext: () -> Unit
+) {
+    Column(Modifier.fillMaxSize().padding(24.dp)) {
+        Text(
+            stringResource(R.string.onboarding_choose_language),
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            stringResource(R.string.onboarding_language_desc),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(Modifier.height(16.dp))
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(AppLanguage.entries.toList()) { lang ->
+                val isSelected = lang == selectedLanguage
+                Surface(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .selectable(
+                            selected = isSelected,
+                            onClick = { onSelect(lang) }
+                        )
+                        .then(
+                            if (isSelected) Modifier.border(
+                                2.dp,
+                                MaterialTheme.colorScheme.primary,
+                                RoundedCornerShape(12.dp)
+                            ) else Modifier.border(
+                                1.dp,
+                                MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                                RoundedCornerShape(12.dp)
+                            )
+                        ),
+                    color = if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                            else MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 14.dp)
+                    ) {
+                        Text(
+                            lang.nativeScriptName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            lang.displayName,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+        SacredButton(text = stringResource(R.string.onboarding_continue), onClick = onNext)
     }
 }
 

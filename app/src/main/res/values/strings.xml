@@ -155,6 +155,8 @@
     <!-- Onboarding Screen -->
     <string name="app_name_display">Hindu Calendar</string>
     <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_choose_language">Choose Your Language</string>
+    <string name="onboarding_language_desc">Select the language for translations and content.</string>
     <string name="onboarding_full_panchang">Full daily Panchang</string>
     <string name="onboarding_festival_reminders">Festival reminders</string>
     <string name="onboarding_sync_calendar">Sync to your calendar</string>
@@ -212,6 +214,13 @@
     <string name="focus_verse_counter">Verse %1$d of %2$d</string>
     <string name="reader_verses_count">%d verses</string>
     <string name="cd_go_back">Go back</string>
+
+    <!-- Chapter Completion -->
+    <string name="completion_chapter_complete">Chapter Complete!</string>
+    <string name="completion_text_complete">Text Complete!</string>
+    <string name="completion_continue_reading">Continue Reading</string>
+    <string name="completion_wonderful">Wonderful!</string>
+    <string name="completion_review_chapter">Review This Chapter</string>
 
     <!-- Bookmarks -->
     <string name="bookmarks_title">Bookmarks</string>
