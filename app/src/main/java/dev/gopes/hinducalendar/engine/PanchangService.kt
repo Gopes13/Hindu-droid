@@ -1,5 +1,6 @@
 package dev.gopes.hinducalendar.engine
 
+import android.util.LruCache
 import dev.gopes.hinducalendar.data.model.*
 import timber.log.Timber
 import java.time.*
@@ -15,11 +16,23 @@ class PanchangService @Inject constructor(
     private val festivalEngine: FestivalRulesEngine
 ) {
 
+    private data class CacheKey(val date: LocalDate, val lat: Double, val lng: Double, val tradition: String)
+
+    private val cache = LruCache<CacheKey, PanchangDay>(120)
+
+    fun clearCache() {
+        cache.evictAll()
+        Timber.d("Panchang cache cleared")
+    }
+
     fun computePanchang(
         date: LocalDate,
         location: HinduLocation,
         tradition: CalendarTradition
     ): PanchangDay {
+        val key = CacheKey(date, location.latitude, location.longitude, tradition.key)
+        cache.get(key)?.let { return it }
+
         Timber.d("Computing panchang for %s at (%.4f, %.4f)", date, location.latitude, location.longitude)
         val year = date.year
         val jdMidnight = AstronomyEngine.dateToJD(year, date.monthValue, date.dayOfMonth)
@@ -115,7 +128,7 @@ class PanchangService @Inject constructor(
             gulikaKaal = gulikaKaal,
             abhijitMuhurta = abhijit,
             festivals = festivals
-        )
+        ).also { cache.put(key, it) }
     }
 
     fun computeMonthlyPanchang(
