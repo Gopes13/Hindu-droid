@@ -28,7 +28,11 @@ import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayPanchangScreen(viewModel: TodayPanchangViewModel = hiltViewModel()) {
+fun TodayPanchangScreen(
+    onSadhanaClick: () -> Unit = {},
+    viewModel: TodayPanchangViewModel = hiltViewModel(),
+    gamificationViewModel: dev.gopes.hinducalendar.ui.gamification.GamificationViewModel = hiltViewModel()
+) {
     val panchang by viewModel.panchang.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
@@ -42,13 +46,33 @@ fun TodayPanchangScreen(viewModel: TodayPanchangViewModel = hiltViewModel()) {
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else if (panchang != null) {
-            PanchangContent(panchang!!, Modifier.padding(padding))
+            PanchangContent(panchang!!, Modifier.padding(padding), gamificationViewModel, onSadhanaClick)
         }
+    }
+
+    // Level up celebration
+    gamificationViewModel.levelUpEvent?.let { (old, new) ->
+        dev.gopes.hinducalendar.ui.gamification.LevelUpCelebration(
+            oldLevel = old, newLevel = new,
+            onDismiss = { gamificationViewModel.dismissLevelUp() }
+        )
+    }
+    // Milestone celebration
+    gamificationViewModel.milestoneEvent?.let { days ->
+        dev.gopes.hinducalendar.ui.gamification.MilestoneCelebration(
+            days = days,
+            onDismiss = { gamificationViewModel.dismissMilestone() }
+        )
     }
 }
 
 @Composable
-private fun PanchangContent(panchang: PanchangDay, modifier: Modifier) {
+private fun PanchangContent(
+    panchang: PanchangDay,
+    modifier: Modifier,
+    gamificationViewModel: dev.gopes.hinducalendar.ui.gamification.GamificationViewModel? = null,
+    onSadhanaClick: () -> Unit = {}
+) {
     val isDark = isSystemInDarkTheme()
 
     Column(
@@ -58,6 +82,27 @@ private fun PanchangContent(panchang: PanchangDay, modifier: Modifier) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // Sadhana Status Bar (gamification)
+        gamificationViewModel?.let { gvm ->
+            if (gvm.gamificationData.isEnabled) {
+                dev.gopes.hinducalendar.ui.gamification.SadhanaStatusBar(
+                    data = gvm.gamificationData,
+                    onClick = onSadhanaClick
+                )
+                dev.gopes.hinducalendar.ui.gamification.StreakBadgeView(
+                    streakData = gvm.streakData,
+                    gamificationData = gvm.gamificationData
+                )
+                gvm.dailyChallenge?.let { challenge ->
+                    dev.gopes.hinducalendar.ui.gamification.DailyChallengeCard(
+                        challenge = challenge,
+                        gamificationData = gvm.gamificationData,
+                        onAnswered = { correct -> gvm.onChallengeAnswered(correct) }
+                    )
+                }
+            }
+        }
+
         // Greeting Banner
         GreetingBanner(isDarkTheme = isDark)
 

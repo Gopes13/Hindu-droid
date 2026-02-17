@@ -32,6 +32,7 @@ import dev.gopes.hinducalendar.ui.texts.reader.ChalisaReaderScreen
 import dev.gopes.hinducalendar.ui.texts.reader.GenericReaderScreen
 import dev.gopes.hinducalendar.ui.texts.reader.GitaReaderScreen
 import dev.gopes.hinducalendar.ui.texts.reader.JapjiReaderScreen
+import dev.gopes.hinducalendar.ui.gamification.SadhanaJourneyScreen
 
 sealed class Screen(val route: String, @StringRes val titleRes: Int, val icon: ImageVector) {
     data object Today : Screen("today", R.string.tab_today, Icons.Filled.WbSunny)
@@ -89,7 +90,9 @@ fun NavGraph() {
             startDestination = Screen.Today.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Today.route) { TodayPanchangScreen() }
+            composable(Screen.Today.route) {
+                TodayPanchangScreen(onSadhanaClick = { navController.navigate("sadhana") })
+            }
             composable(Screen.Texts.route) {
                 SacredTextsScreen(
                     onTextClick = { textType ->
@@ -100,10 +103,16 @@ fun NavGraph() {
             }
             composable(Screen.Calendar.route) { CalendarScreen() }
             composable(Screen.Festivals.route) { FestivalListScreen() }
-            composable(Screen.Settings.route) { SettingsScreen() }
+            composable(Screen.Settings.route) {
+                SettingsScreen(onSadhanaClick = { navController.navigate("sadhana") })
+            }
 
             composable("bookmarks") {
                 BookmarksScreen(onBack = { navController.popBackStack() })
+            }
+
+            composable("sadhana") {
+                SadhanaJourneyScreen(onBack = { navController.popBackStack() })
             }
 
             composable(

@@ -24,7 +24,11 @@ import dev.gopes.hinducalendar.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
+fun SettingsScreen(
+    onSadhanaClick: () -> Unit = {},
+    viewModel: SettingsViewModel = hiltViewModel(),
+    gamificationViewModel: dev.gopes.hinducalendar.ui.gamification.GamificationViewModel = hiltViewModel()
+) {
     val prefs by viewModel.preferences.collectAsState()
 
     var pathDropdownExpanded by remember { mutableStateOf(false) }
@@ -440,6 +444,70 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
                     text = stringResource(R.string.setting_reset_reading),
                     onClick = { showResetDialog = true }
                 )
+            }
+
+            // Sadhana Journey (Gamification)
+            SettingsSection(stringResource(R.string.sadhana_journey)) {
+                ContentToggleRow(
+                    label = stringResource(R.string.sadhana_enable),
+                    description = stringResource(R.string.sadhana_enable_desc),
+                    checked = gamificationViewModel.gamificationData.isEnabled,
+                    onCheckedChange = { gamificationViewModel.toggleGamification(it) }
+                )
+                if (gamificationViewModel.gamificationData.isEnabled) {
+                    Spacer(Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onSadhanaClick() },
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            val level = dev.gopes.hinducalendar.data.model.SadhanaLevel.forLevel(
+                                gamificationViewModel.gamificationData.currentLevel
+                            )
+                            val titleRes = when (level.titleKey) {
+                                "level_1" -> R.string.level_1
+                                "level_2" -> R.string.level_2
+                                "level_3" -> R.string.level_3
+                                "level_4" -> R.string.level_4
+                                "level_5" -> R.string.level_5
+                                "level_6" -> R.string.level_6
+                                "level_7" -> R.string.level_7
+                                "level_8" -> R.string.level_8
+                                "level_9" -> R.string.level_9
+                                "level_10" -> R.string.level_10
+                                "level_11" -> R.string.level_11
+                                "level_12" -> R.string.level_12
+                                "level_13" -> R.string.level_13
+                                "level_14" -> R.string.level_14
+                                "level_15" -> R.string.level_15
+                                "level_16" -> R.string.level_16
+                                "level_17" -> R.string.level_17
+                                "level_18" -> R.string.level_18
+                                "level_19" -> R.string.level_19
+                                else -> R.string.level_20
+                            }
+                            Text(
+                                stringResource(R.string.sadhana_level_format, level.level, stringResource(titleRes)),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                stringResource(R.string.punya_points) + ": ${gamificationViewModel.gamificationData.totalPunyaPoints}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Text(
+                            stringResource(R.string.sadhana_continue),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
             }
 
             // About
