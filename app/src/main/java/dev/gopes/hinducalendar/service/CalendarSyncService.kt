@@ -5,10 +5,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.provider.CalendarContract
+import dev.gopes.hinducalendar.data.model.FestivalCategory
 import dev.gopes.hinducalendar.data.model.FestivalOccurrence
 import dev.gopes.hinducalendar.data.model.PanchangDay
 import timber.log.Timber
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.TimeZone
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -111,12 +113,26 @@ class CalendarSyncService @Inject constructor(
             val endDate = occurrence.endDate ?: occurrence.date.plusDays(1)
             val endMillis = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
+            val timeFmt = DateTimeFormatter.ofPattern("h:mm a")
             val description = buildString {
                 appendLine(occurrence.festival.description["en"] ?: "")
+
+                occurrence.festival.significances?.get("en")?.let {
+                    appendLine()
+                    appendLine("Significance: $it")
+                }
+
                 appendLine()
+                appendLine("--- Panchang ---")
                 appendLine("Hindu Date: ${panchang.hinduDate.displayString}")
-                appendLine("Sunrise: ${panchang.sunrise}")
-                appendLine("Sunset: ${panchang.sunset}")
+                appendLine("Tithi: ${panchang.tithiInfo.name}")
+                appendLine("Nakshatra: ${panchang.nakshatraInfo.name}")
+                appendLine("Yoga: ${panchang.yogaInfo.name}")
+                appendLine("Karana: ${panchang.karanaInfo.name}")
+                appendLine()
+                appendLine("Sunrise: ${panchang.sunrise.format(timeFmt)}  |  Sunset: ${panchang.sunset.format(timeFmt)}")
+                panchang.rahuKaal?.let { appendLine("Rahu Kaal: ${it.displayString}") }
+                panchang.abhijitMuhurta?.let { appendLine("Abhijit Muhurta: ${it.displayString}") }
                 appendLine()
                 appendLine("[$eventId]")
             }
@@ -129,9 +145,29 @@ class CalendarSyncService @Inject constructor(
                 put(CalendarContract.Events.DTEND, endMillis)
                 put(CalendarContract.Events.ALL_DAY, 1)
                 put(CalendarContract.Events.EVENT_TIMEZONE, panchang.location.timeZoneId)
+                put(CalendarContract.Events.HAS_ALARM, 1)
             }
 
-            resolver.insert(CalendarContract.Events.CONTENT_URI, values)
+            val eventUri = resolver.insert(CalendarContract.Events.CONTENT_URI, values)
+            eventUri?.lastPathSegment?.toLongOrNull()?.let { insertedEventId ->
+                // Day-before reminder for all festivals
+                val dayBeforeReminder = ContentValues().apply {
+                    put(CalendarContract.Reminders.EVENT_ID, insertedEventId)
+                    put(CalendarContract.Reminders.MINUTES, 24 * 60)
+                    put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT)
+                }
+                resolver.insert(CalendarContract.Reminders.CONTENT_URI, dayBeforeReminder)
+
+                // Morning-of reminder for major festivals
+                if (occurrence.festival.category == FestivalCategory.MAJOR) {
+                    val morningReminder = ContentValues().apply {
+                        put(CalendarContract.Reminders.EVENT_ID, insertedEventId)
+                        put(CalendarContract.Reminders.MINUTES, 0)
+                        put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT)
+                    }
+                    resolver.insert(CalendarContract.Reminders.CONTENT_URI, morningReminder)
+                }
+            }
         } catch (e: Exception) {
             Timber.e(e, "Failed to insert calendar event: %s", occurrence.festival.displayName)
         }
