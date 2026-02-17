@@ -1,6 +1,7 @@
 package dev.gopes.hinducalendar.engine
 
 import dev.gopes.hinducalendar.data.model.*
+import timber.log.Timber
 import java.time.*
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -19,6 +20,7 @@ class PanchangService @Inject constructor(
         location: HinduLocation,
         tradition: CalendarTradition
     ): PanchangDay {
+        Timber.d("Computing panchang for %s at (%.4f, %.4f)", date, location.latitude, location.longitude)
         val year = date.year
         val jdMidnight = AstronomyEngine.dateToJD(year, date.monthValue, date.dayOfMonth)
         val jdTT = AstronomyEngine.utToTT(jdMidnight, year.toDouble())

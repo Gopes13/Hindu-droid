@@ -84,6 +84,9 @@ dependencies {
     // Gson for JSON parsing
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // Logging
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
     // Desugaring (java.time on API < 26)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 

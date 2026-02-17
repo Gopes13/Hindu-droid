@@ -15,6 +15,7 @@ import dev.gopes.hinducalendar.data.model.DharmaPath
 import dev.gopes.hinducalendar.data.model.ReadingProgress
 import dev.gopes.hinducalendar.data.model.UserPreferences
 import dev.gopes.hinducalendar.engine.SacredTextService
+import timber.log.Timber
 
 /**
  * A WorkManager CoroutineWorker that creates a morning daily briefing notification
@@ -34,58 +35,63 @@ class DailyNotificationWorker(
     }
 
     override suspend fun doWork(): Result {
-        createNotificationChannel()
+        return try {
+            createNotificationChannel()
 
-        // In production, load preferences from SharedPreferences / DataStore
-        val preferences = UserPreferences()
-        val sacredTextService = SacredTextService(appContext)
+            // In production, load preferences from SharedPreferences / DataStore
+            val preferences = UserPreferences()
+            val sacredTextService = SacredTextService(appContext)
 
-        val dailyContent = sacredTextService.getDailyContent(
-            path = preferences.dharmaPath,
-            progress = preferences.readingProgress,
-            lang = preferences.language
-        )
+            val dailyContent = sacredTextService.getDailyContent(
+                path = preferences.dharmaPath,
+                progress = preferences.readingProgress,
+                lang = preferences.language
+            )
 
-        val title = buildString {
-            append("Daily Wisdom")
-            dailyContent.primaryVerse?.let {
-                append(" - ${it.title}")
+            val title = buildString {
+                append("Daily Wisdom")
+                dailyContent.primaryVerse?.let {
+                    append(" - ${it.title}")
+                }
             }
+
+            val body = buildString {
+                dailyContent.primaryVerse?.let { verse ->
+                    append(verse.subtitle)
+                    append("\n")
+                    append(verse.translation.take(150))
+                    if (verse.translation.length > 150) append("...")
+                } ?: append("Open the app for today's Panchang and sacred readings.")
+            }
+
+            // Build the intent to open the app
+            val intent = Intent(appContext, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            else PendingIntent.FLAG_UPDATE_CURRENT
+            val pendingIntent = PendingIntent.getActivity(appContext, 0, intent, flags)
+
+            val notification = NotificationCompat.Builder(appContext, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .build()
+
+            val notificationManager =
+                appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(NOTIFICATION_ID, notification)
+
+            Result.success()
+        } catch (e: Exception) {
+            Timber.e(e, "Daily notification worker failed")
+            Result.retry()
         }
-
-        val body = buildString {
-            dailyContent.primaryVerse?.let { verse ->
-                append(verse.subtitle)
-                append("\n")
-                append(verse.translation.take(150))
-                if (verse.translation.length > 150) append("...")
-            } ?: append("Open the app for today's Panchang and sacred readings.")
-        }
-
-        // Build the intent to open the app
-        val intent = Intent(appContext, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        else PendingIntent.FLAG_UPDATE_CURRENT
-        val pendingIntent = PendingIntent.getActivity(appContext, 0, intent, flags)
-
-        val notification = NotificationCompat.Builder(appContext, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(title)
-            .setContentText(body)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-            .build()
-
-        val notificationManager =
-            appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(NOTIFICATION_ID, notification)
-
-        return Result.success()
     }
 
     private fun createNotificationChannel() {

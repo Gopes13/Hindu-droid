@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import dev.gopes.hinducalendar.data.model.*
+import timber.log.Timber
 import java.time.LocalDate
 
 /**
@@ -20,6 +21,7 @@ class FestivalRulesEngine(private val context: Context) {
             val container = Gson().fromJson(json, FestivalContainer::class.java)
             container.festivals.map { it.toDomain() }
         } catch (e: Exception) {
+            Timber.e(e, "Failed to load festivals.json from assets")
             emptyList()
         }
     }

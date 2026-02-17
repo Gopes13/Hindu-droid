@@ -8,6 +8,7 @@ import dev.gopes.hinducalendar.data.model.DharmaPath
 import dev.gopes.hinducalendar.data.model.ReadingProgress
 import dev.gopes.hinducalendar.data.model.SacredTextType
 import dev.gopes.hinducalendar.data.model.localized
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -414,6 +415,7 @@ class SacredTextService @Inject constructor(
             val json = context.assets.open("$fileName.json").bufferedReader().use { it.readText() }
             gson.fromJson(json, clazz)
         } catch (e: Exception) {
+            Timber.e(e, "Failed to load JSON asset: %s.json", fileName)
             null
         }
     }
