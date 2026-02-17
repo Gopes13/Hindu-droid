@@ -11,10 +11,9 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dev.gopes.hinducalendar.MainActivity
 import dev.gopes.hinducalendar.R
-import dev.gopes.hinducalendar.data.model.DharmaPath
-import dev.gopes.hinducalendar.data.model.ReadingProgress
-import dev.gopes.hinducalendar.data.model.UserPreferences
+import dev.gopes.hinducalendar.data.repository.PreferencesRepository
 import dev.gopes.hinducalendar.engine.SacredTextService
+import kotlinx.coroutines.flow.first
 import timber.log.Timber
 
 /**
@@ -36,8 +35,8 @@ class DailyNotificationWorker(
         return try {
             createNotificationChannel()
 
-            // In production, load preferences from SharedPreferences / DataStore
-            val preferences = UserPreferences()
+            val preferencesRepository = PreferencesRepository(appContext)
+            val preferences = preferencesRepository.preferencesFlow.first()
             val sacredTextService = SacredTextService(appContext)
 
             val dailyContent = sacredTextService.getDailyContent(

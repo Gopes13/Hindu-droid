@@ -81,6 +81,9 @@ dependencies {
     // Location
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+    // DataStore for preferences persistence
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
     // Gson for JSON parsing
     implementation("com.google.code.gson:gson:2.10.1")
 

@@ -11,43 +11,28 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.R
-import dev.gopes.hinducalendar.data.model.AppLanguage
-import dev.gopes.hinducalendar.data.model.ContentPreferences
-import dev.gopes.hinducalendar.data.model.DharmaPath
-import dev.gopes.hinducalendar.data.model.NotificationTime
+import dev.gopes.hinducalendar.data.model.*
 import dev.gopes.hinducalendar.ui.components.*
 import dev.gopes.hinducalendar.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
-    var syncEnabled by remember { mutableStateOf(true) }
-    var notificationsEnabled by remember { mutableStateOf(true) }
+fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
+    val prefs by viewModel.preferences.collectAsState()
 
-    // Spiritual path state
-    var selectedPath by remember { mutableStateOf(DharmaPath.GENERAL) }
     var pathDropdownExpanded by remember { mutableStateOf(false) }
-
-    // Language state
-    var selectedLanguage by remember { mutableStateOf(AppLanguage.ENGLISH) }
     var languageDropdownExpanded by remember { mutableStateOf(false) }
-
-    // Content preferences state
-    var panchangNotif by remember { mutableStateOf(true) }
-    var primaryText by remember { mutableStateOf(true) }
-    var festivalStories by remember { mutableStateOf(true) }
-    var secondaryText by remember { mutableStateOf(false) }
-
-    // Notification time state
-    var notifHour by remember { mutableIntStateOf(7) }
-    var notifMinute by remember { mutableIntStateOf(0) }
+    var traditionDropdownExpanded by remember { mutableStateOf(false) }
+    var syncOptionDropdownExpanded by remember { mutableStateOf(false) }
+    var reminderDropdownExpanded by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
-    val notifTime = NotificationTime(notifHour, notifMinute)
-
-    // Reset confirmation
     var showResetDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -73,12 +58,12 @@ fun SettingsScreen() {
                     ) {
                         Column(Modifier.weight(1f)) {
                             Text(
-                                selectedPath.displayName,
+                                prefs.dharmaPath.displayName,
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
-                                selectedPath.description,
+                                prefs.dharmaPath.description,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -99,7 +84,7 @@ fun SettingsScreen() {
                                     Column {
                                         Text(
                                             path.displayName,
-                                            fontWeight = if (path == selectedPath) FontWeight.Bold else FontWeight.Normal
+                                            fontWeight = if (path == prefs.dharmaPath) FontWeight.Bold else FontWeight.Normal
                                         )
                                         Text(
                                             path.description,
@@ -109,7 +94,7 @@ fun SettingsScreen() {
                                     }
                                 },
                                 onClick = {
-                                    selectedPath = path
+                                    viewModel.updateDharmaPath(path)
                                     pathDropdownExpanded = false
                                 }
                             )
@@ -130,7 +115,7 @@ fun SettingsScreen() {
                     ) {
                         Column(Modifier.weight(1f)) {
                             Text(
-                                "${selectedLanguage.nativeScriptName} (${selectedLanguage.displayName})",
+                                "${prefs.language.nativeScriptName} (${prefs.language.displayName})",
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium
                             )
@@ -155,11 +140,11 @@ fun SettingsScreen() {
                                 text = {
                                     Text(
                                         "${lang.nativeScriptName} (${lang.displayName})",
-                                        fontWeight = if (lang == selectedLanguage) FontWeight.Bold else FontWeight.Normal
+                                        fontWeight = if (lang == prefs.language) FontWeight.Bold else FontWeight.Normal
                                     )
                                 },
                                 onClick = {
-                                    selectedLanguage = lang
+                                    viewModel.updateLanguage(lang)
                                     languageDropdownExpanded = false
                                 }
                             )
@@ -173,48 +158,105 @@ fun SettingsScreen() {
                 ContentToggleRow(
                     label = stringResource(R.string.setting_panchang_notification),
                     description = stringResource(R.string.setting_panchang_notification_desc),
-                    checked = panchangNotif,
-                    onCheckedChange = { panchangNotif = it }
+                    checked = prefs.contentPreferences.panchangNotification,
+                    onCheckedChange = {
+                        viewModel.updateContentPreferences(prefs.contentPreferences.copy(panchangNotification = it))
+                    }
                 )
                 ContentToggleRow(
                     label = stringResource(R.string.setting_primary_sacred_text),
-                    description = stringResource(R.string.setting_primary_text_desc, selectedPath.displayName),
-                    checked = primaryText,
-                    onCheckedChange = { primaryText = it }
+                    description = stringResource(R.string.setting_primary_text_desc, prefs.dharmaPath.displayName),
+                    checked = prefs.contentPreferences.primaryText,
+                    onCheckedChange = {
+                        viewModel.updateContentPreferences(prefs.contentPreferences.copy(primaryText = it))
+                    }
                 )
                 ContentToggleRow(
                     label = stringResource(R.string.setting_festival_stories),
                     description = stringResource(R.string.setting_festival_stories_desc),
-                    checked = festivalStories,
-                    onCheckedChange = { festivalStories = it }
+                    checked = prefs.contentPreferences.festivalStories,
+                    onCheckedChange = {
+                        viewModel.updateContentPreferences(prefs.contentPreferences.copy(festivalStories = it))
+                    }
                 )
                 ContentToggleRow(
                     label = stringResource(R.string.setting_secondary_text),
                     description = stringResource(R.string.setting_secondary_text_desc),
-                    checked = secondaryText,
-                    onCheckedChange = { secondaryText = it }
+                    checked = prefs.contentPreferences.secondaryText,
+                    onCheckedChange = {
+                        viewModel.updateContentPreferences(prefs.contentPreferences.copy(secondaryText = it))
+                    }
                 )
             }
 
-            // Tradition
+            // Tradition Picker
             SettingsSection(stringResource(R.string.setting_calendar_tradition)) {
-                Text(
-                    stringResource(R.string.setting_north_indian_purnimant),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    stringResource(R.string.setting_month_ends_purnima),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Box {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { traditionDropdownExpanded = true },
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                prefs.tradition.displayName,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                prefs.tradition.description,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Icon(
+                            Icons.Filled.ExpandMore,
+                            contentDescription = stringResource(R.string.setting_change),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = traditionDropdownExpanded,
+                        onDismissRequest = { traditionDropdownExpanded = false }
+                    ) {
+                        CalendarTradition.entries.forEach { tradition ->
+                            DropdownMenuItem(
+                                text = {
+                                    Column {
+                                        Text(
+                                            tradition.displayName,
+                                            fontWeight = if (tradition == prefs.tradition) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                        Text(
+                                            tradition.description,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    viewModel.updateTradition(tradition)
+                                    traditionDropdownExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
             }
 
             // Location
             SettingsSection(stringResource(R.string.settings_location)) {
-                Text("New Delhi", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
                 Text(
-                    "28.6139\u00B0N, 77.2090\u00B0E \u00B7 Asia/Kolkata",
+                    prefs.location.cityName ?: "Unknown",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    "%.4f\u00B0N, %.4f\u00B0E \u00B7 ${prefs.location.timeZoneId}".format(
+                        prefs.location.latitude, prefs.location.longitude
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -229,8 +271,11 @@ fun SettingsScreen() {
                 ) {
                     Text(stringResource(R.string.setting_sync_to_google), style = MaterialTheme.typography.bodyMedium)
                     Switch(
-                        checked = syncEnabled,
-                        onCheckedChange = { syncEnabled = it },
+                        checked = prefs.syncToCalendar,
+                        onCheckedChange = { viewModel.updateSyncEnabled(it) },
+                        modifier = Modifier.semantics {
+                            stateDescription = if (prefs.syncToCalendar) "Enabled" else "Disabled"
+                        },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
                             checkedTrackColor = MaterialTheme.colorScheme.primary,
@@ -239,12 +284,49 @@ fun SettingsScreen() {
                         )
                     )
                 }
-                if (syncEnabled) {
-                    Text(
-                        stringResource(R.string.setting_festivals_only),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                if (prefs.syncToCalendar) {
+                    // Sync Option Picker
+                    Box {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { syncOptionDropdownExpanded = true }
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                prefs.syncOption.displayName,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Icon(
+                                Icons.Filled.ExpandMore,
+                                contentDescription = stringResource(R.string.setting_change),
+                                modifier = Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = syncOptionDropdownExpanded,
+                            onDismissRequest = { syncOptionDropdownExpanded = false }
+                        ) {
+                            CalendarSyncOption.entries.forEach { option ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            option.displayName,
+                                            fontWeight = if (option == prefs.syncOption) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                    },
+                                    onClick = {
+                                        viewModel.updateSyncOption(option)
+                                        syncOptionDropdownExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
                     Spacer(Modifier.height(8.dp))
                     SacredButton(text = stringResource(R.string.setting_sync_now), onClick = { /* sync */ })
                 }
@@ -259,8 +341,11 @@ fun SettingsScreen() {
                 ) {
                     Text(stringResource(R.string.setting_festival_reminders), style = MaterialTheme.typography.bodyMedium)
                     Switch(
-                        checked = notificationsEnabled,
-                        onCheckedChange = { notificationsEnabled = it },
+                        checked = prefs.notificationsEnabled,
+                        onCheckedChange = { viewModel.updateNotificationsEnabled(it) },
+                        modifier = Modifier.semantics {
+                            stateDescription = if (prefs.notificationsEnabled) "Enabled" else "Disabled"
+                        },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
                             checkedTrackColor = MaterialTheme.colorScheme.primary,
@@ -269,12 +354,49 @@ fun SettingsScreen() {
                         )
                     )
                 }
-                if (notificationsEnabled) {
-                    Text(
-                        stringResource(R.string.setting_one_day_before),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                if (prefs.notificationsEnabled) {
+                    // Reminder Timing Picker
+                    Box {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { reminderDropdownExpanded = true }
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                prefs.reminderTiming.displayName,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Icon(
+                                Icons.Filled.ExpandMore,
+                                contentDescription = stringResource(R.string.setting_change),
+                                modifier = Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = reminderDropdownExpanded,
+                            onDismissRequest = { reminderDropdownExpanded = false }
+                        ) {
+                            ReminderTiming.entries.forEach { timing ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            timing.displayName,
+                                            fontWeight = if (timing == prefs.reminderTiming) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                    },
+                                    onClick = {
+                                        viewModel.updateReminderTiming(timing)
+                                        reminderDropdownExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
                 }
 
                 Spacer(Modifier.height(12.dp))
@@ -298,7 +420,7 @@ fun SettingsScreen() {
                         )
                     }
                     Text(
-                        notifTime.displayString,
+                        prefs.notificationTime.displayString,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary
@@ -332,8 +454,8 @@ fun SettingsScreen() {
     // Time Picker Dialog
     if (showTimePicker) {
         val timePickerState = rememberTimePickerState(
-            initialHour = notifHour,
-            initialMinute = notifMinute,
+            initialHour = prefs.notificationTime.hour,
+            initialMinute = prefs.notificationTime.minute,
             is24Hour = false
         )
         AlertDialog(
@@ -349,8 +471,7 @@ fun SettingsScreen() {
             },
             confirmButton = {
                 TextButton(onClick = {
-                    notifHour = timePickerState.hour
-                    notifMinute = timePickerState.minute
+                    viewModel.updateNotificationTime(timePickerState.hour, timePickerState.minute)
                     showTimePicker = false
                 }) {
                     Text(stringResource(R.string.common_ok))
@@ -374,7 +495,7 @@ fun SettingsScreen() {
             },
             confirmButton = {
                 TextButton(onClick = {
-                    // In production, reset the persisted reading progress
+                    viewModel.resetReadingProgress()
                     showResetDialog = false
                 }) {
                     Text(stringResource(R.string.setting_reset), color = MaterialTheme.colorScheme.error)
@@ -415,6 +536,9 @@ private fun ContentToggleRow(
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
+            modifier = Modifier.semantics {
+                stateDescription = if (checked) "Enabled" else "Disabled"
+            },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
                 checkedTrackColor = MaterialTheme.colorScheme.primary,
@@ -432,7 +556,8 @@ private fun SettingsSection(title: String, content: @Composable ColumnScope.() -
             title,
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.semantics { heading() }
         )
         Spacer(Modifier.height(8.dp))
         SacredCard(content = content)

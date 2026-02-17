@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dev.gopes.hinducalendar.data.repository.PreferencesRepository
 import dev.gopes.hinducalendar.engine.FestivalRulesEngine
 import dev.gopes.hinducalendar.engine.PanchangService
 import dev.gopes.hinducalendar.engine.SacredTextService
@@ -16,6 +17,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun providePreferencesRepository(@ApplicationContext context: Context): PreferencesRepository {
+        return PreferencesRepository(context)
+    }
 
     @Provides
     @Singleton

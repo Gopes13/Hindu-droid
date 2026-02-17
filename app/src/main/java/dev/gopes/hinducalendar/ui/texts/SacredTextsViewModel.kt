@@ -3,14 +3,13 @@ package dev.gopes.hinducalendar.ui.texts
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.gopes.hinducalendar.data.model.DharmaPath
-import dev.gopes.hinducalendar.data.model.ReadingProgress
 import dev.gopes.hinducalendar.data.model.SacredTextType
-import dev.gopes.hinducalendar.data.model.UserPreferences
+import dev.gopes.hinducalendar.data.repository.PreferencesRepository
 import dev.gopes.hinducalendar.engine.SacredTextService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,14 +20,12 @@ data class SacredTextsUiState(
 
 @HiltViewModel
 class SacredTextsViewModel @Inject constructor(
-    private val sacredTextService: SacredTextService
+    private val sacredTextService: SacredTextService,
+    private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SacredTextsUiState())
     val uiState: StateFlow<SacredTextsUiState> = _uiState
-
-    // Default preferences — in production, load from SharedPreferences / DataStore
-    private val preferences = UserPreferences()
 
     init {
         loadTexts()
@@ -36,8 +33,9 @@ class SacredTextsViewModel @Inject constructor(
 
     private fun loadTexts() {
         viewModelScope.launch(Dispatchers.IO) {
-            val path = preferences.dharmaPath
-            val progress = preferences.readingProgress
+            val prefs = preferencesRepository.preferencesFlow.first()
+            val path = prefs.dharmaPath
+            val progress = prefs.readingProgress
             val primaryTextId = path.primaryTextId
 
             val items = path.availableTextIds.mapNotNull { textId ->
