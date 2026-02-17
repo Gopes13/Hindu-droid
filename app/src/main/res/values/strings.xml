@@ -170,4 +170,31 @@
     <string name="notif_channel_name">Daily Briefing</string>
     <string name="notif_channel_description">Morning notification with daily Panchang and sacred text wisdom</string>
     <string name="notif_fallback_body">Open the app for today\'s Panchang and sacred readings.</string>
+
+    <!-- Reader Screen -->
+    <string name="reader_understand">Understand this verse</string>
+    <string name="reader_understanding">Understanding</string>
+    <string name="reader_word_by_word">Word-by-word</string>
+    <string name="reader_doha">Doha</string>
+    <string name="reader_chaupai">Chaupai</string>
+    <string name="reader_closing_doha">Closing Doha</string>
+    <string name="reader_mool_mantar">Mool Mantar</string>
+    <string name="reader_namakam">Namakam</string>
+    <string name="reader_chamakam">Chamakam</string>
+    <string name="reader_key_teaching">Key Teaching</string>
+    <string name="reader_significance">Significance</string>
+    <string name="reader_names_meanings">Names &amp; Meanings</string>
+    <string name="reader_key_question">Key Question</string>
+    <string name="reader_quote">Quote</string>
+    <string name="reader_theme">Theme</string>
+    <string name="reader_salok">Salok</string>
+    <string name="reader_summary">Summary</string>
+    <string name="reader_kavach">Kavach</string>
+    <string name="reader_dhyana_shloka">Dhyana Shloka</string>
+    <string name="reader_namokar_mantra">Namokar Mantra</string>
+    <string name="reader_teachings">Teachings</string>
+    <string name="reader_lesson">Lesson</string>
+    <string name="reader_unable_to_load">Unable to load content</string>
+    <string name="reader_verses_count">%d verses</string>
+    <string name="cd_go_back">Go back</string>
 </resources>

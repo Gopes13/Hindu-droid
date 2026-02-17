@@ -14,16 +14,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.data.model.SacredTextType
 import dev.gopes.hinducalendar.ui.today.TodayPanchangScreen
 import dev.gopes.hinducalendar.ui.calendar.CalendarScreen
 import dev.gopes.hinducalendar.ui.festivals.FestivalListScreen
 import dev.gopes.hinducalendar.ui.settings.SettingsScreen
 import dev.gopes.hinducalendar.ui.texts.SacredTextsScreen
+import dev.gopes.hinducalendar.ui.texts.reader.ChalisaReaderScreen
+import dev.gopes.hinducalendar.ui.texts.reader.GenericReaderScreen
+import dev.gopes.hinducalendar.ui.texts.reader.GitaReaderScreen
+import dev.gopes.hinducalendar.ui.texts.reader.JapjiReaderScreen
 
 sealed class Screen(val route: String, @StringRes val titleRes: Int, val icon: ImageVector) {
     data object Today : Screen("today", R.string.tab_today, Icons.Filled.WbSunny)
@@ -42,8 +49,11 @@ fun NavGraph() {
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentEntry?.destination?.route
 
+    val isMainScreen = screens.any { it.route == currentRoute }
+
     Scaffold(
         bottomBar = {
+            if (!isMainScreen) return@Scaffold
             NavigationBar(
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onSurface
@@ -79,10 +89,33 @@ fun NavGraph() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Today.route) { TodayPanchangScreen() }
-            composable(Screen.Texts.route) { SacredTextsScreen() }
+            composable(Screen.Texts.route) {
+                SacredTextsScreen(
+                    onTextClick = { textType ->
+                        navController.navigate("reader/${textType.name}")
+                    }
+                )
+            }
             composable(Screen.Calendar.route) { CalendarScreen() }
             composable(Screen.Festivals.route) { FestivalListScreen() }
             composable(Screen.Settings.route) { SettingsScreen() }
+
+            composable(
+                route = "reader/{textType}",
+                arguments = listOf(navArgument("textType") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val textTypeName = backStackEntry.arguments?.getString("textType")
+                val textType = textTypeName?.let { name ->
+                    SacredTextType.entries.find { it.name == name }
+                }
+                val onBack: () -> Unit = { navController.popBackStack() }
+                when (textType) {
+                    SacredTextType.GITA -> GitaReaderScreen(onBack = onBack)
+                    SacredTextType.HANUMAN_CHALISA -> ChalisaReaderScreen(onBack = onBack)
+                    SacredTextType.JAPJI_SAHIB -> JapjiReaderScreen(onBack = onBack)
+                    else -> GenericReaderScreen(onBack = onBack)
+                }
+            }
         }
     }
 }

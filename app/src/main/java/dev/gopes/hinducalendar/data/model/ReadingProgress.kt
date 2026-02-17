@@ -36,6 +36,27 @@ data class ReadingProgress(
         SacredTextType.TATTVARTHA_SUTRA -> tattvarthaSutraSutra
         SacredTextType.JAIN_PRAYERS -> jainTeachingEpisode
     }
+
+    fun withPosition(textType: SacredTextType, position: Int): ReadingProgress = when (textType) {
+        SacredTextType.GITA -> copy(gitaVerse = position)
+        SacredTextType.HANUMAN_CHALISA -> copy(chalisaVerse = position)
+        SacredTextType.JAPJI_SAHIB -> copy(japjiPauri = position)
+        SacredTextType.BHAGAVATA -> copy(bhagavataEpisode = position)
+        SacredTextType.VISHNU_SAHASRANAMA -> copy(vishnuSahasranamaShloka = position)
+        SacredTextType.SHIVA_PURANA -> copy(shivaPuranaEpisode = position)
+        SacredTextType.RUDRAM -> copy(rudramAnuvaka = position)
+        SacredTextType.DEVI_MAHATMYA -> copy(deviMahatmyaChapter = position)
+        SacredTextType.SOUNDARYA_LAHARI -> copy(soundaryaLahariVerse = position)
+        SacredTextType.SHIKSHAPATRI -> copy(shikshapatriShloka = position)
+        SacredTextType.VACHANAMRUT -> copy(vachanamrutDiscourse = position)
+        SacredTextType.SUKHMANI -> copy(sukhmaniAshtpadi = position)
+        SacredTextType.GURBANI -> copy(gurbaniDay = position)
+        SacredTextType.TATTVARTHA_SUTRA -> copy(tattvarthaSutraSutra = position)
+        SacredTextType.JAIN_PRAYERS -> copy(jainTeachingEpisode = position)
+    }
+
+    fun withGitaProgress(chapter: Int, verse: Int): ReadingProgress =
+        copy(gitaChapter = chapter, gitaVerse = verse)
 }
 
 data class ContentPreferences(

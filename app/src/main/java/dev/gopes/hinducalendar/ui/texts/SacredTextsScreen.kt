@@ -24,7 +24,10 @@ import dev.gopes.hinducalendar.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SacredTextsScreen(viewModel: SacredTextsViewModel = hiltViewModel()) {
+fun SacredTextsScreen(
+    onTextClick: (SacredTextType) -> Unit = {},
+    viewModel: SacredTextsViewModel = hiltViewModel()
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
@@ -85,7 +88,7 @@ fun SacredTextsScreen(viewModel: SacredTextsViewModel = hiltViewModel()) {
                 }
 
                 items(uiState.availableTexts) { textItem ->
-                    SacredTextCard(textItem)
+                    SacredTextCard(textItem, onTextClick)
                 }
             }
         }
@@ -93,9 +96,9 @@ fun SacredTextsScreen(viewModel: SacredTextsViewModel = hiltViewModel()) {
 }
 
 @Composable
-private fun SacredTextCard(item: SacredTextItem) {
+private fun SacredTextCard(item: SacredTextItem, onTextClick: (SacredTextType) -> Unit) {
     SacredCard(
-        modifier = Modifier.clickable { /* Navigate to detail view in future */ },
+        modifier = Modifier.clickable { onTextClick(item.textType) },
         isHighlighted = item.isPrimary
     ) {
         Row(
