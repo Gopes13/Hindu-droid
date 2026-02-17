@@ -15,7 +15,8 @@ import javax.inject.Inject
 
 data class SacredTextsUiState(
     val dharmaPathName: String = "General Hindu",
-    val availableTexts: List<SacredTextItem> = emptyList()
+    val availableTexts: List<SacredTextItem> = emptyList(),
+    val bookmarkCount: Int = 0
 )
 
 @HiltViewModel
@@ -54,7 +55,8 @@ class SacredTextsViewModel @Inject constructor(
 
             _uiState.value = SacredTextsUiState(
                 dharmaPathName = path.displayName,
-                availableTexts = items
+                availableTexts = items,
+                bookmarkCount = prefs.bookmarks.bookmarks.size
             )
         }
     }

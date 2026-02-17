@@ -201,4 +201,17 @@
     <string name="focus_verse_counter">Verse %1$d of %2$d</string>
     <string name="reader_verses_count">%d verses</string>
     <string name="cd_go_back">Go back</string>
+
+    <!-- Bookmarks -->
+    <string name="bookmarks_title">Bookmarks</string>
+    <string name="bookmarks_empty">No bookmarks yet</string>
+    <string name="bookmarks_empty_hint">Tap the heart icon on any verse to save it here</string>
+    <string name="bookmarks_edit">Edit</string>
+    <string name="bookmarks_delete">Delete</string>
+    <string name="bookmarks_delete_title">Remove Bookmark?</string>
+    <string name="bookmarks_delete_body">This bookmark and any notes will be removed.</string>
+    <string name="bookmarks_reflection">Reflection</string>
+    <string name="bookmarks_note_hint">Your notes</string>
+    <string name="bookmarks_note_placeholder">Write your thoughts, reflections, or insights…</string>
+    <string name="bookmarks_saved_count">%d verses saved</string>
 </resources>

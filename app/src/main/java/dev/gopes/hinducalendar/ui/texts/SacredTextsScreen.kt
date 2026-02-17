@@ -26,6 +26,7 @@ import dev.gopes.hinducalendar.ui.theme.*
 @Composable
 fun SacredTextsScreen(
     onTextClick: (SacredTextType) -> Unit = {},
+    onBookmarksClick: () -> Unit = {},
     viewModel: SacredTextsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -72,6 +73,44 @@ fun SacredTextsScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
+                if (uiState.bookmarkCount > 0) {
+                    item {
+                        SacredCard(
+                            modifier = Modifier.clickable { onBookmarksClick() }
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Filled.Favorite,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(32.dp),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                                Spacer(Modifier.width(16.dp))
+                                Column(Modifier.weight(1f)) {
+                                    Text(
+                                        stringResource(R.string.bookmarks_title),
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Text(
+                                        stringResource(R.string.bookmarks_saved_count, uiState.bookmarkCount),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Icon(
+                                    Icons.Filled.ChevronRight,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
+
                 item {
                     Text(
                         stringResource(R.string.your_path_texts, uiState.dharmaPathName),

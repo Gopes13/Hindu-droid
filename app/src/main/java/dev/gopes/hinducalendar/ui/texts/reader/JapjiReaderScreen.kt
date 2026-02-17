@@ -115,11 +115,16 @@ fun JapjiReaderScreen(
                 Spacer(Modifier.height(4.dp))
             }
             items(japji.pauris) { pauri ->
+                val ref = "${stringResource(R.string.text_pauri)} ${pauri.pauri}"
                 VerseCard(
-                    badge = "${stringResource(R.string.text_pauri)} ${pauri.pauri}",
+                    badge = ref,
                     originalText = pauri.punjabi,
                     transliteration = pauri.transliteration,
-                    translation = pauri.translation(lang)
+                    translation = pauri.translation(lang),
+                    isBookmarked = viewModel.isBookmarked(ref),
+                    onBookmarkToggle = {
+                        viewModel.toggleBookmark(ref, pauri.punjabi, pauri.translation(lang))
+                    }
                 )
             }
         }

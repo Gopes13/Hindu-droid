@@ -83,12 +83,17 @@ fun ChalisaReaderScreen(
                     )
                 }
                 items(chalisa.dohas) { verse ->
+                    val ref = "${stringResource(R.string.reader_doha)} ${verse.verse}"
                     VerseCard(
-                        badge = "${stringResource(R.string.reader_doha)} ${verse.verse}",
+                        badge = ref,
                         originalText = verse.sanskrit,
                         transliteration = verse.transliteration,
                         translation = verse.translation(lang),
-                        isHighlighted = true
+                        isHighlighted = true,
+                        isBookmarked = viewModel.isBookmarked(ref),
+                        onBookmarkToggle = {
+                            viewModel.toggleBookmark(ref, verse.sanskrit, verse.translation(lang))
+                        }
                     )
                 }
             }
@@ -105,11 +110,16 @@ fun ChalisaReaderScreen(
                     )
                 }
                 items(chalisa.chaupais) { verse ->
+                    val ref = "${stringResource(R.string.reader_chaupai)} ${verse.verse}"
                     VerseCard(
-                        badge = "${stringResource(R.string.reader_chaupai)} ${verse.verse}",
+                        badge = ref,
                         originalText = verse.sanskrit,
                         transliteration = verse.transliteration,
-                        translation = verse.translation(lang)
+                        translation = verse.translation(lang),
+                        isBookmarked = viewModel.isBookmarked(ref),
+                        onBookmarkToggle = {
+                            viewModel.toggleBookmark(ref, verse.sanskrit, verse.translation(lang))
+                        }
                     )
                 }
             }
@@ -126,12 +136,17 @@ fun ChalisaReaderScreen(
                     )
                 }
                 item {
+                    val ref = stringResource(R.string.reader_closing_doha)
                     VerseCard(
-                        badge = stringResource(R.string.reader_closing_doha),
+                        badge = ref,
                         originalText = closing.sanskrit,
                         transliteration = closing.transliteration,
                         translation = closing.translation(lang),
-                        isHighlighted = true
+                        isHighlighted = true,
+                        isBookmarked = viewModel.isBookmarked(ref),
+                        onBookmarkToggle = {
+                            viewModel.toggleBookmark(ref, closing.sanskrit, closing.translation(lang))
+                        }
                     )
                 }
             }

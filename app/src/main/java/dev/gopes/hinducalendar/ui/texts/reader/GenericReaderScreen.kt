@@ -83,23 +83,23 @@ fun GenericReaderScreen(
             viewModel.episodeData != null ->
                 EpisodeContent(viewModel.episodeData!!, lang, Modifier.padding(padding))
             viewModel.shlokaData != null ->
-                ShlokaContent(viewModel.shlokaData!!, lang, Modifier.padding(padding))
+                ShlokaContent(viewModel.shlokaData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
             viewModel.verseData != null ->
-                NumberedVerseContent(viewModel.verseData!!, lang, Modifier.padding(padding))
+                NumberedVerseContent(viewModel.verseData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
             viewModel.chapterData != null ->
                 ChapterContent(viewModel.chapterData!!, lang, Modifier.padding(padding))
             viewModel.rudramData != null ->
-                RudramContent(viewModel.rudramData!!, lang, Modifier.padding(padding))
+                RudramContent(viewModel.rudramData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
             viewModel.gurbaniData != null ->
                 GurbaniContent(viewModel.gurbaniData!!, lang, Modifier.padding(padding))
             viewModel.sukhmaniData != null ->
-                SukhmaniContent(viewModel.sukhmaniData!!, lang, Modifier.padding(padding))
+                SukhmaniContent(viewModel.sukhmaniData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
             viewModel.sutraData != null ->
-                SutraContent(viewModel.sutraData!!, lang, Modifier.padding(padding))
+                SutraContent(viewModel.sutraData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
             viewModel.discourseData != null ->
                 DiscourseContent(viewModel.discourseData!!, lang, Modifier.padding(padding))
             viewModel.jainPrayersData != null ->
-                JainContent(viewModel.jainPrayersData!!, lang, Modifier.padding(padding))
+                JainContent(viewModel.jainPrayersData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
             else ->
                 Box(Modifier.fillMaxSize().padding(padding), Alignment.Center) {
                     Text(stringResource(R.string.reader_unable_to_load))
@@ -191,7 +191,7 @@ private fun EpisodeContent(data: EpisodeTextData, lang: AppLanguage, modifier: M
 // ── Shloka-Based (Vishnu Sahasranama, Shikshapatri) ─────────────────────────
 
 @Composable
-private fun ShlokaContent(data: ShlokaTextData, lang: AppLanguage, modifier: Modifier) {
+private fun ShlokaContent(data: ShlokaTextData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -225,12 +225,15 @@ private fun ShlokaContent(data: ShlokaTextData, lang: AppLanguage, modifier: Mod
         items(data.shlokas) { shloka ->
             val commentary = shloka.commentary(lang).ifEmpty { null }
                 ?: shloka.explanation(lang).ifEmpty { null }
+            val ref = "${stringResource(R.string.text_shloka)} ${shloka.shloka}"
             VerseCard(
-                badge = "${stringResource(R.string.text_shloka)} ${shloka.shloka}",
+                badge = ref,
                 originalText = shloka.sanskrit,
                 transliteration = shloka.transliteration,
                 translation = shloka.translation(lang),
-                explanation = commentary
+                explanation = commentary,
+                isBookmarked = isBookmarked(ref),
+                onBookmarkToggle = { onToggleBookmark(ref, shloka.sanskrit, shloka.translation(lang)) }
             )
 
             // Names (for Vishnu Sahasranama)
@@ -268,7 +271,7 @@ private fun ShlokaContent(data: ShlokaTextData, lang: AppLanguage, modifier: Mod
 // ── Verse-Based (Soundarya Lahari) ──────────────────────────────────────────
 
 @Composable
-private fun NumberedVerseContent(data: VerseTextData, lang: AppLanguage, modifier: Modifier) {
+private fun NumberedVerseContent(data: VerseTextData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -276,12 +279,15 @@ private fun NumberedVerseContent(data: VerseTextData, lang: AppLanguage, modifie
     ) {
         items(data.verses) { verse ->
             val theme = verse.theme(lang).ifEmpty { null }
+            val ref = "${stringResource(R.string.text_verse)} ${verse.verse}"
             VerseCard(
-                badge = "${stringResource(R.string.text_verse)} ${verse.verse}",
+                badge = ref,
                 originalText = verse.sanskrit,
                 transliteration = verse.transliteration,
                 translation = verse.translation(lang),
-                explanation = theme
+                explanation = theme,
+                isBookmarked = isBookmarked(ref),
+                onBookmarkToggle = { onToggleBookmark(ref, verse.sanskrit, verse.translation(lang)) }
             )
         }
     }
@@ -371,7 +377,7 @@ private fun ChapterContent(data: ChapterTextData, lang: AppLanguage, modifier: M
 // ── Rudram (Namakam + Chamakam) ─────────────────────────────────────────────
 
 @Composable
-private fun RudramContent(data: RudramData, lang: AppLanguage, modifier: Modifier) {
+private fun RudramContent(data: RudramData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOfNotNull(
         data.namakam?.let { stringResource(R.string.reader_namakam) to it },
@@ -400,12 +406,15 @@ private fun RudramContent(data: RudramData, lang: AppLanguage, modifier: Modifie
             section?.anuvakas?.let { anuvakas ->
                 items(anuvakas) { anuvaka ->
                     val theme = anuvaka.theme(lang).ifEmpty { null }
+                    val ref = "${stringResource(R.string.text_shloka)} ${anuvaka.anuvaka}"
                     VerseCard(
-                        badge = "${stringResource(R.string.text_shloka)} ${anuvaka.anuvaka}",
+                        badge = ref,
                         originalText = anuvaka.sanskrit,
                         transliteration = anuvaka.transliteration,
                         translation = anuvaka.translation(lang),
-                        explanation = theme
+                        explanation = theme,
+                        isBookmarked = isBookmarked(ref),
+                        onBookmarkToggle = { onToggleBookmark(ref, anuvaka.sanskrit, anuvaka.translation(lang)) }
                     )
                 }
             }
@@ -485,7 +494,7 @@ private fun GurbaniContent(data: GurbaniData, lang: AppLanguage, modifier: Modif
 // ── Sukhmani Sahib (Ashtpadis) ──────────────────────────────────────────────
 
 @Composable
-private fun SukhmaniContent(data: SukhmaniData, lang: AppLanguage, modifier: Modifier) {
+private fun SukhmaniContent(data: SukhmaniData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -535,11 +544,14 @@ private fun SukhmaniContent(data: SukhmaniData, lang: AppLanguage, modifier: Mod
             // Stanzas
             section.stanzas.forEach { stanza ->
                 Spacer(Modifier.height(8.dp))
+                val ref = "${section.ashtpadi}.${stanza.stanza}"
                 VerseCard(
-                    badge = "Stanza ${stanza.stanza}",
+                    badge = ref,
                     originalText = stanza.punjabi,
                     transliteration = stanza.transliteration,
-                    translation = stanza.translation(lang)
+                    translation = stanza.translation(lang),
+                    isBookmarked = isBookmarked(ref),
+                    onBookmarkToggle = { onToggleBookmark(ref, stanza.punjabi, stanza.translation(lang)) }
                 )
             }
         }
@@ -549,7 +561,7 @@ private fun SukhmaniContent(data: SukhmaniData, lang: AppLanguage, modifier: Mod
 // ── Tattvartha Sutra (Chapter-organized Sutras) ─────────────────────────────
 
 @Composable
-private fun SutraContent(data: SutraTextData, lang: AppLanguage, modifier: Modifier) {
+private fun SutraContent(data: SutraTextData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
     var selectedChapter by remember { mutableIntStateOf(0) }
 
     Column(modifier.fillMaxSize()) {
@@ -605,12 +617,15 @@ private fun SutraContent(data: SutraTextData, lang: AppLanguage, modifier: Modif
             data.chapters.getOrNull(selectedChapter)?.sutras?.let { sutras ->
                 items(sutras) { sutra ->
                     val ch = data.chapters[selectedChapter]
+                    val ref = "${ch.chapter}.${sutra.sutra}"
                     VerseCard(
-                        badge = "${ch.chapter}.${sutra.sutra}",
+                        badge = ref,
                         originalText = sutra.sanskrit,
                         transliteration = sutra.transliteration,
                         translation = sutra.translation(lang),
-                        explanation = sutra.commentary(lang).ifEmpty { null }
+                        explanation = sutra.commentary(lang).ifEmpty { null },
+                        isBookmarked = isBookmarked(ref),
+                        onBookmarkToggle = { onToggleBookmark(ref, sutra.sanskrit, sutra.translation(lang)) }
                     )
                 }
             }
@@ -705,7 +720,7 @@ private fun DiscourseContent(data: DiscourseTextData, lang: AppLanguage, modifie
 // ── Jain (Namokar Mantra + Mahavira Teachings) ──────────────────────────────
 
 @Composable
-private fun JainContent(data: JainPrayersData, lang: AppLanguage, modifier: Modifier) {
+private fun JainContent(data: JainPrayersData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -744,12 +759,15 @@ private fun JainContent(data: JainPrayersData, lang: AppLanguage, modifier: Modi
             // Line-by-line breakdown
             if (nm.lineByLine.isNotEmpty()) {
                 items(nm.lineByLine) { line ->
+                    val ref = "Line ${line.line}"
                     VerseCard(
-                        badge = "Line ${line.line}",
+                        badge = ref,
                         originalText = line.sanskrit,
                         transliteration = line.transliteration,
                         translation = line.translation(lang),
-                        explanation = line.significance(lang).ifEmpty { null }
+                        explanation = line.significance(lang).ifEmpty { null },
+                        isBookmarked = isBookmarked(ref),
+                        onBookmarkToggle = { onToggleBookmark(ref, line.sanskrit, line.translation(lang)) }
                     )
                 }
             }

@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gopes.hinducalendar.data.model.AppLanguage
+import dev.gopes.hinducalendar.data.model.BookmarkCollection
 import dev.gopes.hinducalendar.data.model.SacredTextType
+import dev.gopes.hinducalendar.data.model.VerseBookmark
 import dev.gopes.hinducalendar.data.repository.PreferencesRepository
 import dev.gopes.hinducalendar.engine.*
 import kotlinx.coroutines.Dispatchers
@@ -79,6 +81,10 @@ class ReaderViewModel @Inject constructor(
     var jainPrayersData by mutableStateOf<JainPrayersData?>(null)
         private set
 
+    // Bookmarks
+    var bookmarks by mutableStateOf(BookmarkCollection())
+        private set
+
     init {
         loadData()
     }
@@ -88,6 +94,7 @@ class ReaderViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val prefs = preferencesRepository.preferencesFlow.first()
             language = prefs.language
+            bookmarks = prefs.bookmarks
 
             when (tt) {
                 SacredTextType.GITA -> {
@@ -282,6 +289,34 @@ class ReaderViewModel @Inject constructor(
             }
             else -> emptyList()
         }
+    }
+
+    fun toggleBookmark(reference: String, verseText: String, translation: String) {
+        val tt = textType ?: return
+        viewModelScope.launch {
+            preferencesRepository.update { prefs ->
+                val existing = prefs.bookmarks.findBookmark(tt, reference)
+                val updated = if (existing != null) {
+                    prefs.bookmarks.remove(existing.id)
+                } else {
+                    prefs.bookmarks.add(
+                        VerseBookmark(
+                            textType = tt,
+                            verseReference = reference,
+                            verseText = verseText,
+                            translation = translation
+                        )
+                    )
+                }
+                prefs.copy(bookmarks = updated)
+            }
+            bookmarks = preferencesRepository.preferencesFlow.first().bookmarks
+        }
+    }
+
+    fun isBookmarked(reference: String): Boolean {
+        val tt = textType ?: return false
+        return bookmarks.isBookmarked(tt, reference)
     }
 
     fun saveProgress(position: Int) {

@@ -27,6 +27,7 @@ import dev.gopes.hinducalendar.ui.calendar.CalendarScreen
 import dev.gopes.hinducalendar.ui.festivals.FestivalListScreen
 import dev.gopes.hinducalendar.ui.settings.SettingsScreen
 import dev.gopes.hinducalendar.ui.texts.SacredTextsScreen
+import dev.gopes.hinducalendar.ui.texts.bookmarks.BookmarksScreen
 import dev.gopes.hinducalendar.ui.texts.reader.ChalisaReaderScreen
 import dev.gopes.hinducalendar.ui.texts.reader.GenericReaderScreen
 import dev.gopes.hinducalendar.ui.texts.reader.GitaReaderScreen
@@ -93,12 +94,17 @@ fun NavGraph() {
                 SacredTextsScreen(
                     onTextClick = { textType ->
                         navController.navigate("reader/${textType.name}")
-                    }
+                    },
+                    onBookmarksClick = { navController.navigate("bookmarks") }
                 )
             }
             composable(Screen.Calendar.route) { CalendarScreen() }
             composable(Screen.Festivals.route) { FestivalListScreen() }
             composable(Screen.Settings.route) { SettingsScreen() }
+
+            composable("bookmarks") {
+                BookmarksScreen(onBack = { navController.popBackStack() })
+            }
 
             composable(
                 route = "reader/{textType}",

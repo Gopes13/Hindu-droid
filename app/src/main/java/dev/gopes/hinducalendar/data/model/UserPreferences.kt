@@ -11,7 +11,8 @@ data class UserPreferences(
     val dharmaPath: DharmaPath = DharmaPath.GENERAL,
     val contentPreferences: ContentPreferences = ContentPreferences(),
     val notificationTime: NotificationTime = NotificationTime(),
-    val readingProgress: ReadingProgress = ReadingProgress()
+    val readingProgress: ReadingProgress = ReadingProgress(),
+    val bookmarks: BookmarkCollection = BookmarkCollection()
 )
 
 enum class CalendarSyncOption(val displayName: String) {

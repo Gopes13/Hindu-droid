@@ -148,11 +148,16 @@ fun GitaReaderScreen(
             ) {
                 chapter?.let { ch ->
                     items(ch.verses) { verse ->
+                        val ref = "${ch.chapter}.${verse.verse}"
                         VerseCard(
-                            badge = "${ch.chapter}.${verse.verse}",
+                            badge = ref,
                             originalText = verse.sanskrit,
                             transliteration = verse.transliteration,
-                            translation = verse.translation(lang)
+                            translation = verse.translation(lang),
+                            isBookmarked = viewModel.isBookmarked(ref),
+                            onBookmarkToggle = {
+                                viewModel.toggleBookmark(ref, verse.sanskrit, verse.translation(lang))
+                            }
                         )
                     }
                 }
