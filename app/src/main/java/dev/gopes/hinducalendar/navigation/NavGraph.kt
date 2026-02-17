@@ -24,6 +24,7 @@ import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.SacredTextType
 import dev.gopes.hinducalendar.ui.today.TodayPanchangScreen
 import dev.gopes.hinducalendar.ui.calendar.CalendarScreen
+import dev.gopes.hinducalendar.ui.festivals.FestivalDetailScreen
 import dev.gopes.hinducalendar.ui.festivals.FestivalListScreen
 import dev.gopes.hinducalendar.ui.settings.SettingsScreen
 import dev.gopes.hinducalendar.ui.texts.SacredTextsScreen
@@ -102,7 +103,13 @@ fun NavGraph() {
                 )
             }
             composable(Screen.Calendar.route) { CalendarScreen() }
-            composable(Screen.Festivals.route) { FestivalListScreen() }
+            composable(Screen.Festivals.route) {
+                FestivalListScreen(
+                    onFestivalClick = { festivalId ->
+                        navController.navigate("festival/$festivalId")
+                    }
+                )
+            }
             composable(Screen.Settings.route) {
                 SettingsScreen(onSadhanaClick = { navController.navigate("sadhana") })
             }
@@ -113,6 +120,17 @@ fun NavGraph() {
 
             composable("sadhana") {
                 SadhanaJourneyScreen(onBack = { navController.popBackStack() })
+            }
+
+            composable(
+                route = "festival/{festivalId}",
+                arguments = listOf(navArgument("festivalId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val festivalId = backStackEntry.arguments?.getString("festivalId") ?: ""
+                FestivalDetailScreen(
+                    festivalId = festivalId,
+                    onBack = { navController.popBackStack() }
+                )
             }
 
             composable(

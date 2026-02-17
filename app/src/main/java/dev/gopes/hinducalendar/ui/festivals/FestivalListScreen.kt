@@ -17,17 +17,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.FestivalCategory
 import dev.gopes.hinducalendar.data.model.FestivalOccurrence
-import dev.gopes.hinducalendar.data.model.PanchangDay
 import dev.gopes.hinducalendar.ui.components.*
-import dev.gopes.hinducalendar.ui.theme.*
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FestivalListScreen(viewModel: FestivalListViewModel = hiltViewModel()) {
+fun FestivalListScreen(
+    onFestivalClick: (String) -> Unit = {},
+    viewModel: FestivalListViewModel = hiltViewModel()
+) {
     val festivals by viewModel.festivals.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-    var selectedFestival by remember { mutableStateOf<FestivalOccurrence?>(null) }
 
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.festivals_upcoming)) }) }
@@ -52,18 +52,11 @@ fun FestivalListScreen(viewModel: FestivalListViewModel = hiltViewModel()) {
                 items(festivals, key = { it.first.id }) { (occurrence, _) ->
                     FestivalRow(
                         occurrence = occurrence,
-                        onClick = { selectedFestival = occurrence }
+                        onClick = { onFestivalClick(occurrence.festival.id) }
                     )
                 }
             }
         }
-    }
-
-    selectedFestival?.let { occurrence ->
-        FestivalDetailDialog(
-            festival = occurrence.festival,
-            onDismiss = { selectedFestival = null }
-        )
     }
 }
 
@@ -126,46 +119,4 @@ private fun FestivalRow(occurrence: FestivalOccurrence, onClick: () -> Unit) {
             }
         }
     }
-}
-
-@Composable
-private fun FestivalDetailDialog(festival: dev.gopes.hinducalendar.data.model.Festival, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_close)) }
-        },
-        title = {
-            Column {
-                Text(festival.displayName, fontWeight = FontWeight.Bold)
-                festival.names["hi"]?.let {
-                    Text(
-                        it,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                }
-            }
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(festival.description["en"] ?: "", style = MaterialTheme.typography.bodyMedium)
-                festival.description["hi"]?.let {
-                    Text(
-                        it,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                AssistChip(
-                    onClick = {},
-                    label = { Text(festival.category.displayName) },
-                    colors = AssistChipDefaults.assistChipColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        labelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                )
-            }
-        }
-    )
 }

@@ -145,7 +145,7 @@ private fun HinduDateHeader(panchang: PanchangDay) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                panchang.hinduDate.fullDisplayString,
+                "${panchang.hinduDate.displayString}, ${panchang.hinduDate.yearDisplayForTradition(panchang.tradition)}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface

@@ -26,6 +26,9 @@ class FestivalListViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _language = MutableStateFlow(AppLanguage.ENGLISH)
+    val language: StateFlow<AppLanguage> = _language
+
     init {
         loadFestivals()
     }
@@ -34,6 +37,7 @@ class FestivalListViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             _isLoading.value = true
             val prefs = preferencesRepository.preferencesFlow.first()
+            _language.value = prefs.language
             val results = mutableListOf<Pair<FestivalOccurrence, PanchangDay>>()
             val today = LocalDate.now()
 

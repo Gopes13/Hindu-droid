@@ -81,7 +81,18 @@ class PanchangService @Inject constructor(
         val hinduMonth = PanchangCalculator.calculateHinduMonth(jdSunriseTT)
         val samvatYear = PanchangCalculator.vikramSamvatYear(year, hinduMonth)
         val shakaYear = PanchangCalculator.shakaYear(year, hinduMonth)
-        val hinduDate = HinduDate(hinduMonth, paksha, tithi, samvatYear, shakaYear)
+        val hinduDate = HinduDate(
+            month = hinduMonth,
+            paksha = paksha,
+            tithi = tithi,
+            samvatYear = samvatYear,
+            shakaYear = shakaYear,
+            bangabdaYear = PanchangCalculator.bangabdaYear(year, hinduMonth),
+            thiruvalluvarYear = PanchangCalculator.thiruvalluvarYear(year),
+            kollavarshamYear = PanchangCalculator.kollavarshamYear(year, hinduMonth),
+            nanakshahiYear = PanchangCalculator.nanakshahiYear(year),
+            virNirvanaSamvatYear = PanchangCalculator.virNirvanaSamvatYear(year)
+        )
 
         // Day periods
         val weekday = date.dayOfWeek.value % 7 + 1 // 1=Sunday

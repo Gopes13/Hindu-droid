@@ -32,6 +32,7 @@ enum class ReminderTiming(val displayName: String) {
 enum class AppLanguage(val displayName: String, val code: String, val nativeScriptName: String) {
     ENGLISH("English", "en", "English"),
     HINDI("Hindi", "hi", "हिन्दी"),
+    HINGLISH("Hinglish", "hl", "Hinglish"),
     GUJARATI("Gujarati", "gu", "ગુજરાતી"),
     MARATHI("Marathi", "mr", "मराठी"),
     TAMIL("Tamil", "ta", "தமிழ்"),
@@ -42,6 +43,36 @@ enum class AppLanguage(val displayName: String, val code: String, val nativeScri
     PUNJABI("Punjabi", "pa", "ਪੰਜਾਬੀ"),
     ODIA("Odia", "or", "ଓଡ଼ିଆ"),
     ASSAMESE("Assamese", "as", "অসমীয়া");
+
+    /** Unicode zero character for native numeral scripts, null for Latin-digit languages. */
+    val nativeZero: Char?
+        get() = when (this) {
+            HINDI, MARATHI -> '\u0966'      // Devanagari ०
+            GUJARATI -> '\u0AE6'            // Gujarati ૦
+            BENGALI, ASSAMESE -> '\u09E6'   // Bengali ০
+            TELUGU -> '\u0C66'              // Telugu ౦
+            KANNADA -> '\u0CE6'             // Kannada ೦
+            PUNJABI -> '\u0A66'             // Gurmukhi ੦
+            ODIA -> '\u0B66'               // Odia ୦
+            MALAYALAM -> '\u0D66'           // Malayalam ൦
+            else -> null                    // English, Hinglish, Tamil use Latin digits
+        }
+
+    /** Convert an integer to native numeral string for this language. */
+    fun localizedNumber(n: Int): String {
+        val zero = nativeZero ?: return n.toString()
+        return n.toString().map { ch ->
+            if (ch in '0'..'9') (zero + (ch - '0')) else ch
+        }.joinToString("")
+    }
+
+    /** Convert all ASCII digits in a string to native numerals. */
+    fun localizedDigits(s: String): String {
+        val zero = nativeZero ?: return s
+        return s.map { ch ->
+            if (ch in '0'..'9') (zero + (ch - '0')) else ch
+        }.joinToString("")
+    }
 }
 
 /** Extension to get a localized value from a language-keyed map. */

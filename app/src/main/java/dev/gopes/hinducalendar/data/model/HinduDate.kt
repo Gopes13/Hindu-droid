@@ -6,7 +6,12 @@ data class HinduDate(
     val tithi: Tithi,
     val samvatYear: Int,
     val shakaYear: Int,
-    val isAdhikMaas: Boolean = false
+    val isAdhikMaas: Boolean = false,
+    val bangabdaYear: Int = 0,
+    val thiruvalluvarYear: Int = 0,
+    val kollavarshamYear: Int = 0,
+    val nanakshahiYear: Int = 0,
+    val virNirvanaSamvatYear: Int = 0
 ) {
     val displayString: String
         get() {
@@ -16,6 +21,15 @@ data class HinduDate(
 
     val fullDisplayString: String
         get() = "$displayString, Vikram Samvat $samvatYear"
+
+    /** Year string appropriate for the given tradition. */
+    fun yearDisplayForTradition(tradition: CalendarTradition): String = when (tradition) {
+        CalendarTradition.PURNIMANT, CalendarTradition.AMANT, CalendarTradition.GUJARATI ->
+            "Vikram Samvat $samvatYear"
+        CalendarTradition.TAMIL -> "Thiruvalluvar $thiruvalluvarYear"
+        CalendarTradition.MALAYALAM -> "Kollavarsham $kollavarshamYear"
+        CalendarTradition.BENGALI -> "Bangabda $bangabdaYear"
+    }
 }
 
 enum class HinduMonth(val number: Int, val displayName: String, val hindiName: String) {

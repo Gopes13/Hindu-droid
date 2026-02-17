@@ -129,6 +129,32 @@ object PanchangCalculator {
         }
     }
 
+    /** Bengali calendar year (Bangabda). New year in Vaishakha. Epoch ~594 CE. */
+    fun bangabdaYear(gregorianYear: Int, hinduMonth: HinduMonth): Int {
+        return when (hinduMonth) {
+            HinduMonth.CHAITRA -> gregorianYear - 594
+            else -> gregorianYear - 593
+        }
+    }
+
+    /** Tamil Thiruvalluvar year. Epoch 31 BCE. */
+    fun thiruvalluvarYear(gregorianYear: Int): Int = gregorianYear + 31
+
+    /** Malayalam Kollavarsham year. Epoch 825 CE. New year in Chingam (Shravana). */
+    fun kollavarshamYear(gregorianYear: Int, hinduMonth: HinduMonth): Int {
+        return when (hinduMonth) {
+            HinduMonth.SHRAVANA, HinduMonth.BHADRAPADA, HinduMonth.ASHWIN,
+            HinduMonth.KARTIK, HinduMonth.MARGASHIRSHA -> gregorianYear - 824
+            else -> gregorianYear - 825
+        }
+    }
+
+    /** Sikh Nanakshahi year. Epoch 1469 CE (birth of Guru Nanak). */
+    fun nanakshahiYear(gregorianYear: Int): Int = gregorianYear - 1469
+
+    /** Jain Vir Nirvana Samvat year. Epoch 527 BCE. */
+    fun virNirvanaSamvatYear(gregorianYear: Int): Int = gregorianYear + 527
+
     // ==================== Helpers ====================
 
     private fun findMoonSunAngle(jdStart: Double, targetAngle: Double): Double {
