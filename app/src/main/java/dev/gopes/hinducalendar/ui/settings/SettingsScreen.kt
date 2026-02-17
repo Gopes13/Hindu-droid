@@ -332,7 +332,7 @@ fun SettingsScreen(
                         }
                     }
                     Spacer(Modifier.height(8.dp))
-                    SacredButton(text = stringResource(R.string.setting_sync_now), onClick = { /* sync */ })
+                    SacredButton(text = stringResource(R.string.setting_sync_now), onClick = { viewModel.syncCalendarNow() })
                 }
             }
 

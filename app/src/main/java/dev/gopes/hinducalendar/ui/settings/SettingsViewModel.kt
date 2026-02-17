@@ -5,15 +5,22 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gopes.hinducalendar.data.model.*
 import dev.gopes.hinducalendar.data.repository.PreferencesRepository
+import dev.gopes.hinducalendar.engine.PanchangService
+import dev.gopes.hinducalendar.service.CalendarSyncService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val calendarSyncService: CalendarSyncService,
+    private val panchangService: PanchangService
 ) : ViewModel() {
 
     val preferences: StateFlow<UserPreferences> = preferencesRepository.preferencesFlow
@@ -78,6 +85,23 @@ class SettingsViewModel @Inject constructor(
     fun resetReadingProgress() {
         viewModelScope.launch {
             preferencesRepository.update { it.copy(readingProgress = ReadingProgress()) }
+        }
+    }
+
+    fun syncCalendarNow() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val prefs = preferencesRepository.preferencesFlow.first()
+            if (!prefs.syncToCalendar) return@launch
+
+            val today = LocalDate.now()
+            val panchangDays = (0 until 90).map { offset ->
+                panchangService.computePanchang(
+                    today.plusDays(offset.toLong()),
+                    prefs.location,
+                    prefs.tradition
+                )
+            }
+            calendarSyncService.syncMonth(panchangDays, prefs.syncOption, prefs.reminderTiming)
         }
     }
 }
