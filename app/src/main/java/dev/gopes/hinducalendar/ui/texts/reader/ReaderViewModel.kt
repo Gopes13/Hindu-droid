@@ -17,6 +17,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class StudyVerse(
+    val reference: String,
+    val originalText: String,
+    val transliteration: String?,
+    val translation: String,
+    val explanation: String?,
+    val names: List<Pair<String, String>>? = null
+)
+
+enum class ReaderMode { NORMAL, STUDY, FOCUS }
+
 @HiltViewModel
 class ReaderViewModel @Inject constructor(
     private val sacredTextService: SacredTextService,
@@ -131,6 +142,145 @@ class ReaderViewModel @Inject constructor(
             preferencesRepository.update { prefs ->
                 prefs.copy(readingProgress = prefs.readingProgress.copy(gitaChapter = chapter))
             }
+        }
+    }
+
+    fun getStudyVerses(): List<StudyVerse> {
+        val lang = language
+        return when {
+            gitaData != null -> {
+                val ch = gitaData!!.chapters.find { it.chapter == selectedChapter }
+                    ?: return emptyList()
+                ch.verses.map { verse ->
+                    StudyVerse(
+                        reference = "${ch.chapter}.${verse.verse}",
+                        originalText = verse.sanskrit,
+                        transliteration = verse.transliteration,
+                        translation = verse.translation(lang),
+                        explanation = null
+                    )
+                }
+            }
+            chalisaData != null -> chalisaData!!.allVerses.map { v ->
+                StudyVerse(
+                    reference = "${(v.type ?: "Verse").replaceFirstChar { c -> c.uppercase() }} ${v.verse}",
+                    originalText = v.sanskrit,
+                    transliteration = v.transliteration,
+                    translation = v.translation(lang),
+                    explanation = null
+                )
+            }
+            japjiData != null -> japjiData!!.pauris.map { p ->
+                StudyVerse(
+                    reference = "Pauri ${p.pauri}",
+                    originalText = p.punjabi,
+                    transliteration = p.transliteration,
+                    translation = p.translation(lang),
+                    explanation = null
+                )
+            }
+            shlokaData != null -> shlokaData!!.shlokas.map { s ->
+                StudyVerse(
+                    reference = "Shloka ${s.shloka}",
+                    originalText = s.sanskrit,
+                    transliteration = s.transliteration,
+                    translation = s.translation(lang),
+                    explanation = s.commentary(lang).ifEmpty { s.explanation(lang).ifEmpty { null } },
+                    names = s.names?.map { it.name to it.meaning(lang) }
+                )
+            }
+            verseData != null -> verseData!!.verses.map { v ->
+                StudyVerse(
+                    reference = "Verse ${v.verse}",
+                    originalText = v.sanskrit,
+                    transliteration = v.transliteration,
+                    translation = v.translation(lang),
+                    explanation = v.theme(lang).ifEmpty { null }
+                )
+            }
+            rudramData != null -> {
+                val section = rudramData!!.namakam ?: rudramData!!.chamakam
+                section?.anuvakas?.map { a ->
+                    StudyVerse(
+                        reference = "Anuvaka ${a.anuvaka}",
+                        originalText = a.sanskrit,
+                        transliteration = a.transliteration,
+                        translation = a.translation(lang),
+                        explanation = a.theme(lang).ifEmpty { null }
+                    )
+                } ?: emptyList()
+            }
+            gurbaniData != null -> gurbaniData!!.shabads.map { s ->
+                StudyVerse(
+                    reference = "Shabad ${s.day}",
+                    originalText = s.punjabi,
+                    transliteration = s.transliteration,
+                    translation = s.translation(lang),
+                    explanation = s.theme(lang).ifEmpty { null }
+                )
+            }
+            sukhmaniData != null -> sukhmaniData!!.ashtpadis.flatMap { section ->
+                section.stanzas.map { st ->
+                    StudyVerse(
+                        reference = "${section.ashtpadi}.${st.stanza}",
+                        originalText = st.punjabi,
+                        transliteration = st.transliteration,
+                        translation = st.translation(lang),
+                        explanation = null
+                    )
+                }
+            }
+            sutraData != null -> sutraData!!.chapters.flatMap { ch ->
+                ch.sutras.map { s ->
+                    StudyVerse(
+                        reference = "${ch.chapter}.${s.sutra}",
+                        originalText = s.sanskrit,
+                        transliteration = s.transliteration,
+                        translation = s.translation(lang),
+                        explanation = s.commentary(lang).ifEmpty { null }
+                    )
+                }
+            }
+            episodeData != null -> episodeData!!.episodes.map { e ->
+                StudyVerse(
+                    reference = "Episode ${e.episode}",
+                    originalText = e.relatedVerse?.sanskrit ?: e.title(lang),
+                    transliteration = e.relatedVerse?.transliteration,
+                    translation = e.summary(lang),
+                    explanation = e.keyTeaching(lang).ifEmpty { null }
+                )
+            }
+            discourseData != null -> discourseData!!.discourses.map { d ->
+                StudyVerse(
+                    reference = "Discourse ${d.discourse}",
+                    originalText = d.title(lang),
+                    transliteration = null,
+                    translation = d.summary(lang),
+                    explanation = d.keyTeaching(lang).ifEmpty { null }
+                )
+            }
+            jainPrayersData != null -> {
+                val lines = jainPrayersData!!.namokarMantra?.lineByLine?.map { l ->
+                    StudyVerse(
+                        reference = "Line ${l.line}",
+                        originalText = l.sanskrit,
+                        transliteration = l.transliteration,
+                        translation = l.translation(lang),
+                        explanation = l.significance(lang).ifEmpty { null }
+                    )
+                } ?: emptyList()
+                val teachings = jainPrayersData!!.mahaviraTeachings.map { t ->
+                    StudyVerse(
+                        reference = "Teaching ${t.episode}",
+                        originalText = t.title(lang),
+                        transliteration = null,
+                        translation = t.content(lang),
+                        explanation = t.lesson(lang).ifEmpty { null }
+                    )
+                }
+                lines + teachings
+            }
+            else -> emptyList()
         }
     }
 

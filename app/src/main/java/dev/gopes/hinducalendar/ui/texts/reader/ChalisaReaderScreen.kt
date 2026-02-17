@@ -5,8 +5,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CropFree
+import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,6 +26,17 @@ fun ChalisaReaderScreen(
 ) {
     val chalisa = viewModel.chalisaData
     val lang = viewModel.language
+    val studyVerses = remember(viewModel.isLoading) { viewModel.getStudyVerses() }
+    var readerMode by remember { mutableStateOf(ReaderMode.NORMAL) }
+
+    if (readerMode == ReaderMode.STUDY && studyVerses.isNotEmpty()) {
+        StudyModeScreen(verses = studyVerses, onDismiss = { readerMode = ReaderMode.NORMAL })
+        return
+    }
+    if (readerMode == ReaderMode.FOCUS && studyVerses.isNotEmpty()) {
+        FocusedReadingScreen(verses = studyVerses, onDismiss = { readerMode = ReaderMode.NORMAL })
+        return
+    }
 
     Scaffold(
         topBar = {
@@ -32,6 +45,16 @@ fun ChalisaReaderScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.cd_go_back))
+                    }
+                },
+                actions = {
+                    if (studyVerses.isNotEmpty()) {
+                        IconButton(onClick = { readerMode = ReaderMode.STUDY }) {
+                            Icon(Icons.Filled.School, stringResource(R.string.study_mode))
+                        }
+                        IconButton(onClick = { readerMode = ReaderMode.FOCUS }) {
+                            Icon(Icons.Filled.CropFree, stringResource(R.string.focus_mode))
+                        }
                     }
                 }
             )

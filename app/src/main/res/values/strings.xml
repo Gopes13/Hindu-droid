@@ -195,6 +195,10 @@
     <string name="reader_teachings">Teachings</string>
     <string name="reader_lesson">Lesson</string>
     <string name="reader_unable_to_load">Unable to load content</string>
+    <string name="study_mode">Study Mode</string>
+    <string name="study_meaning">Meaning</string>
+    <string name="focus_mode">Focus Mode</string>
+    <string name="focus_verse_counter">Verse %1$d of %2$d</string>
     <string name="reader_verses_count">%d verses</string>
     <string name="cd_go_back">Go back</string>
 </resources>
