@@ -12,7 +12,9 @@ data class UserPreferences(
     val contentPreferences: ContentPreferences = ContentPreferences(),
     val notificationTime: NotificationTime = NotificationTime(),
     val readingProgress: ReadingProgress = ReadingProgress(),
-    val bookmarks: BookmarkCollection = BookmarkCollection()
+    val bookmarks: BookmarkCollection = BookmarkCollection(),
+    val gamificationData: GamificationData = GamificationData(),
+    val streakData: StreakData = StreakData()
 )
 
 enum class CalendarSyncOption(val displayName: String) {

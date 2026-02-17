@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.gopes.hinducalendar.data.repository.PreferencesRepository
 import dev.gopes.hinducalendar.engine.FestivalRulesEngine
+import dev.gopes.hinducalendar.engine.GamificationService
 import dev.gopes.hinducalendar.engine.PanchangService
 import dev.gopes.hinducalendar.engine.SacredTextService
 import dev.gopes.hinducalendar.service.CalendarSyncService
@@ -52,5 +53,11 @@ object AppModule {
     @Singleton
     fun provideNotificationHelper(@ApplicationContext context: Context): NotificationHelper {
         return NotificationHelper(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGamificationService(): GamificationService {
+        return GamificationService()
     }
 }
