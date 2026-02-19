@@ -1,5 +1,7 @@
 package dev.gopes.hinducalendar.ui.settings
 
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,6 +37,14 @@ class SettingsViewModel @Inject constructor(
     fun updateLanguage(language: AppLanguage) {
         viewModelScope.launch {
             preferencesRepository.update { it.copy(language = language) }
+            // Switch Android locale so string resources update
+            val tag = when (language) {
+                AppLanguage.ENGLISH, AppLanguage.HINGLISH -> "en"
+                else -> language.code
+            }
+            AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(tag)
+            )
         }
     }
 
@@ -85,6 +95,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun updateFestivalDateReference(ref: FestivalDateReference) {
+        viewModelScope.launch {
+            preferencesRepository.update { it.copy(festivalDateReference = ref) }
+        }
+    }
+
     fun updateNotificationTime(hour: Int, minute: Int) {
         viewModelScope.launch {
             preferencesRepository.update {
@@ -118,7 +134,7 @@ class SettingsViewModel @Inject constructor(
                     prefs.tradition
                 )
             }
-            calendarSyncService.syncMonth(panchangDays, prefs.syncOption, prefs.reminderTimings)
+            calendarSyncService.syncMonth(panchangDays, prefs.syncOption, prefs.reminderTimings, prefs.language)
         }
     }
 }

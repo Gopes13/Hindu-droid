@@ -9,8 +9,10 @@ import dev.gopes.hinducalendar.engine.PanchangService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -30,30 +32,47 @@ class FestivalListViewModel @Inject constructor(
     val language: StateFlow<AppLanguage> = _language
 
     init {
-        loadFestivals()
+        observePreferences()
     }
 
-    private fun loadFestivals() {
-        viewModelScope.launch(Dispatchers.Default) {
-            _isLoading.value = true
-            val prefs = preferencesRepository.preferencesFlow.first()
-            _language.value = prefs.language
-            val results = mutableListOf<Pair<FestivalOccurrence, PanchangDay>>()
-            val today = LocalDate.now()
+    private data class PrefsKey(
+        val location: HinduLocation,
+        val tradition: CalendarTradition,
+        val language: AppLanguage,
+        val festivalRef: FestivalDateReference
+    )
 
-            for (dayOffset in 0 until 90) {
-                val date = today.plusDays(dayOffset.toLong())
-                val panchang = panchangService.computePanchang(date, prefs.location, prefs.tradition)
-                for (festival in panchang.festivals) {
-                    if (festival.festival.category == FestivalCategory.MAJOR ||
-                        festival.festival.category == FestivalCategory.MODERATE) {
-                        results.add(festival to panchang)
+    private fun observePreferences() {
+        viewModelScope.launch {
+            preferencesRepository.preferencesFlow
+                .map { PrefsKey(it.location, it.tradition, it.language, it.festivalDateReference) }
+                .distinctUntilChanged()
+                .collect { (location, tradition, language, festivalRef) ->
+                    _isLoading.value = true
+                    _language.value = language
+
+                    val referenceLocation = if (festivalRef == FestivalDateReference.INDIAN_STANDARD)
+                        HinduLocation.DELHI else location
+
+                    val results = withContext(Dispatchers.Default) {
+                        val list = mutableListOf<Pair<FestivalOccurrence, PanchangDay>>()
+                        val today = LocalDate.now()
+                        for (dayOffset in 0 until 90) {
+                            val date = today.plusDays(dayOffset.toLong())
+                            val panchang = panchangService.computePanchang(date, referenceLocation, tradition)
+                            for (festival in panchang.festivals) {
+                                if (festival.festival.category == FestivalCategory.MAJOR ||
+                                    festival.festival.category == FestivalCategory.MODERATE) {
+                                    list.add(festival to panchang)
+                                }
+                            }
+                        }
+                        list
                     }
-                }
-            }
 
-            _festivals.value = results
-            _isLoading.value = false
+                    _festivals.value = results
+                    _isLoading.value = false
+                }
         }
     }
 }

@@ -21,6 +21,7 @@ import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.*
 import dev.gopes.hinducalendar.ui.components.*
 import dev.gopes.hinducalendar.ui.theme.*
+import dev.gopes.hinducalendar.ui.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,11 +35,15 @@ fun SettingsScreen(
     var pathDropdownExpanded by remember { mutableStateOf(false) }
     var languageDropdownExpanded by remember { mutableStateOf(false) }
     var traditionDropdownExpanded by remember { mutableStateOf(false) }
+    var festivalRefDropdownExpanded by remember { mutableStateOf(false) }
     var syncOptionDropdownExpanded by remember { mutableStateOf(false) }
     var wisdomDropdownExpanded by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     var showLocationPicker by remember { mutableStateOf(false) }
     var showResetDialog by remember { mutableStateOf(false) }
+
+    val enabledLabel = stringResource(R.string.state_enabled)
+    val disabledLabel = stringResource(R.string.state_disabled)
 
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.settings_title)) }) }
@@ -63,12 +68,12 @@ fun SettingsScreen(
                     ) {
                         Column(Modifier.weight(1f)) {
                             Text(
-                                prefs.dharmaPath.displayName,
+                                prefs.dharmaPath.localizedName(),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
-                                prefs.dharmaPath.description,
+                                prefs.dharmaPath.localizedDescription(),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -88,11 +93,11 @@ fun SettingsScreen(
                                 text = {
                                     Column {
                                         Text(
-                                            path.displayName,
+                                            path.localizedName(),
                                             fontWeight = if (path == prefs.dharmaPath) FontWeight.Bold else FontWeight.Normal
                                         )
                                         Text(
-                                            path.description,
+                                            path.localizedDescription(),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -170,7 +175,7 @@ fun SettingsScreen(
                 )
                 ContentToggleRow(
                     label = stringResource(R.string.setting_primary_sacred_text),
-                    description = stringResource(R.string.setting_primary_text_desc, prefs.dharmaPath.displayName),
+                    description = stringResource(R.string.setting_primary_text_desc, prefs.dharmaPath.localizedName()),
                     checked = prefs.contentPreferences.primaryText,
                     onCheckedChange = {
                         viewModel.updateContentPreferences(prefs.contentPreferences.copy(primaryText = it))
@@ -206,12 +211,12 @@ fun SettingsScreen(
                     ) {
                         Column(Modifier.weight(1f)) {
                             Text(
-                                prefs.tradition.displayName,
+                                prefs.tradition.localizedName(),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
-                                prefs.tradition.description,
+                                prefs.tradition.localizedDescription(),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -231,11 +236,11 @@ fun SettingsScreen(
                                 text = {
                                     Column {
                                         Text(
-                                            tradition.displayName,
+                                            tradition.localizedName(),
                                             fontWeight = if (tradition == prefs.tradition) FontWeight.Bold else FontWeight.Normal
                                         )
                                         Text(
-                                            tradition.description,
+                                            tradition.localizedDescription(),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -260,7 +265,7 @@ fun SettingsScreen(
                 ) {
                     Column(Modifier.weight(1f)) {
                         Text(
-                            prefs.location.cityName ?: "Unknown",
+                            prefs.location.cityName ?: stringResource(R.string.onboarding_unknown_location),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Medium
                         )
@@ -281,6 +286,56 @@ fun SettingsScreen(
                 }
             }
 
+            // Festival Date Reference
+            SettingsSection("Festival Dates") {
+                Box {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { festivalRefDropdownExpanded = true },
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                prefs.festivalDateReference.displayName,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                "Compute festival dates using IST or your local sunrise",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Icon(
+                            Icons.Filled.ExpandMore,
+                            contentDescription = "Change festival date reference",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = festivalRefDropdownExpanded,
+                        onDismissRequest = { festivalRefDropdownExpanded = false }
+                    ) {
+                        FestivalDateReference.entries.forEach { ref ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        ref.displayName,
+                                        fontWeight = if (ref == prefs.festivalDateReference) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                },
+                                onClick = {
+                                    viewModel.updateFestivalDateReference(ref)
+                                    festivalRefDropdownExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
             // Daily Wisdom Text
             SettingsSection(stringResource(R.string.setting_daily_wisdom_text)) {
                 Box {
@@ -296,7 +351,7 @@ fun SettingsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            prefs.effectiveWisdomText.displayName,
+                            prefs.effectiveWisdomText.localizedName(),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Medium
                         )
@@ -315,7 +370,7 @@ fun SettingsScreen(
                             DropdownMenuItem(
                                 text = {
                                     Text(
-                                        textType.displayName,
+                                        textType.localizedName(),
                                         fontWeight = if (textType == prefs.effectiveWisdomText) FontWeight.Bold else FontWeight.Normal
                                     )
                                 },
@@ -338,7 +393,7 @@ fun SettingsScreen(
                                 DropdownMenuItem(
                                     text = {
                                         Text(
-                                            textType.displayName,
+                                            textType.localizedName(),
                                             fontWeight = if (textType == prefs.effectiveWisdomText) FontWeight.Bold else FontWeight.Normal
                                         )
                                     },
@@ -365,7 +420,7 @@ fun SettingsScreen(
                         checked = prefs.syncToCalendar,
                         onCheckedChange = { viewModel.updateSyncEnabled(it) },
                         modifier = Modifier.semantics {
-                            stateDescription = if (prefs.syncToCalendar) "Enabled" else "Disabled"
+                            stateDescription = if (prefs.syncToCalendar) enabledLabel else disabledLabel
                         },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
@@ -387,7 +442,7 @@ fun SettingsScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                prefs.syncOption.displayName,
+                                prefs.syncOption.localizedName(),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -406,7 +461,7 @@ fun SettingsScreen(
                                 DropdownMenuItem(
                                     text = {
                                         Text(
-                                            option.displayName,
+                                            option.localizedName(),
                                             fontWeight = if (option == prefs.syncOption) FontWeight.Bold else FontWeight.Normal
                                         )
                                     },
@@ -435,7 +490,7 @@ fun SettingsScreen(
                         checked = prefs.notificationsEnabled,
                         onCheckedChange = { viewModel.updateNotificationsEnabled(it) },
                         modifier = Modifier.semantics {
-                            stateDescription = if (prefs.notificationsEnabled) "Enabled" else "Disabled"
+                            stateDescription = if (prefs.notificationsEnabled) enabledLabel else disabledLabel
                         },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
@@ -456,7 +511,7 @@ fun SettingsScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                timing.displayName,
+                                timing.localizedName(),
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.weight(1f)
                             )
@@ -497,7 +552,7 @@ fun SettingsScreen(
                         )
                     }
                     Text(
-                        prefs.notificationTime.displayString,
+                        prefs.language.localizedDigits(prefs.notificationTime.displayString),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary
@@ -568,7 +623,7 @@ fun SettingsScreen(
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
-                                stringResource(R.string.punya_points) + ": ${gamificationViewModel.gamificationData.totalPunyaPoints}",
+                                stringResource(R.string.punya_points) + ": ${prefs.language.localizedNumber(gamificationViewModel.gamificationData.totalPunyaPoints)}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

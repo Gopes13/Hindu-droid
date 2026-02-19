@@ -106,7 +106,9 @@ object AstronomyEngine {
             if (isRise) H = -H
             val gmst = greenwichMeanSiderealTime(jdResult)
             val lst = normalize(gmst + lon)
-            val hourAngle = lst - ra
+            var hourAngle = lst - ra
+            while (hourAngle > 180) hourAngle -= 360
+            while (hourAngle < -180) hourAngle += 360
             jdResult += (H - hourAngle) / 360.0
         }
         return jdResult
@@ -124,11 +126,16 @@ object AstronomyEngine {
 
     fun moonTropicalLongitude(jdTT: Double): Double {
         val T = centuriesFromJ2000(jdTT)
-        val Lp = normalize(218.3164477 + 481267.88123421 * T - 0.0015786 * T * T)
-        val D = normalize(297.8501921 + 445267.1114034 * T - 0.0018819 * T * T)
-        val M = normalize(357.5291092 + 35999.0502909 * T - 0.0001536 * T * T)
-        val Mp = normalize(134.9633964 + 477198.8675055 * T + 0.0087414 * T * T)
-        val F = normalize(93.2720950 + 483202.0175233 * T - 0.0036539 * T * T)
+        val Lp = normalize(218.3164477 + 481267.88123421 * T - 0.0015786 * T * T
+            + T * T * T / 538841.0 - T * T * T * T / 65194000.0)
+        val D = normalize(297.8501921 + 445267.1114034 * T - 0.0018819 * T * T
+            + T * T * T / 545868.0 - T * T * T * T / 113065000.0)
+        val M = normalize(357.5291092 + 35999.0502909 * T - 0.0001536 * T * T
+            + T * T * T / 24490000.0)
+        val Mp = normalize(134.9633964 + 477198.8675055 * T + 0.0087414 * T * T
+            + T * T * T / 69699.0 - T * T * T * T / 14712000.0)
+        val F = normalize(93.2720950 + 483202.0175233 * T - 0.0036539 * T * T
+            - T * T * T / 3526000.0 + T * T * T * T / 863310000.0)
 
         val Drad = toRad(D); val Mrad = toRad(M); val Mprad = toRad(Mp); val Frad = toRad(F)
         val E = 1.0 - 0.002516 * T - 0.0000074 * T * T
@@ -194,7 +201,10 @@ object AstronomyEngine {
             if (isRise) H = -H
             val gmst = greenwichMeanSiderealTime(jdResult)
             val lst = normalize(gmst + lon)
-            jdResult += (H - lst + ra) / 347.8
+            var hourAngle = lst - ra
+            while (hourAngle > 180) hourAngle -= 360
+            while (hourAngle < -180) hourAngle += 360
+            jdResult += (H - hourAngle) / 347.8
         }
 
         val dayStart = jd.toInt() + 0.5 - lon / 360.0 - 0.5

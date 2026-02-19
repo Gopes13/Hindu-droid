@@ -290,7 +290,8 @@ class PanchangCalculatorTest {
     @Test
     fun `calculateHinduMonth returns valid HinduMonth`() {
         val jdTT = jdTTForDate(2025, 4, 15)
-        val month = PanchangCalculator.calculateHinduMonth(jdTT)
+        val result = PanchangCalculator.calculateHinduMonth(jdTT, CalendarTradition.PURNIMANT)
+        val month = result.month
         assertNotNull("Hindu month should not be null", month)
         assertTrue("Month displayName should not be empty", month.displayName.isNotEmpty())
         assertTrue("Month number should be 1-12, was ${month.number}", month.number in 1..12)
@@ -301,7 +302,7 @@ class PanchangCalculatorTest {
         val months = mutableSetOf<HinduMonth>()
         for (m in 1..12) {
             val jdTT = jdTTForDate(2025, m, 15)
-            months.add(PanchangCalculator.calculateHinduMonth(jdTT))
+            months.add(PanchangCalculator.calculateHinduMonth(jdTT, CalendarTradition.PURNIMANT).month)
         }
         assertTrue("Should see multiple Hindu months over a year, saw ${months.size}",
             months.size >= 10)

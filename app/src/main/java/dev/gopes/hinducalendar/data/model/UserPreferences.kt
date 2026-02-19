@@ -1,8 +1,16 @@
 package dev.gopes.hinducalendar.data.model
 
+enum class FestivalDateReference(val displayName: String) {
+    INDIAN_STANDARD("Indian Standard (IST)"),
+    USER_LOCATION("My Location");
+
+    val key: String get() = name.lowercase()
+}
+
 data class UserPreferences(
     val tradition: CalendarTradition = CalendarTradition.PURNIMANT,
     val location: HinduLocation = HinduLocation.DELHI,
+    val festivalDateReference: FestivalDateReference = FestivalDateReference.INDIAN_STANDARD,
     val syncToCalendar: Boolean = true,
     val syncOption: CalendarSyncOption = CalendarSyncOption.FESTIVALS_ONLY,
     val notificationsEnabled: Boolean = true,
@@ -86,7 +94,8 @@ enum class AppLanguage(val displayName: String, val code: String, val nativeScri
     }
 }
 
-/** Extension to get a localized value from a language-keyed map. */
-fun Map<String, String>.localized(language: AppLanguage): String {
+/** Extension to get a localized value from a language-keyed map. Null-safe for Gson interop. */
+fun Map<String, String>?.localized(language: AppLanguage): String {
+    if (this == null) return ""
     return this[language.code] ?: this["en"] ?: ""
 }

@@ -77,8 +77,8 @@ class PanchangService @Inject constructor(
         val karana = PanchangCalculator.calculateKarana(jdSunriseTT)
         val karanaElement = PanchangElement(name = karana.displayName, number = karana.ordinal)
 
-        // Hindu Date
-        val hinduMonth = PanchangCalculator.calculateHinduMonth(jdSunriseTT)
+        // Hindu Date (proper lunar month calculation)
+        val (hinduMonth, isAdhikMaas) = PanchangCalculator.calculateHinduMonth(jdSunriseTT, tradition)
         val samvatYear = PanchangCalculator.vikramSamvatYear(year, hinduMonth)
         val shakaYear = PanchangCalculator.shakaYear(year, hinduMonth)
         val hinduDate = HinduDate(
@@ -87,6 +87,7 @@ class PanchangService @Inject constructor(
             tithi = tithi,
             samvatYear = samvatYear,
             shakaYear = shakaYear,
+            isAdhikMaas = isAdhikMaas,
             bangabdaYear = PanchangCalculator.bangabdaYear(year, hinduMonth),
             thiruvalluvarYear = PanchangCalculator.thiruvalluvarYear(year),
             kollavarshamYear = PanchangCalculator.kollavarshamYear(year, hinduMonth),
@@ -140,6 +141,22 @@ class PanchangService @Inject constructor(
             abhijitMuhurta = abhijit,
             festivals = festivals
         ).also { cache.put(key, it) }
+    }
+
+    /**
+     * Compute festivals for a date using the given reference location.
+     * When [festivalReference] is INDIAN_STANDARD, festivals are computed
+     * from Delhi's perspective so diaspora users see the same dates as India.
+     */
+    fun computeFestivals(
+        date: LocalDate,
+        location: HinduLocation,
+        tradition: CalendarTradition,
+        festivalReference: FestivalDateReference
+    ): List<FestivalOccurrence> {
+        val refLocation = if (festivalReference == FestivalDateReference.INDIAN_STANDARD)
+            HinduLocation.DELHI else location
+        return computePanchang(date, refLocation, tradition).festivals
     }
 
     fun computeMonthlyPanchang(
