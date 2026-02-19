@@ -93,7 +93,10 @@ object AstronomyEngine {
 
     private fun sunRiseSet(jd: Double, lat: Double, lon: Double, isRise: Boolean): Double? {
         val altCorr = -0.8333
-        val jdNoon = jd.toInt() + 0.5 - lon / 360.0
+        // Int(jd) gives the Julian Day Number starting at noon UT.
+        // Adding 1.0 (= 0.5 to midnight UT + 0.5 for transit offset) then
+        // subtracting east-longitude/360 yields local solar noon.
+        val jdNoon = jd.toInt().toDouble() + 1.0 - lon / 360.0
         var jdResult = jdNoon + if (isRise) -0.25 else 0.25
 
         repeat(5) {
@@ -183,7 +186,8 @@ object AstronomyEngine {
 
     private fun moonRiseSet(jd: Double, lat: Double, lon: Double, isRise: Boolean): Double? {
         val altCorr = 0.125
-        val jdNoon = jd.toInt() + 0.5 - lon / 360.0
+        // Same transit formula as sunRiseSet: Int(jd) + 1.0 - lon/360
+        val jdNoon = jd.toInt().toDouble() + 1.0 - lon / 360.0
         var jdResult = jdNoon + if (isRise) -0.25 else 0.25
 
         repeat(10) {
@@ -207,7 +211,7 @@ object AstronomyEngine {
             jdResult += (H - hourAngle) / 347.8
         }
 
-        val dayStart = jd.toInt() + 0.5 - lon / 360.0 - 0.5
+        val dayStart = jd.toInt().toDouble() + 1.0 - lon / 360.0 - 0.5
         if (jdResult < dayStart || jdResult > dayStart + 1.5) return null
         return jdResult
     }

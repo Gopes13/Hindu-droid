@@ -4,7 +4,6 @@ import android.util.LruCache
 import dev.gopes.hinducalendar.data.model.*
 import timber.log.Timber
 import java.time.*
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,7 +32,6 @@ class PanchangService @Inject constructor(
         val key = CacheKey(date, location.latitude, location.longitude, tradition.key)
         cache.get(key)?.let { return it }
 
-        Timber.d("Computing panchang for %s at (%.4f, %.4f)", date, location.latitude, location.longitude)
         val year = date.year
         val jdMidnight = AstronomyEngine.dateToJD(year, date.monthValue, date.dayOfMonth)
         val jdTT = AstronomyEngine.utToTT(jdMidnight, year.toDouble())

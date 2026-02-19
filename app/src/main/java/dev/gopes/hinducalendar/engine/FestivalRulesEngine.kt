@@ -3,7 +3,6 @@ package dev.gopes.hinducalendar.engine
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import com.google.gson.reflect.TypeToken
 import dev.gopes.hinducalendar.data.model.*
 import timber.log.Timber
 import java.time.LocalDate
@@ -37,7 +36,7 @@ class FestivalRulesEngine(private val context: Context) {
         for (festival in festivals) {
             val traditionOk = festival.category == FestivalCategory.MAJOR || tradition.key in festival.traditions
             if (!traditionOk) continue
-            if (matchesFestival(festival, hinduDate, jdTT)) {
+            if (matchesFestival(festival, hinduDate, date, jdTT, tradition)) {
                 results.add(FestivalOccurrence(festival, date))
             }
         }
@@ -45,26 +44,51 @@ class FestivalRulesEngine(private val context: Context) {
         // Add recurring observances
         results.addAll(recurringObservances(hinduDate, date))
 
+        // Deduplicate: suppress generic recurring Ekadashi when a named one matched
+        val hasNamedEkadashi = results.any { it.festival.rule.tithi == 11 && it.festival.category != FestivalCategory.RECURRING }
+        if (hasNamedEkadashi) {
+            results.removeAll { it.festival.id.startsWith("ekadashi_") && it.festival.category == FestivalCategory.RECURRING }
+        }
+
         return results
     }
 
-    private fun matchesFestival(festival: Festival, hinduDate: HinduDate, jdTT: Double): Boolean {
+    private fun matchesFestival(festival: Festival, hinduDate: HinduDate, date: LocalDate, jdTT: Double, tradition: CalendarTradition): Boolean {
         val rule = festival.rule
         return when (rule.type) {
-            "tithi" -> matchesTithiRule(rule, hinduDate)
+            "tithi" -> matchesTithiRule(rule, hinduDate, tradition)
             "solar" -> matchesSolarRule(rule, jdTT)
-            "tithi_offset" -> matchesTithiOffsetRule(rule, hinduDate)
+            "tithi_offset" -> matchesTithiOffsetRule(rule, hinduDate, tradition)
+            "fixed_solar" -> matchesFixedSolarRule(rule, date)
             else -> false
         }
     }
 
-    private fun matchesTithiRule(rule: FestivalRule, hinduDate: HinduDate): Boolean {
+    private fun matchesFixedSolarRule(rule: FestivalRule, date: LocalDate): Boolean {
+        val solarMonth = rule.solarMonth ?: return false
+        val solarDay = rule.solarDay ?: return false
+        return date.monthValue == solarMonth && date.dayOfMonth == solarDay
+    }
+
+    private fun matchesTithiRule(rule: FestivalRule, hinduDate: HinduDate, tradition: CalendarTradition): Boolean {
         val ruleMonth = rule.month ?: return false
         val rulePaksha = rule.paksha ?: return false
         val ruleTithi = rule.tithi ?: return false
 
-        val monthMatches = ruleMonth == hinduDate.month.name.lowercase()
+        var monthMatches = ruleMonth == hinduDate.month.name.lowercase()
                 || ruleMonth == hinduDate.month.displayName.lowercase()
+
+        // Festival rules use Purnimant month naming convention.
+        // In Purnimant, Krishna paksha belongs to the NEXT month vs Amant.
+        // e.g. Diwali is "Kartik Krishna 30" (Purnimant) but "Ashwin Krishna 30" (Amant).
+        // For Amant-based traditions, also check if the next month matches the rule.
+        if (!monthMatches && tradition.monthSystem == MonthSystem.AMANT
+            && (rulePaksha == "krishna" || ruleTithi == 30)) {
+            val nextMonth = hinduDate.month.next()
+            monthMatches = ruleMonth == nextMonth.name.lowercase()
+                    || ruleMonth == nextMonth.displayName.lowercase()
+        }
+
         val pakshaMatches = rulePaksha == hinduDate.paksha.key
         val tithiMatches = when {
             ruleTithi == 15 && hinduDate.paksha == Paksha.SHUKLA -> hinduDate.tithi == Tithi.PURNIMA
@@ -75,21 +99,52 @@ class FestivalRulesEngine(private val context: Context) {
         return monthMatches && pakshaMatches && tithiMatches
     }
 
+    private val solarEventBoundaries = mapOf(
+        "aries_ingress" to 0.0,
+        "taurus_ingress" to 30.0,
+        "gemini_ingress" to 60.0,
+        "cancer_ingress" to 90.0,
+        "leo_ingress" to 120.0,
+        "virgo_ingress" to 150.0,
+        "libra_ingress" to 180.0,
+        "scorpio_ingress" to 210.0,
+        "sagittarius_ingress" to 240.0,
+        "capricorn_ingress" to 270.0,
+        "aquarius_ingress" to 300.0,
+        "pisces_ingress" to 330.0
+    )
+
     private fun matchesSolarRule(rule: FestivalRule, jdTT: Double): Boolean {
-        if (rule.solarEvent != "capricorn_ingress") return false
+        val boundary = solarEventBoundaries[rule.solarEvent] ?: return false
         val sunSidereal = AstronomyEngine.tropicalToSidereal(
             AstronomyEngine.sunTropicalLongitude(jdTT), jdTT
         )
-        return sunSidereal in 270.0..271.0
+        val diff = (sunSidereal - boundary + 360.0) % 360.0
+        return diff in 0.0..1.0
     }
 
-    private fun matchesTithiOffsetRule(rule: FestivalRule, hinduDate: HinduDate): Boolean {
-        if ((rule.daysAfter ?: 0) <= 0) return false
-        // Holi: day after Phalgun Purnima → Krishna Pratipada of the same month
-        if (rule.tithi == 15 && hinduDate.tithi == Tithi.PRATIPADA && hinduDate.paksha == Paksha.KRISHNA) {
-            val ruleMonth = rule.month ?: return false
-            return ruleMonth == hinduDate.month.name.lowercase()
-                    || ruleMonth == hinduDate.month.displayName.lowercase()
+    private fun matchesTithiOffsetRule(rule: FestivalRule, hinduDate: HinduDate, tradition: CalendarTradition): Boolean {
+        val daysAfter = rule.daysAfter ?: return false
+        if (daysAfter <= 0) return false
+        val ruleMonth = rule.month ?: return false
+
+        if (rule.tithi == 15) {
+            // After Purnima: daysAfter=1 → Krishna Pratipada, daysAfter=2 → Krishna Dwitiya, etc.
+            val expectedTithi = Tithi.fromNumber(daysAfter)
+            if (hinduDate.tithi == expectedTithi && hinduDate.paksha == Paksha.KRISHNA) {
+                // The rule's month names the Purnima's month (Purnimant convention).
+                // In Purnimant, Purnima is the LAST day of the month — after it, the
+                // month changes. So the day after X Purnima is in month X+1.
+                // We must check previousMonth to identify which Purnima preceded us.
+                // In Amant, Purnima is mid-month — the following Krishna paksha stays
+                // in the same month, so we check the current month directly.
+                return if (tradition.monthSystem == MonthSystem.PURNIMANT) {
+                    val prevMonth = hinduDate.month.previous()
+                    ruleMonth == prevMonth.name.lowercase() || ruleMonth == prevMonth.displayName.lowercase()
+                } else {
+                    ruleMonth == hinduDate.month.name.lowercase() || ruleMonth == hinduDate.month.displayName.lowercase()
+                }
+            }
         }
         return false
     }
@@ -178,7 +233,17 @@ private data class FestivalJson(
         id = id,
         names = names,
         description = description,
-        rule = FestivalRule(rule.type, rule.month, rule.paksha, rule.tithi, rule.solarEvent, rule.daysAfter, rule.daysBefore),
+        rule = FestivalRule(
+            type = rule.type,
+            month = (rule.month as? String),
+            paksha = rule.paksha,
+            tithi = rule.tithi,
+            solarEvent = rule.solarEvent,
+            daysAfter = rule.daysAfter,
+            daysBefore = rule.daysBefore,
+            solarMonth = (rule.month as? Number)?.toInt(),
+            solarDay = rule.day
+        ),
         traditions = traditions,
         category = when (category) {
             "major" -> FestivalCategory.MAJOR
@@ -197,10 +262,11 @@ private data class FestivalJson(
 
 private data class FestivalRuleJson(
     val type: String,
-    val month: String? = null,
+    val month: Any? = null,     // String for tithi rules, Number for fixed_solar
     val paksha: String? = null,
     val tithi: Int? = null,
     val solarEvent: String? = null,
     val daysAfter: Int? = null,
-    val daysBefore: Int? = null
+    val daysBefore: Int? = null,
+    val day: Int? = null         // used by fixed_solar rules
 )
