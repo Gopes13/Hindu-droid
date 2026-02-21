@@ -52,9 +52,12 @@ data class PanchangElement(
 ) {
     val timeRangeString: String
         get() {
-            if (startTime == null || endTime == null) return ""
             val fmt = DateTimeFormatter.ofPattern("h:mm a")
-            return "${startTime.format(fmt)} – ${endTime.format(fmt)}"
+            return when {
+                startTime != null && endTime != null -> "${startTime.format(fmt)} – ${endTime.format(fmt)}"
+                endTime != null -> "→ ${endTime.format(fmt)}"
+                else -> ""
+            }
         }
 }
 

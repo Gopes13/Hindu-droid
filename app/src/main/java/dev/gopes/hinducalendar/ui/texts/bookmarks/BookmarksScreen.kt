@@ -24,6 +24,7 @@ import dev.gopes.hinducalendar.data.model.BookmarkCollection
 import dev.gopes.hinducalendar.data.model.SacredTextType
 import dev.gopes.hinducalendar.data.model.VerseBookmark
 import dev.gopes.hinducalendar.ui.components.SacredCard
+import dev.gopes.hinducalendar.ui.util.localizedName
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +76,7 @@ fun BookmarksScreen(
                 grouped.forEach { (textType, items) ->
                     item {
                         Text(
-                            textType.displayName,
+                            textType.localizedName(),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary

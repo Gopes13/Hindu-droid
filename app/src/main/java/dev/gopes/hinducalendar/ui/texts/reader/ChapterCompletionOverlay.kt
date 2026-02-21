@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.ui.components.ConfettiOverlay
 import dev.gopes.hinducalendar.ui.theme.DeepSaffron
 import dev.gopes.hinducalendar.ui.theme.DivineGold
@@ -36,7 +37,8 @@ data class ChapterCompletionEvent(
 fun ChapterCompletionOverlay(
     event: ChapterCompletionEvent,
     onContinue: () -> Unit,
-    onReviewChapter: (() -> Unit)? = null
+    onReviewChapter: (() -> Unit)? = null,
+    language: AppLanguage = AppLanguage.ENGLISH
 ) {
     var showConfetti by remember { mutableStateOf(false) }
 
@@ -141,7 +143,7 @@ fun ChapterCompletionOverlay(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
-                            "\u2728 +${event.ppAwarded} PP",
+                            language.localizedDigits(stringResource(R.string.pp_sparkle_format, event.ppAwarded)),
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold,

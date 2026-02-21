@@ -30,18 +30,18 @@ fun ChalisaReaderScreen(
     var readerMode by remember { mutableStateOf(ReaderMode.NORMAL) }
 
     if (readerMode == ReaderMode.STUDY && studyVerses.isNotEmpty()) {
-        StudyModeScreen(verses = studyVerses, onDismiss = { readerMode = ReaderMode.NORMAL })
+        StudyModeScreen(verses = studyVerses, audioPlayerService = viewModel.audioPlayerService, onDismiss = { readerMode = ReaderMode.NORMAL })
         return
     }
     if (readerMode == ReaderMode.FOCUS && studyVerses.isNotEmpty()) {
-        FocusedReadingScreen(verses = studyVerses, onDismiss = { readerMode = ReaderMode.NORMAL })
+        FocusedReadingScreen(verses = studyVerses, audioPlayerService = viewModel.audioPlayerService, onDismiss = { readerMode = ReaderMode.NORMAL })
         return
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Hanuman Chalisa") },
+                title = { Text(stringResource(R.string.text_name_hanuman_chalisa)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.cd_go_back))
@@ -93,7 +93,9 @@ fun ChalisaReaderScreen(
                         isBookmarked = viewModel.isBookmarked(ref),
                         onBookmarkToggle = {
                             viewModel.toggleBookmark(ref, verse.sanskrit, verse.translation(lang))
-                        }
+                        },
+                        audioId = "chalisa_${verse.type ?: "verse"}_${verse.verse}",
+                        audioPlayerService = viewModel.audioPlayerService
                     )
                 }
             }
@@ -119,7 +121,9 @@ fun ChalisaReaderScreen(
                         isBookmarked = viewModel.isBookmarked(ref),
                         onBookmarkToggle = {
                             viewModel.toggleBookmark(ref, verse.sanskrit, verse.translation(lang))
-                        }
+                        },
+                        audioId = "chalisa_${verse.type ?: "verse"}_${verse.verse}",
+                        audioPlayerService = viewModel.audioPlayerService
                     )
                 }
             }
@@ -146,7 +150,9 @@ fun ChalisaReaderScreen(
                         isBookmarked = viewModel.isBookmarked(ref),
                         onBookmarkToggle = {
                             viewModel.toggleBookmark(ref, closing.sanskrit, closing.translation(lang))
-                        }
+                        },
+                        audioId = "chalisa_${closing.type ?: "doha_closing"}_${closing.verse}",
+                        audioPlayerService = viewModel.audioPlayerService
                     )
                 }
             }

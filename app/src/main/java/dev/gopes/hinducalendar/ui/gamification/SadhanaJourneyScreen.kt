@@ -29,9 +29,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.SadhanaBadge
 import dev.gopes.hinducalendar.data.model.SadhanaLevel
 import dev.gopes.hinducalendar.ui.components.SacredCard
+import dev.gopes.hinducalendar.ui.util.localizedName
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +42,7 @@ fun SadhanaJourneyScreen(
     viewModel: GamificationViewModel = hiltViewModel()
 ) {
     val data = viewModel.gamificationData
+    val language by viewModel.language.collectAsState()
     val streak = viewModel.streakData
     val level = data.currentLevelData
 
@@ -108,13 +111,13 @@ fun SadhanaJourneyScreen(
 
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                "Lv.${level.level}",
+                                language.localizedDigits(stringResource(R.string.lv_format, level.level)),
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Text(
-                                "${(data.currentLevelProgress * 100).toInt()}%",
+                                language.localizedDigits("${(data.currentLevelProgress * 100).toInt()}%"),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -124,7 +127,7 @@ fun SadhanaJourneyScreen(
                     Spacer(Modifier.height(12.dp))
 
                     Text(
-                        stringResource(R.string.sadhana_level_format, level.level, stringResource(
+                        language.localizedDigits(stringResource(R.string.sadhana_level_format, level.level, stringResource(
                             when (level.titleKey) {
                                 "level_1" -> R.string.level_1
                                 "level_2" -> R.string.level_2
@@ -147,14 +150,14 @@ fun SadhanaJourneyScreen(
                                 "level_19" -> R.string.level_19
                                 else -> R.string.level_20
                             }
-                        )),
+                        ))),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
 
                     if (data.punyaPointsToNextLevel > 0) {
                         Text(
-                            stringResource(R.string.sadhana_pp_to_next, data.punyaPointsToNextLevel),
+                            language.localizedDigits(stringResource(R.string.sadhana_pp_to_next, data.punyaPointsToNextLevel)),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -175,11 +178,11 @@ fun SadhanaJourneyScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    StatItem(stringResource(R.string.punya_points), "${data.totalPunyaPoints}")
-                    StatItem(stringResource(R.string.sadhana_days_active), "${streak.totalDaysOpened}")
+                    StatItem(stringResource(R.string.punya_points), language.localizedNumber(data.totalPunyaPoints))
+                    StatItem(stringResource(R.string.sadhana_days_active), language.localizedNumber(streak.totalDaysOpened))
                     StatItem(
                         stringResource(R.string.sadhana_badges_label),
-                        "${data.earnedBadges.size}/${SadhanaBadge.allBadges.size}"
+                        language.localizedDigits("${data.earnedBadges.size}/${SadhanaBadge.allBadges.size}")
                     )
                 }
             }
@@ -213,7 +216,7 @@ fun SadhanaJourneyScreen(
 
                 item {
                     Text(
-                        "${category.titleKey.replace("badge_cat_", "").replaceFirstChar { it.uppercase() }} ($earnedCount/${badges.size})",
+                        language.localizedDigits(stringResource(R.string.badge_category_count, category.localizedName(), earnedCount, badges.size)),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary
@@ -286,42 +289,59 @@ private fun BadgeItem(
     ) {
         Box(
             modifier = Modifier
-                .size(48.dp)
+                .size(56.dp)
                 .clip(CircleShape)
-                .background(
-                    if (isEarned) Brush.radialGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.tertiary
+                .then(
+                    if (isEarned) Modifier.background(
+                        Brush.radialGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                Color.Transparent
+                            )
                         )
-                    ) else Brush.radialGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.surfaceVariant,
-                            MaterialTheme.colorScheme.surfaceVariant
-                        )
-                    )
+                    ) else Modifier
                 ),
             contentAlignment = Alignment.Center
         ) {
-            if (!isEarned) {
-                Icon(
-                    Icons.Filled.Lock,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                    modifier = Modifier.size(20.dp)
-                )
-            } else {
-                Text(
-                    badge.category.icon.take(2).uppercase(),
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (isEarned) Brush.radialGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.tertiary
+                            )
+                        ) else Brush.radialGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.surfaceVariant,
+                                MaterialTheme.colorScheme.surfaceVariant
+                            )
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                if (!isEarned) {
+                    Icon(
+                        Icons.Filled.Lock,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        modifier = Modifier.size(20.dp)
+                    )
+                } else {
+                    Text(
+                        badge.category.icon.take(2).uppercase(),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
         }
         Spacer(Modifier.height(4.dp))
         Text(
-            badge.id.replace("_", " ").replaceFirstChar { it.uppercase() },
+            badge.localizedName(),
             style = MaterialTheme.typography.labelSmall,
             textAlign = TextAlign.Center,
             maxLines = 2,

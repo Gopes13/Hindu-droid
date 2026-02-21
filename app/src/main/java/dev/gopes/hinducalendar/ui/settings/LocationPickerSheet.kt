@@ -1,6 +1,10 @@
 package dev.gopes.hinducalendar.ui.settings
 
-import androidx.compose.foundation.clickable
+import android.Manifest
+import android.annotation.SuppressLint
+import android.location.Geocoder
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -8,16 +12,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.location.LocationServices
 import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.HinduLocation
+import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,6 +36,9 @@ fun LocationPickerSheet(
     onDismiss: () -> Unit
 ) {
     var searchText by remember { mutableStateOf("") }
+    var isLocating by remember { mutableStateOf(false) }
+    var locationError by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
 
     val filteredLocations = remember(searchText) {
         if (searchText.isBlank()) {
@@ -35,6 +47,23 @@ fun LocationPickerSheet(
             HinduLocation.ALL_PRESETS.filter {
                 (it.cityName ?: "").contains(searchText, ignoreCase = true)
             }
+        }
+    }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        if (granted) {
+            isLocating = true
+            locationError = null
+            fetchCurrentLocation(context, onLocationSelected, onDismiss) { error ->
+                locationError = error
+                isLocating = false
+            }
+        } else {
+            locationError = context.getString(R.string.setting_location_permission_denied)
         }
     }
 
@@ -62,6 +91,50 @@ fun LocationPickerSheet(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 4.dp)
             )
+
+            // Use My Location button
+            Button(
+                onClick = {
+                    isLocating = true
+                    locationError = null
+                    locationPermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                shape = RoundedCornerShape(12.dp),
+                enabled = !isLocating
+            ) {
+                if (isLocating) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.setting_detecting_location))
+                } else {
+                    Icon(Icons.Filled.MyLocation, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.setting_use_my_location), fontWeight = FontWeight.SemiBold)
+                }
+            }
+
+            if (locationError != null) {
+                Text(
+                    locationError!!,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+            }
 
             // Search field
             OutlinedTextField(
@@ -97,6 +170,45 @@ fun LocationPickerSheet(
                 }
             }
         }
+    }
+}
+
+@SuppressLint("MissingPermission")
+private fun fetchCurrentLocation(
+    context: android.content.Context,
+    onLocationSelected: (HinduLocation) -> Unit,
+    onDismiss: () -> Unit,
+    onError: (String) -> Unit
+) {
+    try {
+        val fusedClient = LocationServices.getFusedLocationProviderClient(context)
+        fusedClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                val cityName = try {
+                    @Suppress("DEPRECATION")
+                    val geocoder = Geocoder(context, Locale.getDefault())
+                    val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                    addresses?.firstOrNull()?.locality ?: addresses?.firstOrNull()?.subAdminArea ?: context.getString(R.string.setting_use_my_location)
+                } catch (_: Exception) {
+                    context.getString(R.string.setting_use_my_location)
+                }
+                val timeZoneId = TimeZone.getDefault().id
+                val hinduLocation = HinduLocation(
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    timeZoneId = timeZoneId,
+                    cityName = cityName
+                )
+                onLocationSelected(hinduLocation)
+                onDismiss()
+            } else {
+                onError(context.getString(R.string.setting_location_not_found))
+            }
+        }.addOnFailureListener { _ ->
+            onError(context.getString(R.string.setting_location_not_found))
+        }
+    } catch (_: Exception) {
+        onError(context.getString(R.string.setting_location_not_found))
     }
 }
 

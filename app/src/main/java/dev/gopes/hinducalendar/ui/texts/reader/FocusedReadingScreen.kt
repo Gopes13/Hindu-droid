@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.engine.AudioPlayerService
 import dev.gopes.hinducalendar.ui.components.ConfettiOverlay
 import dev.gopes.hinducalendar.ui.texts.reader.components.RevealableVerseCard
 
@@ -21,6 +22,7 @@ import dev.gopes.hinducalendar.ui.texts.reader.components.RevealableVerseCard
 fun FocusedReadingScreen(
     verses: List<StudyVerse>,
     startIndex: Int = 0,
+    audioPlayerService: AudioPlayerService? = null,
     onDismiss: () -> Unit
 ) {
     if (verses.isEmpty()) {
@@ -74,6 +76,8 @@ fun FocusedReadingScreen(
                             translation = verse.translation,
                             explanation = verse.explanation,
                             names = verse.names,
+                            audioId = verse.audioId,
+                            audioPlayerService = audioPlayerService,
                             onFullyRevealed = { showConfetti = true }
                         )
                     }

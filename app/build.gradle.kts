@@ -94,6 +94,9 @@ dependencies {
     // Desugaring (java.time on API < 26)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
+    // AppCompat (for per-app language switching)
+    implementation("androidx.appcompat:appcompat:1.7.0")
+
     // Core
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

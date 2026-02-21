@@ -23,13 +23,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.engine.AudioPlayerService
 import dev.gopes.hinducalendar.ui.components.SacredHighlightCard
+import dev.gopes.hinducalendar.ui.texts.reader.components.MiniAudioProgressBar
+import dev.gopes.hinducalendar.ui.texts.reader.components.VerseAudioButton
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun StudyModeScreen(
     verses: List<StudyVerse>,
     startIndex: Int = 0,
+    audioPlayerService: AudioPlayerService? = null,
     onDismiss: () -> Unit,
     onDeepStudy: (() -> Unit)? = null
 ) {
@@ -121,17 +125,34 @@ fun StudyModeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // Reference badge
-                    Surface(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = MaterialTheme.shapes.small
+                    // Reference badge + audio
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            verse.reference,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        Surface(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Text(
+                                verse.reference,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                        if (audioPlayerService != null && verse.audioId != null) {
+                            VerseAudioButton(
+                                audioId = verse.audioId,
+                                audioPlayerService = audioPlayerService
+                            )
+                        }
+                    }
+                    if (audioPlayerService != null) {
+                        MiniAudioProgressBar(
+                            audioId = verse.audioId,
+                            audioPlayerService = audioPlayerService
                         )
                     }
 
@@ -169,7 +190,7 @@ fun StudyModeScreen(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Spacer(Modifier.height(16.dp))
-                            Divider()
+                            HorizontalDivider()
                             Spacer(Modifier.height(16.dp))
                             Text(
                                 verse.translation,

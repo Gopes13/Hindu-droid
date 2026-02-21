@@ -117,8 +117,28 @@ class PanchangService @Inject constructor(
         val moonriseJD = AstronomyEngine.moonrise(jdMidnight, location.latitude, location.longitude)
         val moonsetJD = AstronomyEngine.moonset(jdMidnight, location.latitude, location.longitude)
 
+        // Evening HinduDate for afternoon/evening/night festivals
+        // (Diwali, Shivaratri, Dussehra, etc. check tithi later in the day)
+        val jdEvening = jdSunrise + 0.5 // 12 hours after sunrise
+        val jdEveningTT = AstronomyEngine.utToTT(jdEvening, year.toDouble())
+        val (eveningTithi, eveningPaksha, _) = PanchangCalculator.calculateTithi(jdEveningTT)
+        val (eveningMonth, eveningAdhik) = PanchangCalculator.calculateHinduMonth(jdEveningTT, tradition)
+        val eveningHinduDate = HinduDate(
+            month = eveningMonth,
+            paksha = eveningPaksha,
+            tithi = eveningTithi,
+            samvatYear = PanchangCalculator.vikramSamvatYear(year, eveningMonth),
+            shakaYear = PanchangCalculator.shakaYear(year, eveningMonth),
+            isAdhikMaas = eveningAdhik,
+            bangabdaYear = PanchangCalculator.bangabdaYear(year, eveningMonth),
+            thiruvalluvarYear = PanchangCalculator.thiruvalluvarYear(year),
+            kollavarshamYear = PanchangCalculator.kollavarshamYear(year, eveningMonth),
+            nanakshahiYear = PanchangCalculator.nanakshahiYear(year),
+            virNirvanaSamvatYear = PanchangCalculator.virNirvanaSamvatYear(year)
+        )
+
         // Festivals
-        val festivals = festivalEngine.festivalsFor(date, hinduDate, tradition, jdSunriseTT)
+        val festivals = festivalEngine.festivalsFor(date, hinduDate, eveningHinduDate, tradition, jdSunriseTT)
 
         return PanchangDay(
             date = date,

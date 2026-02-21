@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.GamificationData
 import dev.gopes.hinducalendar.data.model.SadhanaBadge
+import dev.gopes.hinducalendar.ui.util.localizedName
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -123,7 +124,7 @@ fun BadgeDetailSheet(
 
             // Badge title
             Text(
-                badge.id.replace("_", " ").replaceFirstChar { it.uppercase() },
+                badge.localizedName(),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.alpha(contentAlpha)
@@ -133,7 +134,7 @@ fun BadgeDetailSheet(
 
             // Badge description
             Text(
-                badge.category.titleKey.replace("badge_cat_", "").replaceFirstChar { it.uppercase() } + " badge",
+                stringResource(R.string.badge_type_label, badge.category.localizedName()),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,

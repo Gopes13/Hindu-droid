@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.GamificationData
 import dev.gopes.hinducalendar.data.model.SadhanaLevel
 import dev.gopes.hinducalendar.data.model.StreakData
@@ -36,7 +37,8 @@ fun GreetingBanner(
     modifier: Modifier = Modifier,
     isDarkTheme: Boolean = false,
     gamificationData: GamificationData? = null,
-    streakData: StreakData? = null
+    streakData: StreakData? = null,
+    language: AppLanguage = AppLanguage.ENGLISH
 ) {
     val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
     val (sanskrit, english, icon) = when (hour) {
@@ -98,7 +100,7 @@ fun GreetingBanner(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         // Level badge with pulsing animation
-                        GamifiedLevelBadge(gamificationData.currentLevel)
+                        GamifiedLevelBadge(gamificationData.currentLevel, language)
 
                         // Streak capsule
                         val currentStreak = streakData?.currentStreak ?: 0
@@ -114,7 +116,7 @@ fun GreetingBanner(
                                 ) {
                                     Text("\uD83D\uDD25", style = MaterialTheme.typography.labelSmall)
                                     Text(
-                                        "$currentStreak",
+                                        language.localizedNumber(currentStreak),
                                         style = MaterialTheme.typography.labelMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White.copy(alpha = 0.9f)
@@ -130,7 +132,7 @@ fun GreetingBanner(
                         ) {
                             Text("\u2728", style = MaterialTheme.typography.labelSmall)
                             Text(
-                                "${gamificationData.totalPunyaPoints} PP",
+                                language.localizedDigits(stringResource(R.string.pp_total_format, gamificationData.totalPunyaPoints)),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color.White.copy(alpha = 0.7f)
@@ -147,7 +149,7 @@ fun GreetingBanner(
 }
 
 @Composable
-private fun GamifiedLevelBadge(level: Int) {
+private fun GamifiedLevelBadge(level: Int, language: AppLanguage = AppLanguage.ENGLISH) {
     val infiniteTransition = rememberInfiniteTransition(label = "levelPulse")
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -179,7 +181,7 @@ private fun GamifiedLevelBadge(level: Int) {
                 modifier = Modifier.size(12.dp)
             )
             Text(
-                "Lv.$level",
+                language.localizedDigits(stringResource(R.string.lv_format, level)),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = Color.White

@@ -1,14 +1,15 @@
 package dev.gopes.hinducalendar.ui.texts.reader.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,6 +24,8 @@ fun WordByWordRow(
     words: List<WordMeaning>,
     modifier: Modifier = Modifier
 ) {
+    var selectedIndex by remember { mutableIntStateOf(-1) }
+
     Column(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
@@ -40,11 +43,20 @@ fun WordByWordRow(
         }
         Spacer(Modifier.height(8.dp))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(words) { wm ->
+            itemsIndexed(words) { index, wm ->
+                val isSelected = index == selectedIndex
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+                    color = if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                           else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                    border = BorderStroke(
+                        if (isSelected) 2.dp else 1.dp,
+                        if (isSelected) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+                    ),
+                    modifier = Modifier.clickable {
+                        selectedIndex = if (selectedIndex == index) -1 else index
+                    }
                 ) {
                     Column(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -53,12 +65,15 @@ fun WordByWordRow(
                         Text(
                             text = wm.word,
                             style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary
+                                   else MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = wm.meaning,
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                                   else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -13,18 +14,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.ui.components.ConfettiOverlay
 
 @Composable
 fun MilestoneCelebration(
     days: Int,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    language: AppLanguage = AppLanguage.ENGLISH
 ) {
     var appeared by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { appeared = true }
@@ -37,6 +42,14 @@ fun MilestoneCelebration(
     val contentAlpha by animateFloatAsState(
         if (appeared) 1f else 0f,
         tween(400, delayMillis = 300), label = "content"
+    )
+
+    // Ring pulse
+    val ringScale by rememberInfiniteTransition(label = "ring").animateFloat(
+        initialValue = 1.1f,
+        targetValue = 1.3f,
+        animationSpec = infiniteRepeatable(tween(2000, easing = EaseInOut), RepeatMode.Reverse),
+        label = "glowRing"
     )
 
     val milestoneIcon = when {
@@ -73,19 +86,32 @@ fun MilestoneCelebration(
         ) {
             Spacer(Modifier.height(48.dp))
 
-            Icon(
-                milestoneIcon,
-                contentDescription = null,
-                tint = milestoneColor,
-                modifier = Modifier
-                    .size(80.dp)
-                    .scale(iconScale)
-            )
+            Box(contentAlignment = Alignment.Center) {
+                // Glow ring
+                Box(
+                    Modifier
+                        .size(100.dp)
+                        .scale(ringScale)
+                        .alpha(0.3f)
+                        .clip(CircleShape)
+                        .background(
+                            Brush.radialGradient(listOf(milestoneColor, Color.Transparent))
+                        )
+                )
+                Icon(
+                    milestoneIcon,
+                    contentDescription = null,
+                    tint = milestoneColor,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .scale(iconScale)
+                )
+            }
 
             Spacer(Modifier.height(24.dp))
 
             Text(
-                stringResource(R.string.milestone_title, days),
+                language.localizedDigits(stringResource(R.string.milestone_title, days)),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -106,11 +132,15 @@ fun MilestoneCelebration(
             Button(
                 onClick = onDismiss,
                 modifier = Modifier.alpha(contentAlpha),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = milestoneColor
+                )
             ) {
                 Text(
                     stringResource(R.string.common_done),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }

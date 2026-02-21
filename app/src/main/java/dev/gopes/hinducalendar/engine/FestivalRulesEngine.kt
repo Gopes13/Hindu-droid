@@ -28,6 +28,7 @@ class FestivalRulesEngine(private val context: Context) {
     fun festivalsFor(
         date: LocalDate,
         hinduDate: HinduDate,
+        eveningHinduDate: HinduDate,
         tradition: CalendarTradition,
         jdTT: Double
     ): List<FestivalOccurrence> {
@@ -36,7 +37,9 @@ class FestivalRulesEngine(private val context: Context) {
         for (festival in festivals) {
             val traditionOk = festival.category == FestivalCategory.MAJOR || tradition.key in festival.traditions
             if (!traditionOk) continue
-            if (matchesFestival(festival, hinduDate, date, jdTT, tradition)) {
+            // Evening/night festivals check the tithi prevailing later in the day
+            val matchDate = if (festival.id in EVENING_FESTIVALS) eveningHinduDate else hinduDate
+            if (matchesFestival(festival, matchDate, date, jdTT, tradition)) {
                 results.add(FestivalOccurrence(festival, date))
             }
         }
@@ -210,6 +213,27 @@ class FestivalRulesEngine(private val context: Context) {
         }
 
         return results
+    }
+
+    companion object {
+        /**
+         * Festivals celebrated in the afternoon, evening, or night.
+         * These use the tithi prevailing ~12 hours after sunrise rather than at sunrise.
+         * This matches the traditional convention:
+         *  - Diwali: Pradosh Kaal (evening)
+         *  - Maha Shivaratri: Nishita Kaal (midnight)
+         *  - Dussehra: Aparahna Kaal (afternoon)
+         *  - Ganesh Chaturthi: Madhyahna Kaal (midday)
+         */
+        private val EVENING_FESTIVALS = setOf(
+            "diwali",
+            "diwali_jain",
+            "narak_chaturdashi",
+            "maha_shivaratri",
+            "dussehra",
+            "ganesh_chaturthi",
+            "karwa_chauth"
+        )
     }
 }
 

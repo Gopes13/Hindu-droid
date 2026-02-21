@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WbSunny
@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -37,7 +38,7 @@ import dev.gopes.hinducalendar.ui.gamification.SadhanaJourneyScreen
 
 sealed class Screen(val route: String, @StringRes val titleRes: Int, val icon: ImageVector) {
     data object Today : Screen("today", R.string.tab_today, Icons.Filled.WbSunny)
-    data object Texts : Screen("texts", R.string.tab_texts, Icons.Filled.MenuBook)
+    data object Texts : Screen("texts", R.string.tab_texts, Icons.AutoMirrored.Filled.MenuBook)
     data object Calendar : Screen("calendar", R.string.tab_calendar, Icons.Filled.CalendarMonth)
     data object Festivals : Screen("festivals", R.string.tab_festivals, Icons.Filled.Star)
     data object Settings : Screen("settings", R.string.tab_settings, Icons.Filled.Settings)
@@ -65,7 +66,7 @@ fun NavGraph() {
                     val title = stringResource(screen.titleRes)
                     NavigationBarItem(
                         icon = { Icon(screen.icon, contentDescription = title) },
-                        label = { Text(title) },
+                        label = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                         selected = currentRoute == screen.route,
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = MaterialTheme.colorScheme.primary,

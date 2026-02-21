@@ -14,9 +14,11 @@ import dev.gopes.hinducalendar.data.model.SacredTextType
 import dev.gopes.hinducalendar.data.model.VerseBookmark
 import dev.gopes.hinducalendar.data.repository.PreferencesRepository
 import dev.gopes.hinducalendar.engine.*
+import dev.gopes.hinducalendar.engine.AudioPlayerService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class StudyVerse(
@@ -25,7 +27,8 @@ data class StudyVerse(
     val transliteration: String?,
     val translation: String,
     val explanation: String?,
-    val names: List<Pair<String, String>>? = null
+    val names: List<Pair<String, String>>? = null,
+    val audioId: String? = null
 )
 
 enum class ReaderMode { NORMAL, STUDY, FOCUS }
@@ -34,6 +37,7 @@ enum class ReaderMode { NORMAL, STUDY, FOCUS }
 class ReaderViewModel @Inject constructor(
     private val sacredTextService: SacredTextService,
     private val preferencesRepository: PreferencesRepository,
+    val audioPlayerService: AudioPlayerService,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -91,51 +95,53 @@ class ReaderViewModel @Inject constructor(
 
     private fun loadData() {
         val tt = textType ?: return
-        viewModelScope.launch(Dispatchers.IO) {
-            val prefs = preferencesRepository.preferencesFlow.first()
+        viewModelScope.launch {
+            val prefs = withContext(Dispatchers.IO) {
+                preferencesRepository.preferencesFlow.first()
+            }
             language = prefs.language
             bookmarks = prefs.bookmarks
 
             when (tt) {
                 SacredTextType.GITA -> {
-                    gitaData = sacredTextService.loadGita()
+                    gitaData = withContext(Dispatchers.IO) { sacredTextService.loadGita() }
                     selectedChapter = prefs.readingProgress.gitaChapter
                 }
                 SacredTextType.HANUMAN_CHALISA -> {
-                    chalisaData = sacredTextService.loadChalisa()
+                    chalisaData = withContext(Dispatchers.IO) { sacredTextService.loadChalisa() }
                 }
                 SacredTextType.JAPJI_SAHIB -> {
-                    japjiData = sacredTextService.loadJapji()
+                    japjiData = withContext(Dispatchers.IO) { sacredTextService.loadJapji() }
                 }
                 SacredTextType.BHAGAVATA, SacredTextType.SHIVA_PURANA -> {
-                    episodeData = sacredTextService.loadEpisodeText(tt.jsonFileName)
+                    episodeData = withContext(Dispatchers.IO) { sacredTextService.loadEpisodeText(tt.jsonFileName) }
                 }
                 SacredTextType.VISHNU_SAHASRANAMA, SacredTextType.SHIKSHAPATRI -> {
-                    shlokaData = sacredTextService.loadShlokaText(tt.jsonFileName)
+                    shlokaData = withContext(Dispatchers.IO) { sacredTextService.loadShlokaText(tt.jsonFileName) }
                 }
                 SacredTextType.SOUNDARYA_LAHARI -> {
-                    verseData = sacredTextService.loadVerseText(tt.jsonFileName)
+                    verseData = withContext(Dispatchers.IO) { sacredTextService.loadVerseText(tt.jsonFileName) }
                 }
                 SacredTextType.DEVI_MAHATMYA -> {
-                    chapterData = sacredTextService.loadChapterText(tt.jsonFileName)
+                    chapterData = withContext(Dispatchers.IO) { sacredTextService.loadChapterText(tt.jsonFileName) }
                 }
                 SacredTextType.RUDRAM -> {
-                    rudramData = sacredTextService.loadRudram()
+                    rudramData = withContext(Dispatchers.IO) { sacredTextService.loadRudram() }
                 }
                 SacredTextType.GURBANI -> {
-                    gurbaniData = sacredTextService.loadGurbani()
+                    gurbaniData = withContext(Dispatchers.IO) { sacredTextService.loadGurbani() }
                 }
                 SacredTextType.SUKHMANI -> {
-                    sukhmaniData = sacredTextService.loadSukhmani()
+                    sukhmaniData = withContext(Dispatchers.IO) { sacredTextService.loadSukhmani() }
                 }
                 SacredTextType.TATTVARTHA_SUTRA -> {
-                    sutraData = sacredTextService.loadSutraText(tt.jsonFileName)
+                    sutraData = withContext(Dispatchers.IO) { sacredTextService.loadSutraText(tt.jsonFileName) }
                 }
                 SacredTextType.VACHANAMRUT -> {
-                    discourseData = sacredTextService.loadDiscourseText(tt.jsonFileName)
+                    discourseData = withContext(Dispatchers.IO) { sacredTextService.loadDiscourseText(tt.jsonFileName) }
                 }
                 SacredTextType.JAIN_PRAYERS -> {
-                    jainPrayersData = sacredTextService.loadJainPrayers()
+                    jainPrayersData = withContext(Dispatchers.IO) { sacredTextService.loadJainPrayers() }
                 }
             }
 
@@ -164,7 +170,8 @@ class ReaderViewModel @Inject constructor(
                         originalText = verse.sanskrit,
                         transliteration = verse.transliteration,
                         translation = verse.translation(lang),
-                        explanation = null
+                        explanation = null,
+                        audioId = "gita_${ch.chapter}_${verse.verse}"
                     )
                 }
             }
@@ -174,7 +181,8 @@ class ReaderViewModel @Inject constructor(
                     originalText = v.sanskrit,
                     transliteration = v.transliteration,
                     translation = v.translation(lang),
-                    explanation = null
+                    explanation = null,
+                    audioId = "chalisa_${v.type ?: "verse"}_${v.verse}"
                 )
             }
             japjiData != null -> japjiData!!.pauris.map { p ->
@@ -183,18 +191,23 @@ class ReaderViewModel @Inject constructor(
                     originalText = p.punjabi,
                     transliteration = p.transliteration,
                     translation = p.translation(lang),
-                    explanation = null
+                    explanation = null,
+                    audioId = "japji_pauri_${p.pauri}"
                 )
             }
-            shlokaData != null -> shlokaData!!.shlokas.map { s ->
-                StudyVerse(
-                    reference = "Shloka ${s.shloka}",
-                    originalText = s.sanskrit,
-                    transliteration = s.transliteration,
-                    translation = s.translation(lang),
-                    explanation = s.commentary(lang).ifEmpty { s.explanation(lang).ifEmpty { null } },
-                    names = s.names?.map { it.name to it.meaning(lang) }
-                )
+            shlokaData != null -> {
+                val prefix = textType?.jsonFileName ?: "shloka"
+                shlokaData!!.shlokas.map { s ->
+                    StudyVerse(
+                        reference = "Shloka ${s.shloka}",
+                        originalText = s.sanskrit,
+                        transliteration = s.transliteration,
+                        translation = s.translation(lang),
+                        explanation = s.commentary(lang).ifEmpty { s.explanation(lang).ifEmpty { null } },
+                        names = s.names?.map { it.name to it.meaning(lang) },
+                        audioId = "${prefix}_${s.shloka}"
+                    )
+                }
             }
             verseData != null -> verseData!!.verses.map { v ->
                 StudyVerse(
@@ -202,28 +215,32 @@ class ReaderViewModel @Inject constructor(
                     originalText = v.sanskrit,
                     transliteration = v.transliteration,
                     translation = v.translation(lang),
-                    explanation = v.theme(lang).ifEmpty { null }
+                    explanation = v.theme(lang).ifEmpty { null },
+                    audioId = "soundarya_${v.verse}"
                 )
             }
             rudramData != null -> {
                 val section = rudramData!!.namakam ?: rudramData!!.chamakam
+                val sectionName = if (rudramData!!.namakam != null) "namakam" else "chamakam"
                 section?.anuvakas?.map { a ->
                     StudyVerse(
                         reference = "Anuvaka ${a.anuvaka}",
                         originalText = a.sanskrit,
                         transliteration = a.transliteration,
                         translation = a.translation(lang),
-                        explanation = a.theme(lang).ifEmpty { null }
+                        explanation = a.theme(lang).ifEmpty { null },
+                        audioId = "rudram_${sectionName}_${a.anuvaka}"
                     )
                 } ?: emptyList()
             }
-            gurbaniData != null -> gurbaniData!!.shabads.map { s ->
+            gurbaniData != null -> gurbaniData!!.shabads.mapIndexed { index, s ->
                 StudyVerse(
                     reference = "Shabad ${s.day}",
                     originalText = s.punjabi,
                     transliteration = s.transliteration,
                     translation = s.translation(lang),
-                    explanation = s.theme(lang).ifEmpty { null }
+                    explanation = s.theme(lang).ifEmpty { null },
+                    audioId = "gurbani_day_${index + 1}"
                 )
             }
             sukhmaniData != null -> sukhmaniData!!.ashtpadis.flatMap { section ->
@@ -233,7 +250,8 @@ class ReaderViewModel @Inject constructor(
                         originalText = st.punjabi,
                         transliteration = st.transliteration,
                         translation = st.translation(lang),
-                        explanation = null
+                        explanation = null,
+                        audioId = "sukhmani_${section.ashtpadi}_stanza_${st.stanza}"
                     )
                 }
             }
@@ -244,18 +262,25 @@ class ReaderViewModel @Inject constructor(
                         originalText = s.sanskrit,
                         transliteration = s.transliteration,
                         translation = s.translation(lang),
-                        explanation = s.commentary(lang).ifEmpty { null }
+                        explanation = s.commentary(lang).ifEmpty { null },
+                        audioId = "tattvartha_${ch.chapter}_${s.sutra}"
                     )
                 }
             }
-            episodeData != null -> episodeData!!.episodes.map { e ->
-                StudyVerse(
-                    reference = "Episode ${e.episode}",
-                    originalText = e.relatedVerse?.sanskrit ?: e.title(lang),
-                    transliteration = e.relatedVerse?.transliteration,
-                    translation = e.summary(lang),
-                    explanation = e.keyTeaching(lang).ifEmpty { null }
-                )
+            episodeData != null -> {
+                val prefix = textType?.jsonFileName ?: "episode"
+                episodeData!!.episodes.map { e ->
+                    val hasMantra = e.relatedMantra != null
+                    StudyVerse(
+                        reference = "Episode ${e.episode}",
+                        originalText = e.relatedVerse?.sanskrit ?: e.title(lang),
+                        transliteration = e.relatedVerse?.transliteration,
+                        translation = e.summary(lang),
+                        explanation = e.keyTeaching(lang).ifEmpty { null },
+                        audioId = if (hasMantra) "${prefix}_ep_${e.episode}_mantra"
+                                 else "${prefix}_ep_${e.episode}_verse"
+                    )
+                }
             }
             discourseData != null -> discourseData!!.discourses.map { d ->
                 StudyVerse(
@@ -273,7 +298,8 @@ class ReaderViewModel @Inject constructor(
                         originalText = l.sanskrit,
                         transliteration = l.transliteration,
                         translation = l.translation(lang),
-                        explanation = l.significance(lang).ifEmpty { null }
+                        explanation = l.significance(lang).ifEmpty { null },
+                        audioId = if (l.line == 1) "jain_namokar" else null
                     )
                 } ?: emptyList()
                 val teachings = jainPrayersData!!.mahaviraTeachings.map { t ->

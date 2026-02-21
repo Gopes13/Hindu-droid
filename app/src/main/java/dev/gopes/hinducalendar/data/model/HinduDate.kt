@@ -46,6 +46,36 @@ enum class HinduMonth(val number: Int, val displayName: String, val hindiName: S
     MAGHA(11, "Magh", "माघ"),
     PHALGUNA(12, "Phalgun", "फाल्गुन");
 
+    fun previous(): HinduMonth = when (this) {
+        CHAITRA -> PHALGUNA
+        VAISHAKHA -> CHAITRA
+        JYESHTHA -> VAISHAKHA
+        ASHADHA -> JYESHTHA
+        SHRAVANA -> ASHADHA
+        BHADRAPADA -> SHRAVANA
+        ASHWIN -> BHADRAPADA
+        KARTIK -> ASHWIN
+        MARGASHIRSHA -> KARTIK
+        PAUSHA -> MARGASHIRSHA
+        MAGHA -> PAUSHA
+        PHALGUNA -> MAGHA
+    }
+
+    fun next(): HinduMonth = when (this) {
+        CHAITRA -> VAISHAKHA
+        VAISHAKHA -> JYESHTHA
+        JYESHTHA -> ASHADHA
+        ASHADHA -> SHRAVANA
+        SHRAVANA -> BHADRAPADA
+        BHADRAPADA -> ASHWIN
+        ASHWIN -> KARTIK
+        KARTIK -> MARGASHIRSHA
+        MARGASHIRSHA -> PAUSHA
+        PAUSHA -> MAGHA
+        MAGHA -> PHALGUNA
+        PHALGUNA -> CHAITRA
+    }
+
     companion object {
         fun fromSolarMonth(solarMonth: Int): HinduMonth {
             return entries.firstOrNull { it.number == solarMonth + 1 } ?: CHAITRA

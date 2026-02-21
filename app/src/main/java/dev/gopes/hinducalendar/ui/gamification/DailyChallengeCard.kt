@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.DailyChallenge
 import dev.gopes.hinducalendar.data.model.GamificationData
 import dev.gopes.hinducalendar.ui.components.SacredCard
@@ -29,7 +30,8 @@ fun DailyChallengeCard(
     challenge: DailyChallenge,
     gamificationData: GamificationData,
     onAnswered: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    language: AppLanguage = AppLanguage.ENGLISH
 ) {
     val alreadyCompleted = gamificationData.isToday(gamificationData.lastChallengeDate)
             && gamificationData.lastChallengeCompleted
@@ -74,7 +76,7 @@ fun DailyChallengeCard(
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
-                    "+${challenge.xpReward} PP",
+                    language.localizedDigits(stringResource(R.string.pp_format, challenge.xpReward)),
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
@@ -204,7 +206,7 @@ fun DailyChallengeCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "+${challenge.xpReward} ",
+                    language.localizedDigits("+${challenge.xpReward} "),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary

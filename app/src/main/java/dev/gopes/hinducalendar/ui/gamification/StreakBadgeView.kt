@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.GamificationData
 import dev.gopes.hinducalendar.data.model.StreakData
 import dev.gopes.hinducalendar.ui.components.SacredCard
@@ -27,7 +28,8 @@ import dev.gopes.hinducalendar.ui.components.SacredCard
 fun StreakBadgeView(
     streakData: StreakData,
     gamificationData: GamificationData? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    language: AppLanguage = AppLanguage.ENGLISH
 ) {
     val streak = streakData.currentStreak
     if (streak <= 0) return
@@ -84,7 +86,7 @@ fun StreakBadgeView(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        "$streak",
+                        language.localizedNumber(streak),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -99,7 +101,7 @@ fun StreakBadgeView(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                "+${streakData.streakBonus} PP",
+                                language.localizedDigits(stringResource(R.string.pp_format, streakData.streakBonus)),
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
@@ -139,7 +141,7 @@ fun StreakBadgeView(
             if (streakData.longestStreak > streak) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        "${streakData.longestStreak}",
+                        language.localizedNumber(streakData.longestStreak),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant

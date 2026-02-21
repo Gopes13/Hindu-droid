@@ -9,7 +9,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gopes.hinducalendar.data.model.*
 import dev.gopes.hinducalendar.data.repository.PreferencesRepository
 import dev.gopes.hinducalendar.engine.GamificationService
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,6 +22,10 @@ class GamificationViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val gamificationService: GamificationService
 ) : ViewModel() {
+
+    val language: StateFlow<AppLanguage> = preferencesRepository.preferencesFlow
+        .map { it.language }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppLanguage.ENGLISH)
 
     var gamificationData by mutableStateOf(GamificationData())
         private set

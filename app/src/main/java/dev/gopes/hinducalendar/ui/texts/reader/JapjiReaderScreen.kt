@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.ui.components.SacredHighlightCard
+import dev.gopes.hinducalendar.ui.texts.reader.components.MiniAudioProgressBar
+import dev.gopes.hinducalendar.ui.texts.reader.components.VerseAudioButton
 import dev.gopes.hinducalendar.ui.texts.reader.components.VerseCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,18 +34,18 @@ fun JapjiReaderScreen(
     var readerMode by remember { mutableStateOf(ReaderMode.NORMAL) }
 
     if (readerMode == ReaderMode.STUDY && studyVerses.isNotEmpty()) {
-        StudyModeScreen(verses = studyVerses, onDismiss = { readerMode = ReaderMode.NORMAL })
+        StudyModeScreen(verses = studyVerses, audioPlayerService = viewModel.audioPlayerService, onDismiss = { readerMode = ReaderMode.NORMAL })
         return
     }
     if (readerMode == ReaderMode.FOCUS && studyVerses.isNotEmpty()) {
-        FocusedReadingScreen(verses = studyVerses, onDismiss = { readerMode = ReaderMode.NORMAL })
+        FocusedReadingScreen(verses = studyVerses, audioPlayerService = viewModel.audioPlayerService, onDismiss = { readerMode = ReaderMode.NORMAL })
         return
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Japji Sahib") },
+                title = { Text(stringResource(R.string.text_name_japji_sahib)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.cd_go_back))
@@ -77,14 +79,25 @@ fun JapjiReaderScreen(
             // Mool Mantar highlight
             japji.moolMantar?.let { mm ->
                 item {
-                    Text(
-                        stringResource(R.string.reader_mool_mantar),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            stringResource(R.string.reader_mool_mantar),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        VerseAudioButton(
+                            audioId = "japji_moolmantar",
+                            audioPlayerService = viewModel.audioPlayerService
+                        )
+                    }
                     Spacer(Modifier.height(8.dp))
                     SacredHighlightCard {
+                        MiniAudioProgressBar(
+                            audioId = "japji_moolmantar",
+                            audioPlayerService = viewModel.audioPlayerService
+                        )
                         Text(
                             mm.punjabi,
                             style = MaterialTheme.typography.bodyLarge,
@@ -99,7 +112,7 @@ fun JapjiReaderScreen(
                             lineHeight = 22.sp
                         )
                         Spacer(Modifier.height(8.dp))
-                        Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                         Spacer(Modifier.height(8.dp))
                         Text(
                             mm.translation(lang),
@@ -124,7 +137,9 @@ fun JapjiReaderScreen(
                     isBookmarked = viewModel.isBookmarked(ref),
                     onBookmarkToggle = {
                         viewModel.toggleBookmark(ref, pauri.punjabi, pauri.translation(lang))
-                    }
+                    },
+                    audioId = "japji_pauri_${pauri.pauri}",
+                    audioPlayerService = viewModel.audioPlayerService
                 )
             }
         }

@@ -36,18 +36,18 @@ fun GitaReaderScreen(
     var readerMode by remember { mutableStateOf(ReaderMode.NORMAL) }
 
     if (readerMode == ReaderMode.STUDY && studyVerses.isNotEmpty()) {
-        StudyModeScreen(verses = studyVerses, onDismiss = { readerMode = ReaderMode.NORMAL })
+        StudyModeScreen(verses = studyVerses, audioPlayerService = viewModel.audioPlayerService, onDismiss = { readerMode = ReaderMode.NORMAL })
         return
     }
     if (readerMode == ReaderMode.FOCUS && studyVerses.isNotEmpty()) {
-        FocusedReadingScreen(verses = studyVerses, onDismiss = { readerMode = ReaderMode.NORMAL })
+        FocusedReadingScreen(verses = studyVerses, audioPlayerService = viewModel.audioPlayerService, onDismiss = { readerMode = ReaderMode.NORMAL })
         return
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Bhagavad Gita") },
+                title = { Text(stringResource(R.string.text_name_gita)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.cd_go_back))
@@ -157,7 +157,9 @@ fun GitaReaderScreen(
                             isBookmarked = viewModel.isBookmarked(ref),
                             onBookmarkToggle = {
                                 viewModel.toggleBookmark(ref, verse.sanskrit, verse.translation(lang))
-                            }
+                            },
+                            audioId = "gita_${ch.chapter}_${verse.verse}",
+                            audioPlayerService = viewModel.audioPlayerService
                         )
                     }
                 }

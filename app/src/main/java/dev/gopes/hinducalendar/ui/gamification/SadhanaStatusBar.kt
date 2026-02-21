@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.GamificationData
 import dev.gopes.hinducalendar.ui.components.SacredCard
 
@@ -24,7 +25,8 @@ import dev.gopes.hinducalendar.ui.components.SacredCard
 fun SadhanaStatusBar(
     data: GamificationData,
     onClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    language: AppLanguage = AppLanguage.ENGLISH
 ) {
     if (!data.isEnabled) return
 
@@ -68,7 +70,7 @@ fun SadhanaStatusBar(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "Lv.${level.level}",
+                    language.localizedDigits(stringResource(R.string.lv_format, level.level)),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary
@@ -78,7 +80,7 @@ fun SadhanaStatusBar(
             // Level title + progress bar
             Column(Modifier.weight(1f)) {
                 Text(
-                    stringResource(R.string.sadhana_level_format, level.level, stringResource(
+                    language.localizedDigits(stringResource(R.string.sadhana_level_format, level.level, stringResource(
                         when (level.titleKey) {
                             "level_1" -> R.string.level_1
                             "level_2" -> R.string.level_2
@@ -101,7 +103,7 @@ fun SadhanaStatusBar(
                             "level_19" -> R.string.level_19
                             else -> R.string.level_20
                         }
-                    )),
+                    ))),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -141,13 +143,13 @@ fun SadhanaStatusBar(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        "${data.totalPunyaPoints}",
+                        language.localizedNumber(data.totalPunyaPoints),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Text(
-                        "PP",
+                        stringResource(R.string.pp_abbreviation),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                     )

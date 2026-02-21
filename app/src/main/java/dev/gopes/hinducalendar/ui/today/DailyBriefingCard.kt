@@ -23,9 +23,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.SacredTextType
 import dev.gopes.hinducalendar.engine.DailyVerse
 import dev.gopes.hinducalendar.ui.components.*
+import dev.gopes.hinducalendar.ui.util.localizedName
 import dev.gopes.hinducalendar.ui.gamification.GamificationViewModel
 import dev.gopes.hinducalendar.ui.texts.reader.components.RevealableVerseCard
 import dev.gopes.hinducalendar.ui.theme.*
@@ -111,7 +113,7 @@ private fun ReadingView(
             }
             if (uiState.totalPositions > 0) {
                 Text(
-                    "${uiState.currentPosition}/${uiState.totalPositions}",
+                    uiState.language.localizedDigits("${uiState.currentPosition}/${uiState.totalPositions}"),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -179,7 +181,7 @@ private fun ReadingView(
                         color = Color.White.copy(alpha = 0.25f)
                     ) {
                         Text(
-                            "+10 PP",
+                            uiState.language.localizedDigits(stringResource(R.string.pp_format, 10)),
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Black,
@@ -229,7 +231,7 @@ private fun CompletionView(
         ) {
             Text("\uD83D\uDC4F", fontSize = 36.sp) // clapping hands emoji
             Text(
-                stringResource(R.string.briefing_text_completed, uiState.activeText.displayName),
+                stringResource(R.string.briefing_text_completed, uiState.activeText.localizedName()),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold
             )
@@ -269,7 +271,7 @@ private fun CompletionView(
                     )
                     Spacer(Modifier.width(10.dp))
                     Text(
-                        textType.displayName,
+                        textType.localizedName(),
                         style = MaterialTheme.typography.bodyMedium,
                         color = if (isCurrent) MaterialTheme.colorScheme.onSurfaceVariant
                         else MaterialTheme.colorScheme.onSurface,
@@ -308,7 +310,7 @@ private fun ErrorView(
                     color = MaterialTheme.colorScheme.tertiary
                 )
                 Text(
-                    uiState.activeText.displayName,
+                    uiState.activeText.localizedName(),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

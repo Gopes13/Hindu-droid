@@ -3,6 +3,7 @@ package dev.gopes.hinducalendar.ui.today
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.SacredTextType
 import dev.gopes.hinducalendar.data.repository.PreferencesRepository
 import dev.gopes.hinducalendar.engine.DailyVerse
@@ -22,7 +23,8 @@ data class DailyBriefingUiState(
     val isTextComplete: Boolean = false,
     val isLoaded: Boolean = false,
     val hasError: Boolean = false,
-    val isGamified: Boolean = false
+    val isGamified: Boolean = false,
+    val language: AppLanguage = AppLanguage.ENGLISH
 )
 
 @HiltViewModel
@@ -54,7 +56,8 @@ class DailyBriefingViewModel @Inject constructor(
                     totalPositions = total,
                     isTextComplete = true,
                     isLoaded = true,
-                    isGamified = prefs.gamificationData.isEnabled
+                    isGamified = prefs.gamificationData.isEnabled,
+                    language = lang
                 )
                 return@launch
             }
@@ -68,7 +71,8 @@ class DailyBriefingViewModel @Inject constructor(
                 isTextComplete = false,
                 isLoaded = true,
                 hasError = verse == null,
-                isGamified = prefs.gamificationData.isEnabled
+                isGamified = prefs.gamificationData.isEnabled,
+                language = lang
             )
         }
     }

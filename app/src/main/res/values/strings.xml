@@ -3,7 +3,7 @@
     <string name="tab_today">Today</string>
     <string name="tab_calendar">Calendar</string>
     <string name="tab_festivals">Festivals</string>
-    <string name="tab_texts">Sacred Texts</string>
+    <string name="tab_texts">Texts</string>
     <string name="tab_settings">Settings</string>
     <string name="today_panchang">Today\'s Panchang</string>
     <string name="today_daily_verse">Daily Verse</string>
@@ -31,6 +31,7 @@
     <string name="festival_did_you_know">Did You Know?</string>
     <string name="festival_traditions">Traditions</string>
     <string name="festival_duration">Duration</string>
+    <string name="festival_calendar_rule">Calendar Rule</string>
     <string name="festival_days">days</string>
     <string name="text_chapter">Chapter</string>
     <string name="text_verse">Verse</string>
@@ -81,6 +82,7 @@
     <string name="section_sun_moon">Sun &amp; Moon</string>
     <string name="section_panchang">Panchang</string>
     <string name="section_inauspicious_periods">Inauspicious Periods</string>
+    <string name="section_auspicious_period">Auspicious Period</string>
     <string name="section_today_festivals">Today\'s Festivals</string>
     <string name="festival_major">Major</string>
 
@@ -122,6 +124,10 @@
     <string name="setting_select_location">Select Location</string>
     <string name="setting_location_desc">Used for sunrise/sunset times and accurate Panchang calculations.</string>
     <string name="setting_search_city">Search city\u2026</string>
+    <string name="setting_use_my_location">Use My Location</string>
+    <string name="setting_detecting_location">Detecting location\u2026</string>
+    <string name="setting_location_permission_denied">Location permission denied</string>
+    <string name="setting_location_not_found">Could not get current location. Try again.</string>
     <string name="setting_daily_wisdom_text">Daily Wisdom Text</string>
     <string name="setting_wisdom_other_texts">Other Texts</string>
 
@@ -151,9 +157,12 @@
     <string name="texts_position_of">Position %1$d of %2$d</string>
     <string name="texts_position">Position %1$d</string>
     <string name="sacred_texts_available">%d sacred texts available</string>
+    <string name="continue_reading">Continue Reading</string>
+    <string name="all_sacred_texts">All Sacred Texts</string>
+    <string name="completed_text">Completed!</string>
 
     <!-- Onboarding Screen -->
-    <string name="app_name_display">Hindu Calendar</string>
+    <string name="app_name_display">Kiraan</string>
     <string name="onboarding_get_started">Get Started</string>
     <string name="onboarding_choose_language">Choose Your Language</string>
     <string name="onboarding_language_desc">Select the language for translations and content.</string>
@@ -282,4 +291,451 @@
     <string name="level_18">Dharma Champion</string>
     <string name="level_19">Sacred Luminary</string>
     <string name="level_20">Enlightened Sage</string>
+
+    <!-- Dharma Path Names -->
+    <string name="dharma_general">General Hindu</string>
+    <string name="dharma_vaishnav">Vaishnav</string>
+    <string name="dharma_shaiv">Shaiv</string>
+    <string name="dharma_shakta">Shakta</string>
+    <string name="dharma_smarta">Smarta</string>
+    <string name="dharma_iskcon">ISKCON</string>
+    <string name="dharma_swaminarayan">Swaminarayan</string>
+    <string name="dharma_sikh">Sikh</string>
+    <string name="dharma_jain">Jain</string>
+
+    <!-- Dharma Path Descriptions -->
+    <string name="dharma_general_desc">Broad Hindu practice including Gita, Hanuman Chalisa, and major festivals.</string>
+    <string name="dharma_vaishnav_desc">Devotion to Lord Vishnu and his avatars.</string>
+    <string name="dharma_shaiv_desc">Devotion to Lord Shiva.</string>
+    <string name="dharma_shakta_desc">Devotion to the Divine Mother.</string>
+    <string name="dharma_smarta_desc">Worship of all five deities.</string>
+    <string name="dharma_iskcon_desc">International Society for Krishna Consciousness.</string>
+    <string name="dharma_swaminarayan_desc">Swaminarayan Sampradaya.</string>
+    <string name="dharma_sikh_desc">Sikh Dharma founded by Guru Nanak Dev Ji.</string>
+    <string name="dharma_jain_desc">Jain Dharma — path of non-violence.</string>
+
+    <!-- Sacred Text Names -->
+    <string name="text_name_gita">Bhagavad Gita</string>
+    <string name="text_name_hanuman_chalisa">Hanuman Chalisa</string>
+    <string name="text_name_japji_sahib">Japji Sahib</string>
+    <string name="text_name_bhagavata">Bhagavata Purana</string>
+    <string name="text_name_vishnu_sahasranama">Vishnu Sahasranama</string>
+    <string name="text_name_shiva_purana">Shiva Purana</string>
+    <string name="text_name_rudram">Sri Rudram</string>
+    <string name="text_name_devi_mahatmya">Devi Mahatmya</string>
+    <string name="text_name_soundarya_lahari">Soundarya Lahari</string>
+    <string name="text_name_shikshapatri">Shikshapatri</string>
+    <string name="text_name_vachanamrut">Vachanamrut</string>
+    <string name="text_name_sukhmani">Sukhmani Sahib</string>
+    <string name="text_name_gurbani">Daily Gurbani</string>
+    <string name="text_name_tattvartha_sutra">Tattvartha Sutra</string>
+    <string name="text_name_jain_prayers">Jain Prayers</string>
+
+    <!-- Sacred Text Theme Tags -->
+    <string name="theme_philosophy">Philosophy</string>
+    <string name="theme_devotional_hymn">Devotional Hymn</string>
+    <string name="theme_morning_prayer">Morning Prayer</string>
+    <string name="theme_epic_stories">Epic Stories</string>
+    <string name="theme_1000_names">1000 Names</string>
+    <string name="theme_vedic_chant">Vedic Chant</string>
+    <string name="theme_goddess_glory">Goddess Glory</string>
+    <string name="theme_devotional_poetry">Devotional Poetry</string>
+    <string name="theme_ethical_guide">Ethical Guide</string>
+    <string name="theme_discourses">Discourses</string>
+    <string name="theme_meditation">Meditation</string>
+    <string name="theme_daily_shabads">Daily Shabads</string>
+    <string name="theme_jain_philosophy">Jain Philosophy</string>
+    <string name="theme_prayers_teachings">Prayers &amp; Teachings</string>
+
+    <!-- Sacred Text Unit Labels -->
+    <string name="unit_verses">verses</string>
+    <string name="unit_pauris">pauris</string>
+    <string name="unit_episodes">episodes</string>
+    <string name="unit_shlokas">shlokas</string>
+    <string name="unit_anuvakas">anuvakas</string>
+    <string name="unit_chapters">chapters</string>
+    <string name="unit_discourses">discourses</string>
+    <string name="unit_ashtpadis">ashtpadis</string>
+    <string name="unit_shabads">shabads</string>
+    <string name="unit_sutras">sutras</string>
+    <string name="unit_teachings">teachings</string>
+
+    <!-- Calendar Tradition Names -->
+    <string name="tradition_purnimant">North Indian (Purnimant)</string>
+    <string name="tradition_amant">South Indian (Amant)</string>
+    <string name="tradition_gujarati">Gujarati</string>
+    <string name="tradition_bengali">Bengali</string>
+    <string name="tradition_tamil">Tamil</string>
+    <string name="tradition_malayalam">Malayalam</string>
+
+    <!-- Calendar Tradition Descriptions -->
+    <string name="tradition_purnimant_desc">Month ends on Purnima (full moon). Used in most of North India.</string>
+    <string name="tradition_amant_desc">Month ends on Amavasya (new moon). Used in Maharashtra, Karnataka, Andhra Pradesh.</string>
+    <string name="tradition_gujarati_desc">Based on Amant system with Gujarati month names and regional festivals.</string>
+    <string name="tradition_bengali_desc">Bengali calendar with regional festivals like Durga Puja and Poila Boishakh.</string>
+    <string name="tradition_tamil_desc">Tamil calendar with festivals like Pongal and Tamil New Year.</string>
+    <string name="tradition_malayalam_desc">Malayalam calendar with festivals like Onam and Vishu.</string>
+
+    <!-- Festival Category Names -->
+    <string name="category_major">Major Festival</string>
+    <string name="category_moderate">Festival</string>
+    <string name="category_recurring">Monthly Observance</string>
+    <string name="category_regional">Regional Festival</string>
+    <string name="category_vrat">Vrat (Fast)</string>
+
+    <!-- Calendar Sync Options -->
+    <string name="sync_festivals_only">Festivals Only</string>
+    <string name="sync_festivals_and_tithis">Festivals + Important Tithis</string>
+    <string name="sync_full_panchang">Full Panchang</string>
+
+    <!-- Reminder Timings -->
+    <string name="reminder_morning_of">Morning of the event</string>
+    <string name="reminder_evening_before">Evening before (6:00 PM)</string>
+    <string name="reminder_day_before">1 day before</string>
+    <string name="reminder_two_days_before">2 days before</string>
+
+    <!-- Countdown Badge -->
+    <string name="countdown_today">Today!</string>
+    <string name="countdown_tomorrow">Tomorrow</string>
+    <string name="countdown_in_days">In %d days</string>
+
+    <!-- Audio -->
+    <string name="cd_play_audio">Play audio</string>
+    <string name="cd_pause_audio">Pause audio</string>
+    <string name="cd_resume_audio">Resume audio</string>
+    <string name="cd_audio_error">Audio error</string>
+    <string name="audio_downloads">Audio Downloads</string>
+    <string name="audio_download">Download Audio</string>
+    <string name="audio_downloading">Downloading…</string>
+    <string name="audio_downloaded">Downloaded</string>
+    <string name="audio_delete">Delete Audio</string>
+    <string name="audio_delete_all">Delete All Audio</string>
+    <string name="audio_total_usage">Total: %s</string>
+
+    <!-- Panchang Element Names: Tithi -->
+    <string name="tithi_pratipada">Pratipada</string>
+    <string name="tithi_dwitiya">Dwitiya</string>
+    <string name="tithi_tritiya">Tritiya</string>
+    <string name="tithi_chaturthi">Chaturthi</string>
+    <string name="tithi_panchami">Panchami</string>
+    <string name="tithi_shashthi">Shashthi</string>
+    <string name="tithi_saptami">Saptami</string>
+    <string name="tithi_ashtami">Ashtami</string>
+    <string name="tithi_navami">Navami</string>
+    <string name="tithi_dashami">Dashami</string>
+    <string name="tithi_ekadashi">Ekadashi</string>
+    <string name="tithi_dwadashi">Dwadashi</string>
+    <string name="tithi_trayodashi">Trayodashi</string>
+    <string name="tithi_chaturdashi">Chaturdashi</string>
+    <string name="tithi_purnima">Purnima</string>
+    <string name="tithi_amavasya">Amavasya</string>
+
+    <!-- Panchang Element Names: Nakshatra -->
+    <string name="nakshatra_ashwini">Ashwini</string>
+    <string name="nakshatra_bharani">Bharani</string>
+    <string name="nakshatra_krittika">Krittika</string>
+    <string name="nakshatra_rohini">Rohini</string>
+    <string name="nakshatra_mrigashira">Mrigashira</string>
+    <string name="nakshatra_ardra">Ardra</string>
+    <string name="nakshatra_punarvasu">Punarvasu</string>
+    <string name="nakshatra_pushya">Pushya</string>
+    <string name="nakshatra_ashlesha">Ashlesha</string>
+    <string name="nakshatra_magha">Magha</string>
+    <string name="nakshatra_purva_phalguni">Purva Phalguni</string>
+    <string name="nakshatra_uttara_phalguni">Uttara Phalguni</string>
+    <string name="nakshatra_hasta">Hasta</string>
+    <string name="nakshatra_chitra">Chitra</string>
+    <string name="nakshatra_swati">Swati</string>
+    <string name="nakshatra_vishakha">Vishakha</string>
+    <string name="nakshatra_anuradha">Anuradha</string>
+    <string name="nakshatra_jyeshtha">Jyeshtha</string>
+    <string name="nakshatra_mula">Mula</string>
+    <string name="nakshatra_purvashadha">Purvashadha</string>
+    <string name="nakshatra_uttarashadha">Uttarashadha</string>
+    <string name="nakshatra_shravana">Shravana</string>
+    <string name="nakshatra_dhanishta">Dhanishta</string>
+    <string name="nakshatra_shatabhisha">Shatabhisha</string>
+    <string name="nakshatra_purva_bhadrapada">Purva Bhadrapada</string>
+    <string name="nakshatra_uttara_bhadrapada">Uttara Bhadrapada</string>
+    <string name="nakshatra_revati">Revati</string>
+
+    <!-- Panchang Element Names: Yoga -->
+    <string name="yoga_vishkambha">Vishkambha</string>
+    <string name="yoga_priti">Priti</string>
+    <string name="yoga_ayushman">Ayushman</string>
+    <string name="yoga_saubhagya">Saubhagya</string>
+    <string name="yoga_shobhana">Shobhana</string>
+    <string name="yoga_atiganda">Atiganda</string>
+    <string name="yoga_sukarma">Sukarma</string>
+    <string name="yoga_dhriti">Dhriti</string>
+    <string name="yoga_shula">Shula</string>
+    <string name="yoga_ganda">Ganda</string>
+    <string name="yoga_vriddhi">Vriddhi</string>
+    <string name="yoga_dhruva">Dhruva</string>
+    <string name="yoga_vyaghata">Vyaghata</string>
+    <string name="yoga_harshana">Harshana</string>
+    <string name="yoga_vajra">Vajra</string>
+    <string name="yoga_siddhi">Siddhi</string>
+    <string name="yoga_vyatipata">Vyatipata</string>
+    <string name="yoga_variyan">Variyan</string>
+    <string name="yoga_parigha">Parigha</string>
+    <string name="yoga_shiva">Shiva</string>
+    <string name="yoga_siddha">Siddha</string>
+    <string name="yoga_sadhya">Sadhya</string>
+    <string name="yoga_shubha">Shubha</string>
+    <string name="yoga_shukla">Shukla</string>
+    <string name="yoga_brahma">Brahma</string>
+    <string name="yoga_indra">Indra</string>
+    <string name="yoga_vaidhriti">Vaidhriti</string>
+
+    <!-- Panchang Element Names: Karana -->
+    <string name="karana_kimstughna">Kimstughna</string>
+    <string name="karana_shakuni">Shakuni</string>
+    <string name="karana_chatushpada">Chatushpada</string>
+    <string name="karana_nagava">Nagava</string>
+    <string name="karana_bava">Bava</string>
+    <string name="karana_balava">Balava</string>
+    <string name="karana_kaulava">Kaulava</string>
+    <string name="karana_taitila">Taitila</string>
+    <string name="karana_garaja">Garaja</string>
+    <string name="karana_vanija">Vanija</string>
+    <string name="karana_vishti">Vishti (Bhadra)</string>
+
+    <!-- Panchang Element Names: Paksha -->
+    <string name="paksha_shukla">Shukla</string>
+    <string name="paksha_krishna">Krishna</string>
+
+    <!-- Panchang Element Names: Hindu Month -->
+    <string name="month_chaitra">Chaitra</string>
+    <string name="month_vaishakha">Vaishakh</string>
+    <string name="month_jyeshtha">Jyeshtha</string>
+    <string name="month_ashadha">Ashadh</string>
+    <string name="month_shravana">Shravan</string>
+    <string name="month_bhadrapada">Bhadrapad</string>
+    <string name="month_ashwin">Ashwin</string>
+    <string name="month_kartik">Kartik</string>
+    <string name="month_margashirsha">Margashirsha</string>
+    <string name="month_pausha">Paush</string>
+    <string name="month_magha">Magh</string>
+    <string name="month_phalguna">Phalgun</string>
+
+    <!-- Gamification: PP/Level abbreviations -->
+    <string name="pp_abbreviation">PP</string>
+    <string name="pp_format">+%d PP</string>
+    <string name="pp_total_format">%d PP</string>
+    <string name="pp_sparkle_format">\u2728 +%d PP</string>
+    <string name="lv_format">Lv.%d</string>
+
+    <!-- Gamification: Badge categories -->
+    <string name="badge_cat_streak">Streak</string>
+    <string name="badge_cat_text">Text Completion</string>
+    <string name="badge_cat_explorer">Explorer</string>
+    <string name="badge_cat_festival">Festival</string>
+    <string name="badge_cat_language">Language</string>
+    <string name="badge_cat_panchang">Panchang</string>
+    <string name="badge_cat_challenge">Challenge</string>
+    <string name="badge_cat_engagement">Engagement</string>
+    <string name="badge_category_count">%1$s (%2$d/%3$d)</string>
+    <string name="badge_type_label">%s badge</string>
+
+    <!-- Gamification: Badge names -->
+    <string name="badge_streak_7">7-Day Streak</string>
+    <string name="badge_streak_30">30-Day Streak</string>
+    <string name="badge_streak_100">100-Day Streak</string>
+    <string name="badge_streak_365">365-Day Streak</string>
+    <string name="badge_explorer_2">2 Paths Explored</string>
+    <string name="badge_explorer_5">5 Paths Explored</string>
+    <string name="badge_festival_5">5 Festival Stories</string>
+    <string name="badge_festival_20">20 Festival Stories</string>
+    <string name="badge_language_3">3 Languages Used</string>
+    <string name="badge_language_6">6 Languages Used</string>
+    <string name="badge_panchang_7">7 Panchang Days</string>
+    <string name="badge_panchang_30">30 Panchang Days</string>
+    <string name="badge_panchang_100">100 Panchang Days</string>
+    <string name="badge_challenge_7">7 Challenges Solved</string>
+    <string name="badge_challenge_30">30 Challenges Solved</string>
+    <string name="badge_explained_10">10 Verses Explained</string>
+    <string name="badge_explained_100">100 Verses Explained</string>
+    <string name="badge_reflections_5">5 Reflections</string>
+    <string name="badge_reflections_25">25 Reflections</string>
+    <string name="badge_deep_study_7">7 Study Sessions</string>
+    <string name="badge_deep_study_30">30 Study Sessions</string>
+
+    <!-- Accessibility states -->
+    <string name="state_enabled">Enabled</string>
+    <string name="state_disabled">Disabled</string>
+
+    <!-- Quiz strings -->
+    <string name="quiz_tithi_question">Which Tithi is the %1$s lunar day?</string>
+    <string name="quiz_nakshatra_question">Which is the %1$s Nakshatra in the zodiac?</string>
+    <string name="quiz_festival_diwali_q">What does Diwali celebrate?</string>
+    <string name="quiz_festival_diwali_a">Victory of light over darkness</string>
+    <string name="quiz_festival_diwali_w1">Harvest season</string>
+    <string name="quiz_festival_diwali_w2">New Year only</string>
+    <string name="quiz_festival_diwali_w3">Spring equinox</string>
+    <string name="quiz_festival_holi_q">Holi is also known as the festival of?</string>
+    <string name="quiz_festival_holi_a">Colors</string>
+    <string name="quiz_festival_holi_w1">Lights</string>
+    <string name="quiz_festival_holi_w2">Music</string>
+    <string name="quiz_festival_holi_w3">Water</string>
+    <string name="quiz_festival_navratri_q">How many nights does Navratri span?</string>
+    <string name="quiz_festival_navratri_a">Nine</string>
+    <string name="quiz_festival_navratri_w1">Seven</string>
+    <string name="quiz_festival_navratri_w2">Five</string>
+    <string name="quiz_festival_navratri_w3">Ten</string>
+    <string name="quiz_festival_raksha_q">What does a sister tie on her brother\'s wrist?</string>
+    <string name="quiz_festival_raksha_a">Rakhi (sacred thread)</string>
+    <string name="quiz_festival_raksha_w1">Flower garland</string>
+    <string name="quiz_festival_raksha_w2">Gold chain</string>
+    <string name="quiz_festival_raksha_w3">Silk ribbon</string>
+    <string name="quiz_festival_janmashtami_q">Janmashtami celebrates the birth of?</string>
+    <string name="quiz_festival_janmashtami_a">Lord Krishna</string>
+    <string name="quiz_festival_janmashtami_w1">Lord Rama</string>
+    <string name="quiz_festival_janmashtami_w2">Lord Shiva</string>
+    <string name="quiz_festival_janmashtami_w3">Lord Ganesha</string>
+    <string name="quiz_festival_ganesh_q">How many days does Ganesh Chaturthi typically last?</string>
+    <string name="quiz_festival_ganesh_a">10 days</string>
+    <string name="quiz_festival_ganesh_w1">7 days</string>
+    <string name="quiz_festival_ganesh_w2">5 days</string>
+    <string name="quiz_festival_ganesh_w3">3 days</string>
+    <string name="quiz_festival_shivaratri_q">Maha Shivaratri is dedicated to?</string>
+    <string name="quiz_festival_shivaratri_a">Lord Shiva</string>
+    <string name="quiz_festival_shivaratri_w1">Lord Vishnu</string>
+    <string name="quiz_festival_shivaratri_w2">Lord Brahma</string>
+    <string name="quiz_festival_shivaratri_w3">Goddess Durga</string>
+    <string name="quiz_festival_sankranti_q">Makar Sankranti marks the sun\'s entry into?</string>
+    <string name="quiz_festival_sankranti_a">Capricorn (Makar)</string>
+    <string name="quiz_festival_sankranti_w1">Aries (Mesh)</string>
+    <string name="quiz_festival_sankranti_w2">Cancer (Karka)</string>
+    <string name="quiz_festival_sankranti_w3">Libra (Tula)</string>
+    <string name="quiz_festival_baisakhi_q">Baisakhi is significant for which community?</string>
+    <string name="quiz_festival_baisakhi_a">Sikh community</string>
+    <string name="quiz_festival_baisakhi_w1">Buddhist community</string>
+    <string name="quiz_festival_baisakhi_w2">Jain community</string>
+    <string name="quiz_festival_baisakhi_w3">Parsi community</string>
+    <string name="quiz_festival_ramnavami_q">Ram Navami celebrates the birth of?</string>
+    <string name="quiz_festival_ramnavami_a">Lord Rama</string>
+    <string name="quiz_festival_ramnavami_w1">Lord Krishna</string>
+    <string name="quiz_festival_ramnavami_w2">Lord Hanuman</string>
+    <string name="quiz_festival_ramnavami_w3">Lord Vishnu</string>
+    <string name="quiz_festival_hanuman_q">Hanuman is known as the devotee of?</string>
+    <string name="quiz_festival_hanuman_a">Lord Rama</string>
+    <string name="quiz_festival_hanuman_w1">Lord Shiva</string>
+    <string name="quiz_festival_hanuman_w2">Lord Krishna</string>
+    <string name="quiz_festival_hanuman_w3">Lord Vishnu</string>
+    <string name="quiz_festival_gurupurnima_q">Guru Purnima honors?</string>
+    <string name="quiz_festival_gurupurnima_a">Spiritual teachers</string>
+    <string name="quiz_festival_gurupurnima_w1">Harvest gods</string>
+    <string name="quiz_festival_gurupurnima_w2">Ancestors</string>
+    <string name="quiz_festival_gurupurnima_w3">Warriors</string>
+    <string name="quiz_verse_gita_q">In the Gita, who is Krishna\'s charioteer role for?</string>
+    <string name="quiz_verse_gita_a">Arjuna</string>
+    <string name="quiz_verse_gita_w1">Bhishma</string>
+    <string name="quiz_verse_gita_w2">Duryodhana</string>
+    <string name="quiz_verse_gita_w3">Karna</string>
+    <string name="quiz_verse_chalisa_q">How many verses (chaupais) are in the Hanuman Chalisa?</string>
+    <string name="quiz_verse_chalisa_a">40</string>
+    <string name="quiz_verse_chalisa_w1">30</string>
+    <string name="quiz_verse_chalisa_w2">50</string>
+    <string name="quiz_verse_chalisa_w3">60</string>
+    <string name="quiz_verse_japji_q">Who composed Japji Sahib?</string>
+    <string name="quiz_verse_japji_a">Guru Nanak Dev Ji</string>
+    <string name="quiz_verse_japji_w1">Guru Gobind Singh Ji</string>
+    <string name="quiz_verse_japji_w2">Guru Arjan Dev Ji</string>
+    <string name="quiz_verse_japji_w3">Guru Angad Dev Ji</string>
+    <string name="quiz_verse_sahasranama_q">How many names of Vishnu are in the Sahasranama?</string>
+    <string name="quiz_verse_sahasranama_a">1000</string>
+    <string name="quiz_verse_sahasranama_w1">500</string>
+    <string name="quiz_verse_sahasranama_w2">108</string>
+    <string name="quiz_verse_sahasranama_w3">1008</string>
+    <string name="quiz_verse_rudram_q">Sri Rudram is part of which Veda?</string>
+    <string name="quiz_verse_rudram_a">Yajur Veda</string>
+    <string name="quiz_verse_rudram_w1">Rig Veda</string>
+    <string name="quiz_verse_rudram_w2">Sama Veda</string>
+    <string name="quiz_verse_rudram_w3">Atharva Veda</string>
+    <string name="quiz_verse_devi_q">Devi Mahatmya describes the triumph of?</string>
+    <string name="quiz_verse_devi_a">Goddess Durga</string>
+    <string name="quiz_verse_devi_w1">Goddess Lakshmi</string>
+    <string name="quiz_verse_devi_w2">Goddess Saraswati</string>
+    <string name="quiz_verse_devi_w3">Goddess Parvati</string>
+    <string name="quiz_verse_soundarya_q">Who is traditionally credited with composing Soundarya Lahari?</string>
+    <string name="quiz_verse_soundarya_a">Adi Shankaracharya</string>
+    <string name="quiz_verse_soundarya_w1">Tulsidas</string>
+    <string name="quiz_verse_soundarya_w2">Valmiki</string>
+    <string name="quiz_verse_soundarya_w3">Vyasa</string>
+    <string name="quiz_verse_sukhmani_q">Sukhmani Sahib was composed by?</string>
+    <string name="quiz_verse_sukhmani_a">Guru Arjan Dev Ji</string>
+    <string name="quiz_verse_sukhmani_w1">Guru Nanak Dev Ji</string>
+    <string name="quiz_verse_sukhmani_w2">Guru Gobind Singh Ji</string>
+    <string name="quiz_verse_sukhmani_w3">Guru Tegh Bahadur Ji</string>
+    <string name="quiz_mantra_shiva_q">Om Namah Shivaya is dedicated to?</string>
+    <string name="quiz_mantra_shiva_a">Lord Shiva</string>
+    <string name="quiz_mantra_shiva_w1">Lord Vishnu</string>
+    <string name="quiz_mantra_shiva_w2">Lord Brahma</string>
+    <string name="quiz_mantra_shiva_w3">Lord Ganesha</string>
+    <string name="quiz_mantra_narayana_q">Narayana is another name for?</string>
+    <string name="quiz_mantra_narayana_a">Lord Vishnu</string>
+    <string name="quiz_mantra_narayana_w1">Lord Shiva</string>
+    <string name="quiz_mantra_narayana_w2">Lord Indra</string>
+    <string name="quiz_mantra_narayana_w3">Lord Brahma</string>
+    <string name="quiz_mantra_ganesha_q">This mantra invokes?</string>
+    <string name="quiz_mantra_ganesha_a">Lord Ganesha</string>
+    <string name="quiz_mantra_ganesha_w1">Lord Kartikeya</string>
+    <string name="quiz_mantra_ganesha_w2">Lord Hanuman</string>
+    <string name="quiz_mantra_ganesha_w3">Lord Rama</string>
+    <string name="quiz_mantra_gayatri_q">The Gayatri Mantra appears in which Veda?</string>
+    <string name="quiz_mantra_gayatri_a">Rig Veda</string>
+    <string name="quiz_mantra_gayatri_w1">Yajur Veda</string>
+    <string name="quiz_mantra_gayatri_w2">Sama Veda</string>
+    <string name="quiz_mantra_gayatri_w3">Atharva Veda</string>
+    <string name="quiz_mantra_mrityunjaya_q">The Mahamrityunjaya mantra is addressed to?</string>
+    <string name="quiz_mantra_mrityunjaya_a">Lord Shiva (Tryambaka)</string>
+    <string name="quiz_mantra_mrityunjaya_w1">Lord Vishnu</string>
+    <string name="quiz_mantra_mrityunjaya_w2">Lord Yama</string>
+    <string name="quiz_mantra_mrityunjaya_w3">Lord Agni</string>
+    <string name="quiz_mantra_bija_q">Bija mantras like Aim, Hreem, Kleem are associated with?</string>
+    <string name="quiz_mantra_bija_a">Goddess energy (Shakti)</string>
+    <string name="quiz_mantra_bija_w1">Planetary energy</string>
+    <string name="quiz_mantra_bija_w2">Elemental energy</string>
+    <string name="quiz_mantra_bija_w3">Vedic hymns</string>
+    <string name="quiz_mantra_harekrishna_q">The Hare Krishna Maha Mantra has how many words?</string>
+    <string name="quiz_mantra_harekrishna_a">16</string>
+    <string name="quiz_mantra_harekrishna_w1">12</string>
+    <string name="quiz_mantra_harekrishna_w2">18</string>
+    <string name="quiz_mantra_harekrishna_w3">8</string>
+    <string name="quiz_mantra_ikonkar_q">Ik Onkar is the opening of?</string>
+    <string name="quiz_mantra_ikonkar_a">Guru Granth Sahib</string>
+    <string name="quiz_mantra_ikonkar_w1">Bhagavad Gita</string>
+    <string name="quiz_mantra_ikonkar_w2">Ramayana</string>
+    <string name="quiz_mantra_ikonkar_w3">Vedas</string>
+
+    <!-- Ordinals for quiz questions -->
+    <string name="ordinal_1">1st</string>
+    <string name="ordinal_2">2nd</string>
+    <string name="ordinal_3">3rd</string>
+    <string name="ordinal_4">4th</string>
+    <string name="ordinal_5">5th</string>
+    <string name="ordinal_6">6th</string>
+    <string name="ordinal_7">7th</string>
+    <string name="ordinal_8">8th</string>
+    <string name="ordinal_9">9th</string>
+    <string name="ordinal_10">10th</string>
+    <string name="ordinal_11">11th</string>
+    <string name="ordinal_12">12th</string>
+    <string name="ordinal_13">13th</string>
+    <string name="ordinal_14">14th</string>
+    <string name="ordinal_15">15th</string>
+    <string name="ordinal_16">16th</string>
+    <string name="ordinal_17">17th</string>
+    <string name="ordinal_18">18th</string>
+    <string name="ordinal_19">19th</string>
+    <string name="ordinal_20">20th</string>
+    <string name="ordinal_21">21st</string>
+    <string name="ordinal_22">22nd</string>
+    <string name="ordinal_23">23rd</string>
+    <string name="ordinal_24">24th</string>
+    <string name="ordinal_25">25th</string>
+    <string name="ordinal_26">26th</string>
+    <string name="ordinal_27">27th</string>
+    <string name="ordinal_30">30th</string>
 </resources>

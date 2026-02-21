@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
@@ -23,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.SadhanaLevel
 import dev.gopes.hinducalendar.ui.components.ConfettiOverlay
 
@@ -30,7 +30,8 @@ import dev.gopes.hinducalendar.ui.components.ConfettiOverlay
 fun LevelUpCelebration(
     oldLevel: Int,
     newLevel: Int,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    language: AppLanguage = AppLanguage.ENGLISH
 ) {
     val newLevelData = SadhanaLevel.forLevel(newLevel)
 
@@ -101,9 +102,8 @@ fun LevelUpCelebration(
                     Modifier
                         .size(90.dp)
                         .scale(iconScale)
-                        .blur(12.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.4f))
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
                 )
                 // Icon circle
                 Box(
@@ -122,7 +122,7 @@ fun LevelUpCelebration(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "Lv.${newLevel}",
+                        language.localizedDigits(stringResource(R.string.lv_format, newLevel)),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimary
@@ -137,9 +137,14 @@ fun LevelUpCelebration(
                 stringResource(R.string.level_up),
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 2.sp
+                    letterSpacing = 2.sp,
+                    brush = Brush.linearGradient(
+                        listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.tertiary
+                        )
+                    )
                 ),
-                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.alpha(textAlpha)
             )
 
@@ -152,22 +157,57 @@ fun LevelUpCelebration(
                 modifier = Modifier.alpha(textAlpha)
             ) {
                 Text(
-                    "Lv.$oldLevel",
+                    language.localizedDigits(stringResource(R.string.lv_format, oldLevel)),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White.copy(alpha = 0.5f)
                 )
                 Text("→", color = Color.White.copy(alpha = 0.7f))
                 Text(
-                    "Lv.$newLevel",
+                    language.localizedDigits(stringResource(R.string.lv_format, newLevel)),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
             }
 
+            Spacer(Modifier.height(6.dp))
+            Text("\u2726 \u2726 \u2726", color = Color.White.copy(alpha = 0.4f), modifier = Modifier.alpha(textAlpha))
+
             Spacer(Modifier.height(8.dp))
 
-            // New title
+            // Level title name
+            Text(
+                stringResource(when (newLevelData.titleKey) {
+                    "level_1" -> R.string.level_1
+                    "level_2" -> R.string.level_2
+                    "level_3" -> R.string.level_3
+                    "level_4" -> R.string.level_4
+                    "level_5" -> R.string.level_5
+                    "level_6" -> R.string.level_6
+                    "level_7" -> R.string.level_7
+                    "level_8" -> R.string.level_8
+                    "level_9" -> R.string.level_9
+                    "level_10" -> R.string.level_10
+                    "level_11" -> R.string.level_11
+                    "level_12" -> R.string.level_12
+                    "level_13" -> R.string.level_13
+                    "level_14" -> R.string.level_14
+                    "level_15" -> R.string.level_15
+                    "level_16" -> R.string.level_16
+                    "level_17" -> R.string.level_17
+                    "level_18" -> R.string.level_18
+                    "level_19" -> R.string.level_19
+                    else -> R.string.level_20
+                }),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier.alpha(textAlpha)
+            )
+
+            Spacer(Modifier.height(4.dp))
+
+            // New title label
             Text(
                 stringResource(R.string.sadhana_new_title),
                 style = MaterialTheme.typography.bodySmall,
@@ -181,11 +221,15 @@ fun LevelUpCelebration(
             Button(
                 onClick = onDismiss,
                 modifier = Modifier.alpha(buttonAlpha),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             ) {
                 Text(
                     stringResource(R.string.sadhana_continue),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }

@@ -19,6 +19,7 @@ import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.Festival
 import dev.gopes.hinducalendar.data.model.FestivalCategory
 import dev.gopes.hinducalendar.ui.components.*
+import dev.gopes.hinducalendar.ui.util.localizedName
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,7 +96,7 @@ fun FestivalDetailScreen(
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         AssistChip(
                             onClick = {},
-                            label = { Text(festival.category.displayName) },
+                            label = { Text(festival.category.localizedName()) },
                             colors = AssistChipDefaults.assistChipColors(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 labelColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -122,6 +123,49 @@ fun FestivalDetailScreen(
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                    }
+                }
+            }
+
+            // Calendar Rule
+            SacredCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Filled.CalendarMonth,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        stringResource(R.string.festival_calendar_rule),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Spacer(Modifier.height(8.dp))
+                // Show panchang info from the occurrence
+                occurrence?.let { occ ->
+                    val panchangPair = festivals.firstOrNull { it.first.festival.id == festivalId }
+                    panchangPair?.let { (_, panchang) ->
+                        Text(
+                            "${stringResource(R.string.panchang_tithi)}: ${panchang.tithiInfo.name}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            "${stringResource(R.string.panchang_nakshatra)}: ${panchang.nakshatraInfo.name}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        if (festival.durationDays > 1) {
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                "${stringResource(R.string.festival_duration)}: ${festival.durationDays} ${stringResource(R.string.festival_days)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             }

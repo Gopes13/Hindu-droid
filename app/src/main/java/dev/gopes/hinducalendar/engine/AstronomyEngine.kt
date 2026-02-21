@@ -142,7 +142,9 @@ object AstronomyEngine {
 
         val Drad = toRad(D); val Mrad = toRad(M); val Mprad = toRad(Mp); val Frad = toRad(F)
         val E = 1.0 - 0.002516 * T - 0.0000074 * T * T
+        val E2 = E * E
 
+        // Full Meeus Table 47.A — 60 longitude terms
         var sigmaL = 0.0
         sigmaL += 6288774 * sin(Mprad)
         sigmaL += 1274027 * sin(2 * Drad - Mprad)
@@ -168,14 +170,55 @@ object AstronomyEngine {
         sigmaL += -5163 * sin(Drad - Mprad)
         sigmaL += 4987 * E * sin(Drad + Mrad)
         sigmaL += 4036 * E * sin(2 * Drad - Mrad + Mprad)
+        // Rows 25-60
+        sigmaL += 3994 * sin(2 * Drad + 2 * Mprad)
+        sigmaL += 3861 * sin(4 * Drad)
+        sigmaL += 3665 * sin(2 * Drad - 3 * Mprad)
+        sigmaL += -2689 * E * sin(Mrad - 2 * Mprad)
+        sigmaL += -2602 * sin(Mprad - 2 * Drad + 2 * Frad)
+        sigmaL += 2390 * E * sin(2 * Drad - Mrad - 2 * Mprad)
+        sigmaL += -2348 * sin(Drad + Mprad)
+        sigmaL += 2236 * E2 * sin(2 * Drad - 2 * Mrad)
+        sigmaL += -2120 * E * sin(Mrad + 2 * Mprad)
+        sigmaL += -2069 * E2 * sin(2 * Mrad)
+        sigmaL += 2048 * E2 * sin(2 * Drad - 2 * Mrad - Mprad)
+        sigmaL += -1773 * sin(2 * Drad + Mprad - 2 * Frad)
+        sigmaL += -1595 * sin(2 * Drad + 2 * Frad)
+        sigmaL += 1215 * E * sin(4 * Drad - Mrad - Mprad)
+        sigmaL += -1110 * sin(2 * Mprad + 2 * Frad)
+        sigmaL += -892 * sin(3 * Drad - Mprad)
+        sigmaL += -810 * E * sin(2 * Drad + Mrad + Mprad)
+        sigmaL += 759 * E * sin(4 * Drad - Mrad - 2 * Mprad)
+        sigmaL += -713 * E2 * sin(2 * Mrad - Mprad)
+        sigmaL += -700 * E2 * sin(2 * Drad + 2 * Mrad - Mprad)
+        sigmaL += 691 * E * sin(2 * Drad + Mrad - 2 * Mprad)
+        sigmaL += 596 * E * sin(2 * Drad - Mrad - 2 * Frad)
+        sigmaL += 549 * sin(4 * Drad + Mprad)
+        sigmaL += 537 * sin(4 * Mprad)
+        sigmaL += 520 * E * sin(4 * Drad - Mrad)
+        sigmaL += -487 * sin(Drad - 2 * Mprad)
+        sigmaL += -399 * E * sin(2 * Drad + Mrad - 2 * Frad)
+        sigmaL += -381 * sin(2 * Mprad - 2 * Frad)
+        sigmaL += 351 * E * sin(Drad + Mrad + Mprad)
+        sigmaL += -340 * sin(3 * Drad - 2 * Mprad)
+        sigmaL += 330 * sin(4 * Drad - 3 * Mprad)
+        sigmaL += 327 * E * sin(2 * Drad - Mrad + 2 * Mprad)
+        sigmaL += -323 * E2 * sin(2 * Mrad + Mprad)
+        sigmaL += 299 * E * sin(Drad + Mrad - Mprad)
+        sigmaL += 294 * sin(2 * Drad + 3 * Mprad)
 
+        // Additional correction terms (A1, A2)
         val A1 = toRad(normalize(119.75 + 131.849 * T))
         val A2 = toRad(normalize(53.09 + 479264.290 * T))
         sigmaL += 3958 * sin(A1)
         sigmaL += 1962 * sin(toRad(Lp) - Frad)
         sigmaL += 318 * sin(A2)
 
-        return normalize(Lp + sigmaL / 1000000.0)
+        // Nutation correction (matches Sun's nutation term for consistency)
+        val omega = 125.04 - 1934.136 * T
+        val nutationCorrection = -0.00478 * sin(toRad(omega))
+
+        return normalize(Lp + sigmaL / 1000000.0 + nutationCorrection)
     }
 
     fun moonrise(jd: Double, lat: Double, lon: Double): Double? =

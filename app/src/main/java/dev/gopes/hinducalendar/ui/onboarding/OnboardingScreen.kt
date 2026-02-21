@@ -1,5 +1,6 @@
 package dev.gopes.hinducalendar.ui.onboarding
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -9,8 +10,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -33,6 +36,7 @@ import dev.gopes.hinducalendar.data.model.DharmaPath
 import dev.gopes.hinducalendar.data.model.HinduLocation
 import dev.gopes.hinducalendar.ui.components.*
 import dev.gopes.hinducalendar.ui.theme.*
+import dev.gopes.hinducalendar.ui.util.*
 
 @Composable
 fun OnboardingScreen(onComplete: (CalendarTradition, HinduLocation, DharmaPath, AppLanguage) -> Unit) {
@@ -42,28 +46,89 @@ fun OnboardingScreen(onComplete: (CalendarTradition, HinduLocation, DharmaPath, 
     var selectedLocation by remember { mutableStateOf(HinduLocation.DELHI) }
     var selectedDharmaPath by remember { mutableStateOf(DharmaPath.GENERAL) }
 
-    when (step) {
-        0 -> LanguageStep(
-            selectedLanguage = selectedLanguage,
-            onSelect = { selectedLanguage = it },
-            onNext = { step = 1 }
-        )
-        1 -> WelcomeStep(onNext = { step = 2 })
-        2 -> DharmaPathStep(
-            selectedPath = selectedDharmaPath,
-            onSelect = { selectedDharmaPath = it },
-            onNext = { step = 3 }
-        )
-        3 -> TraditionStep(
-            selectedTradition = selectedTradition,
-            onSelect = { selectedTradition = it },
-            onNext = { step = 4 }
-        )
-        4 -> LocationStep(
-            selectedLocation = selectedLocation,
-            onSelect = { selectedLocation = it },
-            onComplete = { onComplete(selectedTradition, selectedLocation, selectedDharmaPath, selectedLanguage) }
-        )
+    Column(Modifier.fillMaxSize()) {
+        // Back button + Progress dots (hidden on Welcome step)
+        if (step != 1) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (step > 0) {
+                    IconButton(onClick = { step-- }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.cd_go_back)
+                        )
+                    }
+                } else {
+                    Spacer(Modifier.size(48.dp))
+                }
+
+                Spacer(Modifier.weight(1f))
+                StepProgressDots(currentStep = step, totalSteps = 5)
+                Spacer(Modifier.weight(1f))
+                Spacer(Modifier.size(48.dp))
+            }
+        }
+
+        // Animated step content
+        AnimatedContent(
+            targetState = step,
+            transitionSpec = {
+                if (targetState > initialState) {
+                    slideInHorizontally { it } + fadeIn() togetherWith
+                            slideOutHorizontally { -it } + fadeOut()
+                } else {
+                    slideInHorizontally { -it } + fadeIn() togetherWith
+                            slideOutHorizontally { it } + fadeOut()
+                }
+            },
+            modifier = Modifier.weight(1f),
+            label = "onboarding_step"
+        ) { currentStep ->
+            when (currentStep) {
+                0 -> LanguageStep(
+                    selectedLanguage = selectedLanguage,
+                    onSelect = { selectedLanguage = it },
+                    onNext = { step = 1 }
+                )
+                1 -> WelcomeStep(onNext = { step = 2 })
+                2 -> DharmaPathStep(
+                    selectedPath = selectedDharmaPath,
+                    onSelect = { selectedDharmaPath = it },
+                    onNext = { step = 3 }
+                )
+                3 -> TraditionStep(
+                    selectedTradition = selectedTradition,
+                    onSelect = { selectedTradition = it },
+                    onNext = { step = 4 }
+                )
+                4 -> LocationStep(
+                    selectedLocation = selectedLocation,
+                    onSelect = { selectedLocation = it },
+                    onComplete = { onComplete(selectedTradition, selectedLocation, selectedDharmaPath, selectedLanguage) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun StepProgressDots(currentStep: Int, totalSteps: Int) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        repeat(totalSteps) { index ->
+            Box(
+                modifier = Modifier
+                    .size(if (index == currentStep) 10.dp else 8.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (index <= currentStep) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                    )
+            )
+        }
     }
 }
 
@@ -258,13 +323,13 @@ private fun DharmaPathStep(
                     isHighlighted = path == selectedPath
                 ) {
                     Text(
-                        path.displayName,
+                        path.localizedName(),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Medium,
                         color = if (path == selectedPath) accentColor else MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        path.description,
+                        path.localizedDescription(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -308,13 +373,13 @@ private fun TraditionStep(
                     isHighlighted = tradition == selectedTradition
                 ) {
                     Text(
-                        tradition.displayName,
+                        tradition.localizedName(),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Medium,
                         color = if (tradition == selectedTradition) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        tradition.description,
+                        tradition.localizedDescription(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

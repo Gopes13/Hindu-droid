@@ -24,13 +24,15 @@ data class Festival(
 }
 
 data class FestivalRule(
-    val type: String,           // "tithi", "solar", "tithi_offset"
+    val type: String,           // "tithi", "solar", "tithi_offset", "fixed_solar"
     val month: String? = null,
     val paksha: String? = null,
     val tithi: Int? = null,
     val solarEvent: String? = null,
     val daysAfter: Int? = null,
-    val daysBefore: Int? = null
+    val daysBefore: Int? = null,
+    val solarMonth: Int? = null,
+    val solarDay: Int? = null
 )
 
 enum class FestivalCategory(val displayName: String) {

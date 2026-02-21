@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.engine.AudioPlayerService
 import dev.gopes.hinducalendar.ui.components.SacredCard
 
 @Composable
@@ -38,6 +39,8 @@ fun RevealableVerseCard(
     translation: String,
     explanation: String?,
     names: List<Pair<String, String>>? = null,
+    audioId: String? = null,
+    audioPlayerService: AudioPlayerService? = null,
     onFullyRevealed: (() -> Unit)? = null,
     onExplanationReveal: (() -> Unit)? = null,
     onShare: (() -> Unit)? = null,
@@ -81,6 +84,12 @@ fun RevealableVerseCard(
                 )
             }
             Spacer(Modifier.weight(1f))
+            if (audioPlayerService != null && audioId != null) {
+                VerseAudioButton(
+                    audioId = audioId,
+                    audioPlayerService = audioPlayerService
+                )
+            }
             if (onShare != null) {
                 Icon(
                     Icons.Filled.Share,
@@ -101,6 +110,11 @@ fun RevealableVerseCard(
                     modifier = Modifier.size(20.dp)
                 )
             }
+        }
+
+        // Audio progress bar
+        if (audioPlayerService != null) {
+            MiniAudioProgressBar(audioId = audioId, audioPlayerService = audioPlayerService)
         }
 
         Spacer(Modifier.height(12.dp))

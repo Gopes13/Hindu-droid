@@ -14,10 +14,10 @@
     <string name="today_moonrise">चंद्रोदय</string>
     <string name="today_moonset">चंद्रास्त</string>
     <string name="panchang_tithi">तिथी</string>
-    <string name="panchang_nakshatra">__धर्म_०१०__</string>
-    <string name="panchang_yoga">__धर्म_०९१__</string>
-    <string name="panchang_karana">__धर्म_०४२__</string>
-    <string name="panchang_paksha">__धर्म_०४६__</string>
+    <string name="panchang_nakshatra">नक्षत्र</string>
+    <string name="panchang_yoga">योग</string>
+    <string name="panchang_karana">करण</string>
+    <string name="panchang_paksha">पक्ष</string>
     <string name="panchang_hindu_month">हिंदू महिना</string>
     <string name="panchang_rahu_kaal">राहू काळ</string>
     <string name="panchang_yamaghanda">यमघंडा</string>
@@ -28,17 +28,19 @@
     <string name="festivals_all">सर्व सण</string>
     <string name="festival_story">कथा</string>
     <string name="festival_significance">महत्त्व</string>
+    <string name="festival_did_you_know">तुम्हाला माहीत आहे का?</string>
     <string name="festival_traditions">परंपरा</string>
     <string name="festival_duration">कालावधी</string>
+    <string name="festival_calendar_rule">कॅलेंडर नियम</string>
     <string name="festival_days">दिवस</string>
     <string name="text_chapter">धडा</string>
     <string name="text_verse">श्लोक</string>
-    <string name="text_shloka">__धर्म_०३१__</string>
+    <string name="text_shloka">श्लोक</string>
     <string name="text_episode">भाग</string>
     <string name="text_pauri">पौडी</string>
     <string name="text_shabad">शब्द</string>
     <string name="text_ashtpadi">अष्टपदी</string>
-    <string name="text_sutra">__धर्म_०६१__</string>
+    <string name="text_sutra">सूत्र</string>
     <string name="text_discourse">प्रवचन</string>
     <string name="text_continue_reading">वाचन सुरू ठेवा</string>
     <string name="text_start_reading">वाचन सुरू करा</string>
@@ -80,6 +82,7 @@
     <string name="section_sun_moon">सूर्य आणि चंद्र</string>
     <string name="section_panchang">पंचांग</string>
     <string name="section_inauspicious_periods">अशुभ काळ</string>
+    <string name="section_auspicious_period">शुभ काळ</string>
     <string name="section_today_festivals">आजचे सण</string>
     <string name="festival_major">प्रमुख</string>
 
@@ -118,6 +121,15 @@
     <string name="setting_ayanamsa">अयनांश</string>
     <string name="setting_lahiri">लाहिरी (चित्रपक्ष)</string>
     <string name="setting_set_briefing_time">दैनिक ब्रीफिंग वेळ सेट करा</string>
+    <string name="setting_select_location">स्थान निवडा</string>
+    <string name="setting_location_desc">सूर्योदय/सूर्यास्त वेळा आणि अचूक पंचांग गणनेसाठी वापरले जाते.</string>
+    <string name="setting_search_city">शहर शोधा\u2026</string>
+    <string name="setting_use_my_location">माझे स्थान वापरा</string>
+    <string name="setting_detecting_location">स्थान शोधत आहे\u2026</string>
+    <string name="setting_location_permission_denied">स्थान परवानगी नाकारली</string>
+    <string name="setting_location_not_found">सध्याचे स्थान मिळू शकले नाही. पुन्हा प्रयत्न करा.</string>
+    <string name="setting_daily_wisdom_text">दैनिक ज्ञान ग्रंथ</string>
+    <string name="setting_wisdom_other_texts">इतर ग्रंथ</string>
 
     <!-- Calendar Screen -->
     <string name="cd_previous_month">मागील महिना</string>
@@ -125,6 +137,11 @@
 
     <!-- Daily Briefing -->
     <string name="daily_wisdom">दैनिक ज्ञान</string>
+    <string name="briefing_text_completed">तुम्ही %s पूर्ण केले!</string>
+    <string name="briefing_text_completed_subtitle">तुमची यात्रा सुरू ठेवण्यासाठी पुढील ग्रंथ निवडा.</string>
+    <string name="briefing_choose_next">पुढील ग्रंथ निवडा</string>
+    <string name="briefing_loading_error">आजची ज्ञान सामग्री लोड करण्यात अक्षम.</string>
+    <string name="briefing_load_wisdom">आजचे ज्ञान लोड करा</string>
 
     <!-- Festival List Screen -->
     <string name="no_upcoming_festivals">कोणताही आगामी सण सापडला नाही</string>
@@ -140,10 +157,15 @@
     <string name="texts_position_of">स्थिती %1$d / %2$d</string>
     <string name="texts_position">स्थिती %1$d</string>
     <string name="sacred_texts_available">%d पवित्र ग्रंथ उपलब्ध</string>
+    <string name="continue_reading">वाचन सुरू ठेवा</string>
+    <string name="all_sacred_texts">सर्व पवित्र ग्रंथ</string>
+    <string name="completed_text">पूर्ण!</string>
 
     <!-- Onboarding Screen -->
     <string name="app_name_display">हिंदू कॅलेंडर</string>
     <string name="onboarding_get_started">सुरू करा</string>
+    <string name="onboarding_choose_language">तुमची भाषा निवडा</string>
+    <string name="onboarding_language_desc">भाषांतर आणि सामग्रीसाठी भाषा निवडा.</string>
     <string name="onboarding_full_panchang">पूर्ण दैनिक पंचांग</string>
     <string name="onboarding_festival_reminders">सण स्मरणपत्रे</string>
     <string name="onboarding_sync_calendar">तुमच्या कॅलेंडरमध्ये सिंक करा</string>
@@ -170,4 +192,550 @@
     <string name="notif_channel_name">दैनिक ब्रीफिंग</string>
     <string name="notif_channel_description">दैनिक पंचांग आणि पवित्र ग्रंथ ज्ञानासह सकाळची सूचना</string>
     <string name="notif_fallback_body">आजचा पंचांग आणि पवित्र वाचनासाठी अॅप उघडा.</string>
+
+    <!-- Reader Screen -->
+    <string name="reader_understand">हा श्लोक समजून घ्या</string>
+    <string name="reader_understanding">समज</string>
+    <string name="reader_word_by_word">शब्दाशब्दी</string>
+    <string name="reader_doha">दोहा</string>
+    <string name="reader_chaupai">चौपाई</string>
+    <string name="reader_closing_doha">समापन दोहा</string>
+    <string name="reader_mool_mantar">मूळ मंतर</string>
+    <string name="reader_namakam">नमकम्</string>
+    <string name="reader_chamakam">चमकम्</string>
+    <string name="reader_key_teaching">मुख्य शिकवण</string>
+    <string name="reader_significance">महत्त्व</string>
+    <string name="reader_names_meanings">नावे आणि अर्थ</string>
+    <string name="reader_key_question">मुख्य प्रश्न</string>
+    <string name="reader_quote">उद्धरण</string>
+    <string name="reader_theme">विषय</string>
+    <string name="reader_salok">सलोक</string>
+    <string name="reader_summary">सारांश</string>
+    <string name="reader_kavach">कवच</string>
+    <string name="reader_dhyana_shloka">ध्यान श्लोक</string>
+    <string name="reader_namokar_mantra">णमोकार मंत्र</string>
+    <string name="reader_teachings">शिकवणी</string>
+    <string name="reader_lesson">धडा</string>
+    <string name="reader_unable_to_load">सामग्री लोड करण्यात अक्षम</string>
+    <string name="study_mode">अभ्यास मोड</string>
+    <string name="study_meaning">अर्थ</string>
+    <string name="focus_mode">एकाग्रता मोड</string>
+    <string name="focus_verse_counter">श्लोक %1$d / %2$d</string>
+    <string name="reader_verses_count">%d श्लोक</string>
+    <string name="cd_go_back">मागे जा</string>
+
+    <!-- Chapter Completion -->
+    <string name="completion_chapter_complete">अध्याय पूर्ण!</string>
+    <string name="completion_text_complete">ग्रंथ पूर्ण!</string>
+    <string name="completion_continue_reading">वाचन सुरू ठेवा</string>
+    <string name="completion_wonderful">अद्भुत!</string>
+    <string name="completion_review_chapter">या अध्यायाचा आढावा घ्या</string>
+
+    <!-- Bookmarks -->
+    <string name="bookmarks_title">बुकमार्क्स</string>
+    <string name="bookmarks_empty">अजून बुकमार्क नाहीत</string>
+    <string name="bookmarks_empty_hint">कोणत्याही श्लोकावर हृदय चिन्ह टॅप करा आणि येथे जतन करा</string>
+    <string name="bookmarks_edit">संपादित करा</string>
+    <string name="bookmarks_delete">हटवा</string>
+    <string name="bookmarks_delete_title">बुकमार्क काढायचा?</string>
+    <string name="bookmarks_delete_body">हा बुकमार्क आणि सर्व नोट्स काढून टाकल्या जातील.</string>
+    <string name="bookmarks_reflection">चिंतन</string>
+    <string name="bookmarks_note_hint">तुमच्या नोट्स</string>
+    <string name="bookmarks_note_placeholder">तुमचे विचार, चिंतन किंवा अंतर्दृष्टी लिहा…</string>
+    <string name="bookmarks_saved_count">%d श्लोक जतन केले</string>
+
+    <!-- Gamification -->
+    <string name="sadhana_journey">साधना यात्रा</string>
+    <string name="sadhana_level_format">स्त.%1$d %2$s</string>
+    <string name="sadhana_pp_to_next">पुढील स्तरापर्यंत %d पुण्य गुण</string>
+    <string name="sadhana_max_level">कमाल स्तर प्राप्त!</string>
+    <string name="sadhana_days_active">सक्रिय दिवस</string>
+    <string name="sadhana_badges_label">बॅज</string>
+    <string name="sadhana_badges_section">बॅज</string>
+    <string name="sadhana_new_title">नवी उपाधी प्राप्त</string>
+    <string name="sadhana_continue">यात्रा सुरू ठेवा</string>
+    <string name="sadhana_enable">साधना यात्रा सक्रिय करा</string>
+    <string name="sadhana_enable_desc">गुण आणि बॅज द्वारे तुमची आध्यात्मिक साधना ट्रॅक करा</string>
+    <string name="punya_points">पुण्य गुण</string>
+    <string name="level_up">स्तर वाढला!</string>
+    <string name="daily_challenge">दैनिक आव्हान</string>
+    <string name="challenge_panchang">पंचांग अन्वेषक</string>
+    <string name="challenge_festival">सण ज्ञान</string>
+    <string name="challenge_verse">श्लोक चिंतन</string>
+    <string name="challenge_mantra">मंत्र जुळवणी</string>
+    <string name="challenge_completed">आव्हान पूर्ण!</string>
+    <string name="challenge_come_back">नवीन आव्हानासाठी उद्या या</string>
+    <string name="streak_day_label">दिवसांची सलग उपस्थिती</string>
+    <string name="streak_best">सर्वोत्तम</string>
+    <string name="milestone_title">%d दिवसांची सलग उपस्थिती!</string>
+    <string name="milestone_subtitle">तुमची निष्ठा प्रेरणादायक आहे</string>
+    <string name="badge_earned_on">%s रोजी मिळवले</string>
+    <string name="badge_keep_practicing">हा बॅज मिळवण्यासाठी अभ्यास सुरू ठेवा</string>
+    <string name="level_1">जिज्ञासू साधक</string>
+    <string name="level_2">समर्पित शिष्य</string>
+    <string name="level_3">प्रातः यात्री</string>
+    <string name="level_4">शास्त्र विद्यार्थी</string>
+    <string name="level_5">सजग साधक</string>
+    <string name="level_6">धर्म अन्वेषक</string>
+    <string name="level_7">पवित्र वाचक</string>
+    <string name="level_8">उत्सव रक्षक</string>
+    <string name="level_9">मंत्र जापक</string>
+    <string name="level_10">पंचांग ज्ञाता</string>
+    <string name="level_11">ज्ञान अन्वेषक</string>
+    <string name="level_12">समर्पित साधक</string>
+    <string name="level_13">मंदिर रक्षक</string>
+    <string name="level_14">कथा संरक्षक</string>
+    <string name="level_15">परंपरा वाहक</string>
+    <string name="level_16">ज्ञान गुरू</string>
+    <string name="level_17">आध्यात्मिक मार्गदर्शक</string>
+    <string name="level_18">धर्म विजेता</string>
+    <string name="level_19">पवित्र ज्योती</string>
+    <string name="level_20">प्रबुद्ध ऋषी</string>
+
+    <!-- Dharma Path Names -->
+    <string name="dharma_general">सामान्य हिंदू</string>
+    <string name="dharma_vaishnav">वैष्णव</string>
+    <string name="dharma_shaiv">शैव</string>
+    <string name="dharma_shakta">शाक्त</string>
+    <string name="dharma_smarta">स्मार्त</string>
+    <string name="dharma_iskcon">ISKCON</string>
+    <string name="dharma_swaminarayan">स्वामीनारायण</string>
+    <string name="dharma_sikh">सिख</string>
+    <string name="dharma_jain">जैन</string>
+
+    <!-- Dharma Path Descriptions -->
+    <string name="dharma_general_desc">गीता, हनुमान चालीसा आणि प्रमुख सणांसह व्यापक हिंदू आचरण.</string>
+    <string name="dharma_vaishnav_desc">भगवान विष्णू आणि त्यांच्या अवतारांची भक्ती.</string>
+    <string name="dharma_shaiv_desc">भगवान शिवाची भक्ती.</string>
+    <string name="dharma_shakta_desc">दिव्य मातेची भक्ती.</string>
+    <string name="dharma_smarta_desc">पाचही देवतांची पूजा.</string>
+    <string name="dharma_iskcon_desc">आंतरराष्ट्रीय कृष्णभावनामृत संघ.</string>
+    <string name="dharma_swaminarayan_desc">स्वामीनारायण संप्रदाय.</string>
+    <string name="dharma_sikh_desc">गुरू नानक देव जी यांनी स्थापित सिख धर्म.</string>
+    <string name="dharma_jain_desc">जैन धर्म — अहिंसेचा मार्ग.</string>
+
+    <!-- Sacred Text Names -->
+    <string name="text_name_gita">भगवद् गीता</string>
+    <string name="text_name_hanuman_chalisa">हनुमान चालीसा</string>
+    <string name="text_name_japji_sahib">जपजी साहिब</string>
+    <string name="text_name_bhagavata">भागवत पुराण</string>
+    <string name="text_name_vishnu_sahasranama">विष्णू सहस्रनाम</string>
+    <string name="text_name_shiva_purana">शिव पुराण</string>
+    <string name="text_name_rudram">श्री रुद्रम्</string>
+    <string name="text_name_devi_mahatmya">देवी माहात्म्य</string>
+    <string name="text_name_soundarya_lahari">सौंदर्य लहरी</string>
+    <string name="text_name_shikshapatri">शिक्षापत्री</string>
+    <string name="text_name_vachanamrut">वचनामृत</string>
+    <string name="text_name_sukhmani">सुखमनी साहिब</string>
+    <string name="text_name_gurbani">दैनिक गुरबाणी</string>
+    <string name="text_name_tattvartha_sutra">तत्त्वार्थ सूत्र</string>
+    <string name="text_name_jain_prayers">जैन प्रार्थना</string>
+
+    <!-- Sacred Text Theme Tags -->
+    <string name="theme_philosophy">तत्त्वज्ञान</string>
+    <string name="theme_devotional_hymn">भक्ती गीत</string>
+    <string name="theme_morning_prayer">प्रातःप्रार्थना</string>
+    <string name="theme_epic_stories">महाकाव्य कथा</string>
+    <string name="theme_1000_names">1000 नावे</string>
+    <string name="theme_vedic_chant">वैदिक मंत्र</string>
+    <string name="theme_goddess_glory">देवी महिमा</string>
+    <string name="theme_devotional_poetry">भक्ती काव्य</string>
+    <string name="theme_ethical_guide">नैतिक मार्गदर्शक</string>
+    <string name="theme_discourses">प्रवचन</string>
+    <string name="theme_meditation">ध्यान</string>
+    <string name="theme_daily_shabads">दैनिक शबद</string>
+    <string name="theme_jain_philosophy">जैन तत्त्वज्ञान</string>
+    <string name="theme_prayers_teachings">प्रार्थना आणि शिकवणी</string>
+
+    <!-- Sacred Text Unit Labels -->
+    <string name="unit_verses">श्लोक</string>
+    <string name="unit_pauris">पौड्या</string>
+    <string name="unit_episodes">भाग</string>
+    <string name="unit_shlokas">श्लोक</string>
+    <string name="unit_anuvakas">अनुवाक</string>
+    <string name="unit_chapters">अध्याय</string>
+    <string name="unit_discourses">प्रवचने</string>
+    <string name="unit_ashtpadis">अष्टपदी</string>
+    <string name="unit_shabads">शबद</string>
+    <string name="unit_sutras">सूत्रे</string>
+    <string name="unit_teachings">शिकवणी</string>
+
+    <!-- Calendar Tradition Names -->
+    <string name="tradition_purnimant">उत्तर भारतीय (पूर्णिमांत)</string>
+    <string name="tradition_amant">दक्षिण भारतीय (अमांत)</string>
+    <string name="tradition_gujarati">गुजराती</string>
+    <string name="tradition_bengali">बंगाली</string>
+    <string name="tradition_tamil">तमिळ</string>
+    <string name="tradition_malayalam">मल्याळम</string>
+
+    <!-- Calendar Tradition Descriptions -->
+    <string name="tradition_purnimant_desc">महिना पूर्णिमेला संपतो. बहुतांश उत्तर भारतात वापरला जातो.</string>
+    <string name="tradition_amant_desc">महिना अमावस्येला संपतो. महाराष्ट्र, कर्नाटक, आंध्र प्रदेशात वापरला जातो.</string>
+    <string name="tradition_gujarati_desc">गुजराती महिन्यांची नावे आणि प्रादेशिक सणांसह अमांत प्रणालीवर आधारित.</string>
+    <string name="tradition_bengali_desc">दुर्गा पूजा आणि पोइला बैशाख सारख्या प्रादेशिक सणांसह बंगाली कॅलेंडर.</string>
+    <string name="tradition_tamil_desc">पोंगल आणि तमिळ नववर्ष सारख्या सणांसह तमिळ कॅलेंडर.</string>
+    <string name="tradition_malayalam_desc">ओणम आणि विशु सारख्या सणांसह मल्याळम कॅलेंडर.</string>
+
+    <!-- Festival Category Names -->
+    <string name="category_major">प्रमुख सण</string>
+    <string name="category_moderate">सण</string>
+    <string name="category_recurring">मासिक अनुष्ठान</string>
+    <string name="category_regional">प्रादेशिक सण</string>
+    <string name="category_vrat">व्रत (उपवास)</string>
+
+    <!-- Calendar Sync Options -->
+    <string name="sync_festivals_only">फक्त सण</string>
+    <string name="sync_festivals_and_tithis">सण + महत्त्वाच्या तिथी</string>
+    <string name="sync_full_panchang">पूर्ण पंचांग</string>
+
+    <!-- Reminder Timings -->
+    <string name="reminder_morning_of">कार्यक्रमाच्या सकाळी</string>
+    <string name="reminder_evening_before">आदल्या संध्याकाळी (संध्या. 6:00)</string>
+    <string name="reminder_day_before">१ दिवस आधी</string>
+    <string name="reminder_two_days_before">२ दिवस आधी</string>
+
+    <!-- Countdown Badge -->
+    <string name="countdown_today">आज!</string>
+    <string name="countdown_tomorrow">उद्या</string>
+    <string name="countdown_in_days">%d दिवसांत</string>
+
+    <!-- Audio -->
+    <string name="cd_play_audio">ऑडिओ प्ले करा</string>
+    <string name="cd_pause_audio">ऑडिओ थांबवा</string>
+    <string name="cd_resume_audio">ऑडिओ पुन्हा सुरू करा</string>
+    <string name="cd_audio_error">ऑडिओ त्रुटी</string>
+    <string name="audio_downloads">ऑडिओ डाउनलोड्स</string>
+    <string name="audio_download">ऑडिओ डाउनलोड करा</string>
+    <string name="audio_downloading">डाउनलोड होत आहे…</string>
+    <string name="audio_downloaded">डाउनलोड झाले</string>
+    <string name="audio_delete">ऑडिओ हटवा</string>
+    <string name="audio_delete_all">सर्व ऑडिओ हटवा</string>
+    <string name="audio_total_usage">एकूण: %s</string>
+
+    <!-- Panchang Element Names: Tithi -->
+    <string name="tithi_pratipada">प्रतिपदा</string>
+    <string name="tithi_dwitiya">द्वितीया</string>
+    <string name="tithi_tritiya">तृतीया</string>
+    <string name="tithi_chaturthi">चतुर्थी</string>
+    <string name="tithi_panchami">पंचमी</string>
+    <string name="tithi_shashthi">षष्ठी</string>
+    <string name="tithi_saptami">सप्तमी</string>
+    <string name="tithi_ashtami">अष्टमी</string>
+    <string name="tithi_navami">नवमी</string>
+    <string name="tithi_dashami">दशमी</string>
+    <string name="tithi_ekadashi">एकादशी</string>
+    <string name="tithi_dwadashi">द्वादशी</string>
+    <string name="tithi_trayodashi">त्रयोदशी</string>
+    <string name="tithi_chaturdashi">चतुर्दशी</string>
+    <string name="tithi_purnima">पूर्णिमा</string>
+    <string name="tithi_amavasya">अमावस्या</string>
+
+    <!-- Panchang Element Names: Nakshatra -->
+    <string name="nakshatra_ashwini">अश्विनी</string>
+    <string name="nakshatra_bharani">भरणी</string>
+    <string name="nakshatra_krittika">कृत्तिका</string>
+    <string name="nakshatra_rohini">रोहिणी</string>
+    <string name="nakshatra_mrigashira">मृगशिरा</string>
+    <string name="nakshatra_ardra">आर्द्रा</string>
+    <string name="nakshatra_punarvasu">पुनर्वसू</string>
+    <string name="nakshatra_pushya">पुष्य</string>
+    <string name="nakshatra_ashlesha">अश्लेषा</string>
+    <string name="nakshatra_magha">मघा</string>
+    <string name="nakshatra_purva_phalguni">पूर्वा फाल्गुनी</string>
+    <string name="nakshatra_uttara_phalguni">उत्तरा फाल्गुनी</string>
+    <string name="nakshatra_hasta">हस्ता</string>
+    <string name="nakshatra_chitra">चित्रा</string>
+    <string name="nakshatra_swati">स्वाती</string>
+    <string name="nakshatra_vishakha">विशाखा</string>
+    <string name="nakshatra_anuradha">अनुराधा</string>
+    <string name="nakshatra_jyeshtha">ज्येष्ठा</string>
+    <string name="nakshatra_mula">मूळ</string>
+    <string name="nakshatra_purvashadha">पूर्वाषाढा</string>
+    <string name="nakshatra_uttarashadha">उत्तराषाढा</string>
+    <string name="nakshatra_shravana">श्रवण</string>
+    <string name="nakshatra_dhanishta">धनिष्ठा</string>
+    <string name="nakshatra_shatabhisha">शतभिषा</string>
+    <string name="nakshatra_purva_bhadrapada">पूर्वा भाद्रपदा</string>
+    <string name="nakshatra_uttara_bhadrapada">उत्तरा भाद्रपदा</string>
+    <string name="nakshatra_revati">रेवती</string>
+
+    <!-- Panchang Element Names: Yoga -->
+    <string name="yoga_vishkambha">विष्कंभ</string>
+    <string name="yoga_priti">प्रीती</string>
+    <string name="yoga_ayushman">आयुष्मान</string>
+    <string name="yoga_saubhagya">सौभाग्य</string>
+    <string name="yoga_shobhana">शोभन</string>
+    <string name="yoga_atiganda">अतिगंड</string>
+    <string name="yoga_sukarma">सुकर्म</string>
+    <string name="yoga_dhriti">धृती</string>
+    <string name="yoga_shula">शूल</string>
+    <string name="yoga_ganda">गंड</string>
+    <string name="yoga_vriddhi">वृद्धी</string>
+    <string name="yoga_dhruva">ध्रुव</string>
+    <string name="yoga_vyaghata">व्याघात</string>
+    <string name="yoga_harshana">हर्षण</string>
+    <string name="yoga_vajra">वज्र</string>
+    <string name="yoga_siddhi">सिद्धी</string>
+    <string name="yoga_vyatipata">व्यतिपात</string>
+    <string name="yoga_variyan">वरियान</string>
+    <string name="yoga_parigha">परिघ</string>
+    <string name="yoga_shiva">शिव</string>
+    <string name="yoga_siddha">सिद्ध</string>
+    <string name="yoga_sadhya">साध्य</string>
+    <string name="yoga_shubha">शुभ</string>
+    <string name="yoga_shukla">शुक्ल</string>
+    <string name="yoga_brahma">ब्रह्म</string>
+    <string name="yoga_indra">इंद्र</string>
+    <string name="yoga_vaidhriti">वैधृती</string>
+
+    <!-- Panchang Element Names: Karana -->
+    <string name="karana_kimstughna">किंस्तुघ्न</string>
+    <string name="karana_shakuni">शकुनी</string>
+    <string name="karana_chatushpada">चतुष्पद</string>
+    <string name="karana_nagava">नागव</string>
+    <string name="karana_bava">बव</string>
+    <string name="karana_balava">बालव</string>
+    <string name="karana_kaulava">कौलव</string>
+    <string name="karana_taitila">तैतिल</string>
+    <string name="karana_garaja">गरज</string>
+    <string name="karana_vanija">वणिज</string>
+    <string name="karana_vishti">विष्टी (भद्रा)</string>
+
+    <!-- Panchang Element Names: Paksha -->
+    <string name="paksha_shukla">शुक्ल</string>
+    <string name="paksha_krishna">कृष्ण</string>
+
+    <!-- Panchang Element Names: Hindu Month -->
+    <string name="month_chaitra">चैत्र</string>
+    <string name="month_vaishakha">वैशाख</string>
+    <string name="month_jyeshtha">ज्येष्ठ</string>
+    <string name="month_ashadha">आषाढ</string>
+    <string name="month_shravana">श्रावण</string>
+    <string name="month_bhadrapada">भाद्रपद</string>
+    <string name="month_ashwin">आश्विन</string>
+    <string name="month_kartik">कार्तिक</string>
+    <string name="month_margashirsha">मार्गशीर्ष</string>
+    <string name="month_pausha">पौष</string>
+    <string name="month_magha">माघ</string>
+    <string name="month_phalguna">फाल्गुन</string>
+
+    <!-- Gamification: PP/Level abbreviations -->
+    <string name="pp_abbreviation">पु.अं.</string>
+    <string name="pp_format">+%d पु.अं.</string>
+    <string name="pp_total_format">%d पु.अं.</string>
+    <string name="pp_sparkle_format">\u2728 +%d पु.अं.</string>
+    <string name="lv_format">स्त.%d</string>
+
+    <!-- Gamification: Badge categories -->
+    <string name="badge_cat_streak">सलग उपस्थिती</string>
+    <string name="badge_cat_text">ग्रंथ पूर्णता</string>
+    <string name="badge_cat_explorer">अन्वेषक</string>
+    <string name="badge_cat_festival">सण</string>
+    <string name="badge_cat_language">भाषा</string>
+    <string name="badge_cat_panchang">पंचांग</string>
+    <string name="badge_cat_challenge">आव्हान</string>
+    <string name="badge_cat_engagement">सहभाग</string>
+    <string name="badge_category_count">%1$s (%2$d/%3$d)</string>
+    <string name="badge_type_label">%s बॅज</string>
+
+    <!-- Gamification: Badge names -->
+    <string name="badge_streak_7">7 दिवसांची सलग उपस्थिती</string>
+    <string name="badge_streak_30">30 दिवसांची सलग उपस्थिती</string>
+    <string name="badge_streak_100">100 दिवसांची सलग उपस्थिती</string>
+    <string name="badge_streak_365">365 दिवसांची सलग उपस्थिती</string>
+    <string name="badge_explorer_2">2 मार्ग अन्वेषित</string>
+    <string name="badge_explorer_5">5 मार्ग अन्वेषित</string>
+    <string name="badge_festival_5">5 सणांच्या कथा</string>
+    <string name="badge_festival_20">20 सणांच्या कथा</string>
+    <string name="badge_language_3">3 भाषा वापरल्या</string>
+    <string name="badge_language_6">6 भाषा वापरल्या</string>
+    <string name="badge_panchang_7">7 पंचांग दिवस</string>
+    <string name="badge_panchang_30">30 पंचांग दिवस</string>
+    <string name="badge_panchang_100">100 पंचांग दिवस</string>
+    <string name="badge_challenge_7">7 आव्हाने सोडवली</string>
+    <string name="badge_challenge_30">30 आव्हाने सोडवली</string>
+    <string name="badge_explained_10">10 श्लोक स्पष्ट केले</string>
+    <string name="badge_explained_100">100 श्लोक स्पष्ट केले</string>
+    <string name="badge_reflections_5">5 चिंतने</string>
+    <string name="badge_reflections_25">25 चिंतने</string>
+    <string name="badge_deep_study_7">7 अभ्यास सत्रे</string>
+    <string name="badge_deep_study_30">30 अभ्यास सत्रे</string>
+
+    <!-- Accessibility states -->
+    <string name="state_enabled">सक्रिय</string>
+    <string name="state_disabled">निष्क्रिय</string>
+
+    <!-- Quiz strings -->
+    <string name="quiz_tithi_question">%1$s चांद्र दिवस कोणती तिथी आहे?</string>
+    <string name="quiz_nakshatra_question">राशिचक्रातील %1$s नक्षत्र कोणते आहे?</string>
+    <string name="quiz_festival_diwali_q">दिवाळी काय साजरी करते?</string>
+    <string name="quiz_festival_diwali_a">अंधारावर प्रकाशाचा विजय</string>
+    <string name="quiz_festival_diwali_w1">कापणीचा हंगाम</string>
+    <string name="quiz_festival_diwali_w2">फक्त नवीन वर्ष</string>
+    <string name="quiz_festival_diwali_w3">वसंत विषुव</string>
+    <string name="quiz_festival_holi_q">होळीला कोणत्या सणाचे नाव आहे?</string>
+    <string name="quiz_festival_holi_a">रंगांचा सण</string>
+    <string name="quiz_festival_holi_w1">दिव्यांचा सण</string>
+    <string name="quiz_festival_holi_w2">संगीत</string>
+    <string name="quiz_festival_holi_w3">पाणी</string>
+    <string name="quiz_festival_navratri_q">नवरात्री किती रात्री चालते?</string>
+    <string name="quiz_festival_navratri_a">नऊ</string>
+    <string name="quiz_festival_navratri_w1">सात</string>
+    <string name="quiz_festival_navratri_w2">पाच</string>
+    <string name="quiz_festival_navratri_w3">दहा</string>
+    <string name="quiz_festival_raksha_q">बहीण भावाच्या मनगटावर काय बांधते?</string>
+    <string name="quiz_festival_raksha_a">राखी (पवित्र धागा)</string>
+    <string name="quiz_festival_raksha_w1">फुलांचा हार</string>
+    <string name="quiz_festival_raksha_w2">सोन्याची साखळी</string>
+    <string name="quiz_festival_raksha_w3">रेशमी रिबन</string>
+    <string name="quiz_festival_janmashtami_q">जन्माष्टमी कोणाचा जन्म साजरा करते?</string>
+    <string name="quiz_festival_janmashtami_a">भगवान कृष्ण</string>
+    <string name="quiz_festival_janmashtami_w1">भगवान राम</string>
+    <string name="quiz_festival_janmashtami_w2">भगवान शिव</string>
+    <string name="quiz_festival_janmashtami_w3">भगवान गणेश</string>
+    <string name="quiz_festival_ganesh_q">गणेश चतुर्थी साधारणपणे किती दिवस चालते?</string>
+    <string name="quiz_festival_ganesh_a">१० दिवस</string>
+    <string name="quiz_festival_ganesh_w1">७ दिवस</string>
+    <string name="quiz_festival_ganesh_w2">५ दिवस</string>
+    <string name="quiz_festival_ganesh_w3">३ दिवस</string>
+    <string name="quiz_festival_shivaratri_q">महा शिवरात्री कोणाला समर्पित आहे?</string>
+    <string name="quiz_festival_shivaratri_a">भगवान शिव</string>
+    <string name="quiz_festival_shivaratri_w1">भगवान विष्णू</string>
+    <string name="quiz_festival_shivaratri_w2">भगवान ब्रह्मा</string>
+    <string name="quiz_festival_shivaratri_w3">देवी दुर्गा</string>
+    <string name="quiz_festival_sankranti_q">मकर संक्रांती सूर्याच्या कोणत्या राशीत प्रवेशाचे चिन्हांकन करते?</string>
+    <string name="quiz_festival_sankranti_a">मकर (Capricorn)</string>
+    <string name="quiz_festival_sankranti_w1">मेष (Aries)</string>
+    <string name="quiz_festival_sankranti_w2">कर्क (Cancer)</string>
+    <string name="quiz_festival_sankranti_w3">तूळ (Libra)</string>
+    <string name="quiz_festival_baisakhi_q">बैसाखी कोणत्या समुदायासाठी महत्त्वाची आहे?</string>
+    <string name="quiz_festival_baisakhi_a">सिख समुदाय</string>
+    <string name="quiz_festival_baisakhi_w1">बौद्ध समुदाय</string>
+    <string name="quiz_festival_baisakhi_w2">जैन समुदाय</string>
+    <string name="quiz_festival_baisakhi_w3">पारशी समुदाय</string>
+    <string name="quiz_festival_ramnavami_q">राम नवमी कोणाचा जन्म साजरा करते?</string>
+    <string name="quiz_festival_ramnavami_a">भगवान राम</string>
+    <string name="quiz_festival_ramnavami_w1">भगवान कृष्ण</string>
+    <string name="quiz_festival_ramnavami_w2">भगवान हनुमान</string>
+    <string name="quiz_festival_ramnavami_w3">भगवान विष्णू</string>
+    <string name="quiz_festival_hanuman_q">हनुमान कोणाचे भक्त म्हणून ओळखले जातात?</string>
+    <string name="quiz_festival_hanuman_a">भगवान राम</string>
+    <string name="quiz_festival_hanuman_w1">भगवान शिव</string>
+    <string name="quiz_festival_hanuman_w2">भगवान कृष्ण</string>
+    <string name="quiz_festival_hanuman_w3">भगवान विष्णू</string>
+    <string name="quiz_festival_gurupurnima_q">गुरू पौर्णिमा कोणाचा सन्मान करते?</string>
+    <string name="quiz_festival_gurupurnima_a">आध्यात्मिक गुरू</string>
+    <string name="quiz_festival_gurupurnima_w1">कापणीचे देव</string>
+    <string name="quiz_festival_gurupurnima_w2">पूर्वज</string>
+    <string name="quiz_festival_gurupurnima_w3">योद्धे</string>
+    <string name="quiz_verse_gita_q">गीतेमध्ये कृष्ण कोणाचे सारथी आहेत?</string>
+    <string name="quiz_verse_gita_a">अर्जुन</string>
+    <string name="quiz_verse_gita_w1">भीष्म</string>
+    <string name="quiz_verse_gita_w2">दुर्योधन</string>
+    <string name="quiz_verse_gita_w3">कर्ण</string>
+    <string name="quiz_verse_chalisa_q">हनुमान चालीसामध्ये किती चौपाई आहेत?</string>
+    <string name="quiz_verse_chalisa_a">40</string>
+    <string name="quiz_verse_chalisa_w1">30</string>
+    <string name="quiz_verse_chalisa_w2">50</string>
+    <string name="quiz_verse_chalisa_w3">60</string>
+    <string name="quiz_verse_japji_q">जपजी साहिबची रचना कोणी केली?</string>
+    <string name="quiz_verse_japji_a">गुरू नानक देव जी</string>
+    <string name="quiz_verse_japji_w1">गुरू गोबिंद सिंह जी</string>
+    <string name="quiz_verse_japji_w2">गुरू अर्जन देव जी</string>
+    <string name="quiz_verse_japji_w3">गुरू अंगद देव जी</string>
+    <string name="quiz_verse_sahasranama_q">सहस्रनामामध्ये विष्णूची किती नावे आहेत?</string>
+    <string name="quiz_verse_sahasranama_a">1000</string>
+    <string name="quiz_verse_sahasranama_w1">500</string>
+    <string name="quiz_verse_sahasranama_w2">108</string>
+    <string name="quiz_verse_sahasranama_w3">1008</string>
+    <string name="quiz_verse_rudram_q">श्री रुद्रम् कोणत्या वेदाचा भाग आहे?</string>
+    <string name="quiz_verse_rudram_a">यजुर्वेद</string>
+    <string name="quiz_verse_rudram_w1">ऋग्वेद</string>
+    <string name="quiz_verse_rudram_w2">सामवेद</string>
+    <string name="quiz_verse_rudram_w3">अथर्ववेद</string>
+    <string name="quiz_verse_devi_q">देवी माहात्म्य कोणाच्या विजयाचे वर्णन करते?</string>
+    <string name="quiz_verse_devi_a">देवी दुर्गा</string>
+    <string name="quiz_verse_devi_w1">देवी लक्ष्मी</string>
+    <string name="quiz_verse_devi_w2">देवी सरस्वती</string>
+    <string name="quiz_verse_devi_w3">देवी पार्वती</string>
+    <string name="quiz_verse_soundarya_q">सौंदर्य लहरीची रचना पारंपरिकपणे कोणाला दिली जाते?</string>
+    <string name="quiz_verse_soundarya_a">आदि शंकराचार्य</string>
+    <string name="quiz_verse_soundarya_w1">तुलसीदास</string>
+    <string name="quiz_verse_soundarya_w2">वाल्मीकी</string>
+    <string name="quiz_verse_soundarya_w3">व्यास</string>
+    <string name="quiz_verse_sukhmani_q">सुखमनी साहिबची रचना कोणी केली?</string>
+    <string name="quiz_verse_sukhmani_a">गुरू अर्जन देव जी</string>
+    <string name="quiz_verse_sukhmani_w1">गुरू नानक देव जी</string>
+    <string name="quiz_verse_sukhmani_w2">गुरू गोबिंद सिंह जी</string>
+    <string name="quiz_verse_sukhmani_w3">गुरू तेग बहादूर जी</string>
+    <string name="quiz_mantra_shiva_q">ॐ नमः शिवाय कोणाला समर्पित आहे?</string>
+    <string name="quiz_mantra_shiva_a">भगवान शिव</string>
+    <string name="quiz_mantra_shiva_w1">भगवान विष्णू</string>
+    <string name="quiz_mantra_shiva_w2">भगवान ब्रह्मा</string>
+    <string name="quiz_mantra_shiva_w3">भगवान गणेश</string>
+    <string name="quiz_mantra_narayana_q">नारायण हे कोणाचे दुसरे नाव आहे?</string>
+    <string name="quiz_mantra_narayana_a">भगवान विष्णू</string>
+    <string name="quiz_mantra_narayana_w1">भगवान शिव</string>
+    <string name="quiz_mantra_narayana_w2">भगवान इंद्र</string>
+    <string name="quiz_mantra_narayana_w3">भगवान ब्रह्मा</string>
+    <string name="quiz_mantra_ganesha_q">हा मंत्र कोणाचे आवाहन करतो?</string>
+    <string name="quiz_mantra_ganesha_a">भगवान गणेश</string>
+    <string name="quiz_mantra_ganesha_w1">भगवान कार्तिकेय</string>
+    <string name="quiz_mantra_ganesha_w2">भगवान हनुमान</string>
+    <string name="quiz_mantra_ganesha_w3">भगवान राम</string>
+    <string name="quiz_mantra_gayatri_q">गायत्री मंत्र कोणत्या वेदात आहे?</string>
+    <string name="quiz_mantra_gayatri_a">ऋग्वेद</string>
+    <string name="quiz_mantra_gayatri_w1">यजुर्वेद</string>
+    <string name="quiz_mantra_gayatri_w2">सामवेद</string>
+    <string name="quiz_mantra_gayatri_w3">अथर्ववेद</string>
+    <string name="quiz_mantra_mrityunjaya_q">महामृत्युंजय मंत्र कोणाला उद्देशून आहे?</string>
+    <string name="quiz_mantra_mrityunjaya_a">भगवान शिव (त्र्यंबक)</string>
+    <string name="quiz_mantra_mrityunjaya_w1">भगवान विष्णू</string>
+    <string name="quiz_mantra_mrityunjaya_w2">भगवान यम</string>
+    <string name="quiz_mantra_mrityunjaya_w3">भगवान अग्नी</string>
+    <string name="quiz_mantra_bija_q">ऐं, ह्रीं, क्लीं सारखे बीज मंत्र कशाशी संबंधित आहेत?</string>
+    <string name="quiz_mantra_bija_a">देवी शक्ती</string>
+    <string name="quiz_mantra_bija_w1">ग्रह शक्ती</string>
+    <string name="quiz_mantra_bija_w2">तत्त्व शक्ती</string>
+    <string name="quiz_mantra_bija_w3">वैदिक स्तुती</string>
+    <string name="quiz_mantra_harekrishna_q">हरे कृष्ण महामंत्रात किती शब्द आहेत?</string>
+    <string name="quiz_mantra_harekrishna_a">16</string>
+    <string name="quiz_mantra_harekrishna_w1">12</string>
+    <string name="quiz_mantra_harekrishna_w2">18</string>
+    <string name="quiz_mantra_harekrishna_w3">8</string>
+    <string name="quiz_mantra_ikonkar_q">इक ओंकार कशाची सुरुवात आहे?</string>
+    <string name="quiz_mantra_ikonkar_a">गुरू ग्रंथ साहिब</string>
+    <string name="quiz_mantra_ikonkar_w1">भगवद् गीता</string>
+    <string name="quiz_mantra_ikonkar_w2">रामायण</string>
+    <string name="quiz_mantra_ikonkar_w3">वेद</string>
+
+    <!-- Ordinals for quiz questions -->
+    <string name="ordinal_1">१ला</string>
+    <string name="ordinal_2">२रा</string>
+    <string name="ordinal_3">३रा</string>
+    <string name="ordinal_4">४था</string>
+    <string name="ordinal_5">५वा</string>
+    <string name="ordinal_6">६वा</string>
+    <string name="ordinal_7">७वा</string>
+    <string name="ordinal_8">८वा</string>
+    <string name="ordinal_9">९वा</string>
+    <string name="ordinal_10">१०वा</string>
+    <string name="ordinal_11">११वा</string>
+    <string name="ordinal_12">१२वा</string>
+    <string name="ordinal_13">१३वा</string>
+    <string name="ordinal_14">१४वा</string>
+    <string name="ordinal_15">१५वा</string>
+    <string name="ordinal_16">१६वा</string>
+    <string name="ordinal_17">१७वा</string>
+    <string name="ordinal_18">१८वा</string>
+    <string name="ordinal_19">१९वा</string>
+    <string name="ordinal_20">२०वा</string>
+    <string name="ordinal_21">२१वा</string>
+    <string name="ordinal_22">२२वा</string>
+    <string name="ordinal_23">२३वा</string>
+    <string name="ordinal_24">२४वा</string>
+    <string name="ordinal_25">२५वा</string>
+    <string name="ordinal_26">२६वा</string>
+    <string name="ordinal_27">२७वा</string>
+    <string name="ordinal_30">३०वा</string>
 </resources>

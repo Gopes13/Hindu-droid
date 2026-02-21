@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.gopes.hinducalendar.engine.AudioPlayerService
 import dev.gopes.hinducalendar.ui.components.SacredCard
 
 @Composable
@@ -24,16 +25,17 @@ fun VerseCard(
     isHighlighted: Boolean = false,
     isBookmarked: Boolean = false,
     onBookmarkToggle: (() -> Unit)? = null,
+    audioId: String? = null,
+    audioPlayerService: AudioPlayerService? = null,
     modifier: Modifier = Modifier
 ) {
     SacredCard(
         modifier = modifier,
         isHighlighted = isHighlighted
     ) {
-        // Header: badge + bookmark
+        // Header: badge + audio + bookmark
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
@@ -48,6 +50,13 @@ fun VerseCard(
                     fontWeight = FontWeight.SemiBold
                 )
             }
+            Spacer(Modifier.weight(1f))
+            if (audioPlayerService != null && audioId != null) {
+                VerseAudioButton(
+                    audioId = audioId,
+                    audioPlayerService = audioPlayerService
+                )
+            }
             onBookmarkToggle?.let { toggle ->
                 IconButton(onClick = toggle, modifier = Modifier.size(36.dp)) {
                     Icon(
@@ -59,6 +68,11 @@ fun VerseCard(
                     )
                 }
             }
+        }
+
+        // Audio progress bar
+        if (audioPlayerService != null) {
+            MiniAudioProgressBar(audioId = audioId, audioPlayerService = audioPlayerService)
         }
 
         Spacer(Modifier.height(12.dp))
@@ -84,7 +98,7 @@ fun VerseCard(
         }
 
         Spacer(Modifier.height(12.dp))
-        Divider(color = MaterialTheme.colorScheme.outlineVariant)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         Spacer(Modifier.height(12.dp))
 
         // Translation

@@ -26,7 +26,11 @@ import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.engine.*
 import dev.gopes.hinducalendar.ui.components.SacredCard
 import dev.gopes.hinducalendar.ui.components.SacredHighlightCard
+import dev.gopes.hinducalendar.ui.util.localizedName
+import dev.gopes.hinducalendar.engine.AudioPlayerService
 import dev.gopes.hinducalendar.ui.texts.reader.components.CollapsibleExplanation
+import dev.gopes.hinducalendar.ui.texts.reader.components.MiniAudioProgressBar
+import dev.gopes.hinducalendar.ui.texts.reader.components.VerseAudioButton
 import dev.gopes.hinducalendar.ui.texts.reader.components.VerseCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,16 +39,17 @@ fun GenericReaderScreen(
     onBack: () -> Unit,
     viewModel: ReaderViewModel = hiltViewModel()
 ) {
-    val title = viewModel.textType?.displayName ?: "Sacred Text"
+    val textType = viewModel.textType
+    val title = if (textType != null) textType.localizedName() else stringResource(R.string.sacred_texts_title)
     val studyVerses = remember(viewModel.isLoading) { viewModel.getStudyVerses() }
     var readerMode by remember { mutableStateOf(ReaderMode.NORMAL) }
 
     if (readerMode == ReaderMode.STUDY && studyVerses.isNotEmpty()) {
-        StudyModeScreen(verses = studyVerses, onDismiss = { readerMode = ReaderMode.NORMAL })
+        StudyModeScreen(verses = studyVerses, audioPlayerService = viewModel.audioPlayerService, onDismiss = { readerMode = ReaderMode.NORMAL })
         return
     }
     if (readerMode == ReaderMode.FOCUS && studyVerses.isNotEmpty()) {
-        FocusedReadingScreen(verses = studyVerses, onDismiss = { readerMode = ReaderMode.NORMAL })
+        FocusedReadingScreen(verses = studyVerses, audioPlayerService = viewModel.audioPlayerService, onDismiss = { readerMode = ReaderMode.NORMAL })
         return
     }
 
@@ -78,28 +83,30 @@ fun GenericReaderScreen(
         }
 
         val lang = viewModel.language
+        val audio = viewModel.audioPlayerService
+        val textFileName = viewModel.textType?.jsonFileName ?: ""
 
         when {
             viewModel.episodeData != null ->
-                EpisodeContent(viewModel.episodeData!!, lang, Modifier.padding(padding))
+                EpisodeContent(viewModel.episodeData!!, lang, Modifier.padding(padding), textFileName, audio)
             viewModel.shlokaData != null ->
-                ShlokaContent(viewModel.shlokaData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
+                ShlokaContent(viewModel.shlokaData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark, textFileName, audio)
             viewModel.verseData != null ->
-                NumberedVerseContent(viewModel.verseData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
+                NumberedVerseContent(viewModel.verseData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark, audio)
             viewModel.chapterData != null ->
-                ChapterContent(viewModel.chapterData!!, lang, Modifier.padding(padding))
+                ChapterContent(viewModel.chapterData!!, lang, Modifier.padding(padding), audio)
             viewModel.rudramData != null ->
-                RudramContent(viewModel.rudramData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
+                RudramContent(viewModel.rudramData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark, audio)
             viewModel.gurbaniData != null ->
-                GurbaniContent(viewModel.gurbaniData!!, lang, Modifier.padding(padding))
+                GurbaniContent(viewModel.gurbaniData!!, lang, Modifier.padding(padding), audio)
             viewModel.sukhmaniData != null ->
-                SukhmaniContent(viewModel.sukhmaniData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
+                SukhmaniContent(viewModel.sukhmaniData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark, audio)
             viewModel.sutraData != null ->
-                SutraContent(viewModel.sutraData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
+                SutraContent(viewModel.sutraData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark, audio)
             viewModel.discourseData != null ->
                 DiscourseContent(viewModel.discourseData!!, lang, Modifier.padding(padding))
             viewModel.jainPrayersData != null ->
-                JainContent(viewModel.jainPrayersData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark)
+                JainContent(viewModel.jainPrayersData!!, lang, Modifier.padding(padding), viewModel::isBookmarked, viewModel::toggleBookmark, audio)
             else ->
                 Box(Modifier.fillMaxSize().padding(padding), Alignment.Center) {
                     Text(stringResource(R.string.reader_unable_to_load))
@@ -111,7 +118,7 @@ fun GenericReaderScreen(
 // ── Episode-Based (Bhagavata Purana, Shiva Purana) ──────────────────────────
 
 @Composable
-private fun EpisodeContent(data: EpisodeTextData, lang: AppLanguage, modifier: Modifier) {
+private fun EpisodeContent(data: EpisodeTextData, lang: AppLanguage, modifier: Modifier, textFileName: String = "", audio: AudioPlayerService? = null) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -148,11 +155,27 @@ private fun EpisodeContent(data: EpisodeTextData, lang: AppLanguage, modifier: M
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
+                // Audio button
+                if (audio != null) {
+                    val hasMantra = episode.relatedMantra != null
+                    val epAudioId = if (hasMantra) "${textFileName}_ep_${episode.episode}_mantra"
+                                    else "${textFileName}_ep_${episode.episode}_verse"
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Spacer(Modifier.weight(1f))
+                        VerseAudioButton(audioId = epAudioId, audioPlayerService = audio)
+                    }
+                    MiniAudioProgressBar(
+                        audioId = if (episode.relatedMantra != null) "${textFileName}_ep_${episode.episode}_mantra"
+                                  else "${textFileName}_ep_${episode.episode}_verse",
+                        audioPlayerService = audio
+                    )
+                }
+
                 // Related verse
                 episode.relatedVerse?.let { rv ->
                     if (rv.sanskrit.isNotBlank()) {
                         Spacer(Modifier.height(12.dp))
-                        Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                         Spacer(Modifier.height(12.dp))
                         Text(
                             rv.sanskrit,
@@ -191,7 +214,7 @@ private fun EpisodeContent(data: EpisodeTextData, lang: AppLanguage, modifier: M
 // ── Shloka-Based (Vishnu Sahasranama, Shikshapatri) ─────────────────────────
 
 @Composable
-private fun ShlokaContent(data: ShlokaTextData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
+private fun ShlokaContent(data: ShlokaTextData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit, textFileName: String = "", audio: AudioPlayerService? = null) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -233,7 +256,9 @@ private fun ShlokaContent(data: ShlokaTextData, lang: AppLanguage, modifier: Mod
                 translation = shloka.translation(lang),
                 explanation = commentary,
                 isBookmarked = isBookmarked(ref),
-                onBookmarkToggle = { onToggleBookmark(ref, shloka.sanskrit, shloka.translation(lang)) }
+                onBookmarkToggle = { onToggleBookmark(ref, shloka.sanskrit, shloka.translation(lang)) },
+                audioId = "${textFileName}_${shloka.shloka}",
+                audioPlayerService = audio
             )
 
             // Names (for Vishnu Sahasranama)
@@ -271,7 +296,7 @@ private fun ShlokaContent(data: ShlokaTextData, lang: AppLanguage, modifier: Mod
 // ── Verse-Based (Soundarya Lahari) ──────────────────────────────────────────
 
 @Composable
-private fun NumberedVerseContent(data: VerseTextData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
+private fun NumberedVerseContent(data: VerseTextData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit, audio: AudioPlayerService? = null) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -287,7 +312,9 @@ private fun NumberedVerseContent(data: VerseTextData, lang: AppLanguage, modifie
                 translation = verse.translation(lang),
                 explanation = theme,
                 isBookmarked = isBookmarked(ref),
-                onBookmarkToggle = { onToggleBookmark(ref, verse.sanskrit, verse.translation(lang)) }
+                onBookmarkToggle = { onToggleBookmark(ref, verse.sanskrit, verse.translation(lang)) },
+                audioId = "soundarya_${verse.verse}",
+                audioPlayerService = audio
             )
         }
     }
@@ -296,7 +323,7 @@ private fun NumberedVerseContent(data: VerseTextData, lang: AppLanguage, modifie
 // ── Chapter-Based (Devi Mahatmya) ───────────────────────────────────────────
 
 @Composable
-private fun ChapterContent(data: ChapterTextData, lang: AppLanguage, modifier: Modifier) {
+private fun ChapterContent(data: ChapterTextData, lang: AppLanguage, modifier: Modifier, audio: AudioPlayerService? = null) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -306,12 +333,21 @@ private fun ChapterContent(data: ChapterTextData, lang: AppLanguage, modifier: M
         data.kavach?.let { kav ->
             item {
                 SacredHighlightCard {
-                    Text(
-                        stringResource(R.string.reader_kavach),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            stringResource(R.string.reader_kavach),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        if (audio != null) {
+                            Spacer(Modifier.weight(1f))
+                            VerseAudioButton(audioId = "devi_mahatmya_kavach", audioPlayerService = audio)
+                        }
+                    }
+                    if (audio != null) {
+                        MiniAudioProgressBar(audioId = "devi_mahatmya_kavach", audioPlayerService = audio)
+                    }
                     Spacer(Modifier.height(8.dp))
                     Text(kav.sanskrit, style = MaterialTheme.typography.bodyLarge, lineHeight = 28.sp)
                     kav.transliteration?.let {
@@ -355,10 +391,18 @@ private fun ChapterContent(data: ChapterTextData, lang: AppLanguage, modifier: M
                 )
 
                 // Key verses
-                chapter.keyVerses?.forEach { kv ->
+                chapter.keyVerses?.forEachIndexed { idx, kv ->
                     Spacer(Modifier.height(12.dp))
-                    Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(Modifier.height(12.dp))
+                    if (audio != null) {
+                        val kvAudioId = "devi_mahatmya_ch_${chapter.chapter}_kv_${idx + 1}"
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Spacer(Modifier.weight(1f))
+                            VerseAudioButton(audioId = kvAudioId, audioPlayerService = audio)
+                        }
+                        MiniAudioProgressBar(audioId = kvAudioId, audioPlayerService = audio)
+                    }
                     Text(kv.sanskrit, style = MaterialTheme.typography.bodyMedium, lineHeight = 24.sp)
                     kv.transliteration?.let {
                         Spacer(Modifier.height(4.dp))
@@ -377,7 +421,7 @@ private fun ChapterContent(data: ChapterTextData, lang: AppLanguage, modifier: M
 // ── Rudram (Namakam + Chamakam) ─────────────────────────────────────────────
 
 @Composable
-private fun RudramContent(data: RudramData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
+private fun RudramContent(data: RudramData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit, audio: AudioPlayerService? = null) {
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOfNotNull(
         data.namakam?.let { stringResource(R.string.reader_namakam) to it },
@@ -404,6 +448,7 @@ private fun RudramContent(data: RudramData, lang: AppLanguage, modifier: Modifie
             modifier = Modifier.fillMaxSize()
         ) {
             section?.anuvakas?.let { anuvakas ->
+                val sectionName = if (selectedTab == 0) "namakam" else "chamakam"
                 items(anuvakas) { anuvaka ->
                     val theme = anuvaka.theme(lang).ifEmpty { null }
                     val ref = "${stringResource(R.string.text_shloka)} ${anuvaka.anuvaka}"
@@ -414,7 +459,9 @@ private fun RudramContent(data: RudramData, lang: AppLanguage, modifier: Modifie
                         translation = anuvaka.translation(lang),
                         explanation = theme,
                         isBookmarked = isBookmarked(ref),
-                        onBookmarkToggle = { onToggleBookmark(ref, anuvaka.sanskrit, anuvaka.translation(lang)) }
+                        onBookmarkToggle = { onToggleBookmark(ref, anuvaka.sanskrit, anuvaka.translation(lang)) },
+                        audioId = "rudram_${sectionName}_${anuvaka.anuvaka}",
+                        audioPlayerService = audio
                     )
                 }
             }
@@ -425,16 +472,17 @@ private fun RudramContent(data: RudramData, lang: AppLanguage, modifier: Modifie
 // ── Gurbani (Daily Shabads) ─────────────────────────────────────────────────
 
 @Composable
-private fun GurbaniContent(data: GurbaniData, lang: AppLanguage, modifier: Modifier) {
+private fun GurbaniContent(data: GurbaniData, lang: AppLanguage, modifier: Modifier, audio: AudioPlayerService? = null) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier.fillMaxSize()
     ) {
-        items(data.shabads) { shabad ->
+        items(data.shabads.size) { index ->
+            val shabad = data.shabads[index]
+            val shabadAudioId = "gurbani_day_${index + 1}"
             SacredCard {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Surface(
@@ -449,6 +497,7 @@ private fun GurbaniContent(data: GurbaniData, lang: AppLanguage, modifier: Modif
                             fontWeight = FontWeight.SemiBold
                         )
                     }
+                    Spacer(Modifier.width(8.dp))
                     if (shabad.author.isNotBlank()) {
                         Text(
                             shabad.author,
@@ -456,6 +505,14 @@ private fun GurbaniContent(data: GurbaniData, lang: AppLanguage, modifier: Modif
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
+                    Spacer(Modifier.weight(1f))
+                    if (audio != null) {
+                        VerseAudioButton(audioId = shabadAudioId, audioPlayerService = audio)
+                    }
+                }
+
+                if (audio != null) {
+                    MiniAudioProgressBar(audioId = shabadAudioId, audioPlayerService = audio)
                 }
 
                 Spacer(Modifier.height(12.dp))
@@ -494,7 +551,7 @@ private fun GurbaniContent(data: GurbaniData, lang: AppLanguage, modifier: Modif
 // ── Sukhmani Sahib (Ashtpadis) ──────────────────────────────────────────────
 
 @Composable
-private fun SukhmaniContent(data: SukhmaniData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
+private fun SukhmaniContent(data: SukhmaniData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit, audio: AudioPlayerService? = null) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -522,20 +579,30 @@ private fun SukhmaniContent(data: SukhmaniData, lang: AppLanguage, modifier: Mod
             // Salok
             section.salok?.let { salok ->
                 Spacer(Modifier.height(8.dp))
+                val salokAudioId = "sukhmani_${section.ashtpadi}_salok"
                 SacredHighlightCard {
-                    Text(
-                        stringResource(R.string.reader_salok),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            stringResource(R.string.reader_salok),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        if (audio != null) {
+                            Spacer(Modifier.weight(1f))
+                            VerseAudioButton(audioId = salokAudioId, audioPlayerService = audio)
+                        }
+                    }
+                    if (audio != null) {
+                        MiniAudioProgressBar(audioId = salokAudioId, audioPlayerService = audio)
+                    }
                     Spacer(Modifier.height(8.dp))
                     Text(salok.punjabi, style = MaterialTheme.typography.bodyLarge, lineHeight = 28.sp)
                     Spacer(Modifier.height(4.dp))
                     Text(salok.transliteration, style = MaterialTheme.typography.bodySmall,
                         fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(Modifier.height(8.dp))
-                    Divider(color = MaterialTheme.colorScheme.outlineVariant)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     Spacer(Modifier.height(8.dp))
                     Text(salok.translation(lang), style = MaterialTheme.typography.bodyMedium, lineHeight = 22.sp)
                 }
@@ -551,7 +618,9 @@ private fun SukhmaniContent(data: SukhmaniData, lang: AppLanguage, modifier: Mod
                     transliteration = stanza.transliteration,
                     translation = stanza.translation(lang),
                     isBookmarked = isBookmarked(ref),
-                    onBookmarkToggle = { onToggleBookmark(ref, stanza.punjabi, stanza.translation(lang)) }
+                    onBookmarkToggle = { onToggleBookmark(ref, stanza.punjabi, stanza.translation(lang)) },
+                    audioId = "sukhmani_${section.ashtpadi}_stanza_${stanza.stanza}",
+                    audioPlayerService = audio
                 )
             }
         }
@@ -561,7 +630,7 @@ private fun SukhmaniContent(data: SukhmaniData, lang: AppLanguage, modifier: Mod
 // ── Tattvartha Sutra (Chapter-organized Sutras) ─────────────────────────────
 
 @Composable
-private fun SutraContent(data: SutraTextData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
+private fun SutraContent(data: SutraTextData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit, audio: AudioPlayerService? = null) {
     var selectedChapter by remember { mutableIntStateOf(0) }
 
     Column(modifier.fillMaxSize()) {
@@ -625,7 +694,9 @@ private fun SutraContent(data: SutraTextData, lang: AppLanguage, modifier: Modif
                         translation = sutra.translation(lang),
                         explanation = sutra.commentary(lang).ifEmpty { null },
                         isBookmarked = isBookmarked(ref),
-                        onBookmarkToggle = { onToggleBookmark(ref, sutra.sanskrit, sutra.translation(lang)) }
+                        onBookmarkToggle = { onToggleBookmark(ref, sutra.sanskrit, sutra.translation(lang)) },
+                        audioId = "tattvartha_${ch.chapter}_${sutra.sutra}",
+                        audioPlayerService = audio
                     )
                 }
             }
@@ -720,7 +791,7 @@ private fun DiscourseContent(data: DiscourseTextData, lang: AppLanguage, modifie
 // ── Jain (Namokar Mantra + Mahavira Teachings) ──────────────────────────────
 
 @Composable
-private fun JainContent(data: JainPrayersData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit) {
+private fun JainContent(data: JainPrayersData, lang: AppLanguage, modifier: Modifier, isBookmarked: (String) -> Boolean, onToggleBookmark: (String, String, String) -> Unit, audio: AudioPlayerService? = null) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -729,14 +800,23 @@ private fun JainContent(data: JainPrayersData, lang: AppLanguage, modifier: Modi
         // Namokar Mantra
         data.namokarMantra?.let { nm ->
             item {
-                Text(
-                    stringResource(R.string.reader_namokar_mantra),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        stringResource(R.string.reader_namokar_mantra),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    if (audio != null) {
+                        Spacer(Modifier.width(8.dp))
+                        VerseAudioButton(audioId = "jain_namokar", audioPlayerService = audio)
+                    }
+                }
                 Spacer(Modifier.height(8.dp))
                 SacredHighlightCard {
+                    if (audio != null) {
+                        MiniAudioProgressBar(audioId = "jain_namokar", audioPlayerService = audio)
+                    }
                     Text(nm.sanskrit, style = MaterialTheme.typography.bodyLarge, lineHeight = 28.sp)
                     nm.transliteration?.let {
                         Spacer(Modifier.height(4.dp))

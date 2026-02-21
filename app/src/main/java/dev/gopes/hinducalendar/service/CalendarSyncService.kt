@@ -73,13 +73,13 @@ class CalendarSyncService @Inject constructor(
         }
     }
 
-    fun syncDay(panchang: PanchangDay, syncOption: CalendarSyncOption, reminderTimings: List<ReminderTiming>) {
+    fun syncDay(panchang: PanchangDay, syncOption: CalendarSyncOption, reminderTimings: List<ReminderTiming>, language: AppLanguage = AppLanguage.ENGLISH) {
         val calendarId = getOrCreateCalendarId() ?: return
 
         // Sync festivals based on option
         val festivalsToSync = filterFestivals(panchang.festivals, syncOption)
         for (occurrence in festivalsToSync) {
-            insertEvent(calendarId, occurrence, panchang, reminderTimings)
+            insertEvent(calendarId, occurrence, panchang, reminderTimings, language)
         }
 
         // For FESTIVALS_AND_TITHIS: also add important tithi events
@@ -96,12 +96,12 @@ class CalendarSyncService @Inject constructor(
         }
     }
 
-    fun syncMonth(panchangDays: List<PanchangDay>, syncOption: CalendarSyncOption, reminderTimings: List<ReminderTiming>) {
+    fun syncMonth(panchangDays: List<PanchangDay>, syncOption: CalendarSyncOption, reminderTimings: List<ReminderTiming>, language: AppLanguage = AppLanguage.ENGLISH) {
         val calendarId = getOrCreateCalendarId() ?: return
         for (day in panchangDays) {
             val festivalsToSync = filterFestivals(day.festivals, syncOption)
             for (occurrence in festivalsToSync) {
-                insertEvent(calendarId, occurrence, day, reminderTimings)
+                insertEvent(calendarId, occurrence, day, reminderTimings, language)
             }
 
             if (syncOption == CalendarSyncOption.FESTIVALS_AND_TITHIS ||
@@ -149,7 +149,8 @@ class CalendarSyncService @Inject constructor(
         calendarId: Long,
         occurrence: FestivalOccurrence,
         panchang: PanchangDay,
-        reminderTimings: List<ReminderTiming>
+        reminderTimings: List<ReminderTiming>,
+        language: AppLanguage = AppLanguage.ENGLISH
     ) {
         try {
             val resolver = context.contentResolver
@@ -200,7 +201,7 @@ class CalendarSyncService @Inject constructor(
 
             val values = ContentValues().apply {
                 put(CalendarContract.Events.CALENDAR_ID, calendarId)
-                put(CalendarContract.Events.TITLE, occurrence.festival.displayName)
+                put(CalendarContract.Events.TITLE, occurrence.festival.displayName(language))
                 put(CalendarContract.Events.DESCRIPTION, description)
                 put(CalendarContract.Events.DTSTART, startMillis)
                 put(CalendarContract.Events.DTEND, endMillis)
@@ -214,7 +215,7 @@ class CalendarSyncService @Inject constructor(
                 addReminders(resolver, insertedEventId, reminderTimings)
             }
         } catch (e: Exception) {
-            Timber.e(e, "Failed to insert calendar event: %s", occurrence.festival.displayName)
+            Timber.e(e, "Failed to insert calendar event: %s", occurrence.festival.displayName(language))
         }
     }
 

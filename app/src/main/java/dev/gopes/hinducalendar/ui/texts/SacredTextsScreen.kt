@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -12,15 +13,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.SacredTextType
 import dev.gopes.hinducalendar.ui.components.*
-import dev.gopes.hinducalendar.ui.theme.*
+import dev.gopes.hinducalendar.ui.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,11 +39,16 @@ fun SacredTextsScreen(
             TopAppBar(title = { Text(stringResource(R.string.sacred_texts_title)) })
         }
     ) { padding ->
-        if (uiState.availableTexts.isEmpty()) {
+        if (uiState.isLoading) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
+                modifier = Modifier.fillMaxSize().padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else if (uiState.availableTexts.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(padding),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -73,8 +81,18 @@ fun SacredTextsScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
+                // 1. Continue Reading hero card
+                val primaryText = uiState.availableTexts.firstOrNull { it.hasStarted }
+                    ?: uiState.availableTexts.firstOrNull()
+                if (primaryText != null) {
+                    item(key = "continue_reading") {
+                        ContinueReadingCard(primaryText, onTextClick)
+                    }
+                }
+
+                // 2. Bookmarks quick access
                 if (uiState.bookmarkCount > 0) {
-                    item {
+                    item(key = "bookmarks") {
                         SacredCard(
                             modifier = Modifier.clickable { onBookmarksClick() }
                         ) {
@@ -111,9 +129,10 @@ fun SacredTextsScreen(
                     }
                 }
 
-                item {
+                // 3. "Your Path" section header — localized path name
+                item(key = "path_header") {
                     Text(
-                        stringResource(R.string.your_path_texts, uiState.dharmaPathName),
+                        stringResource(R.string.your_path_texts, uiState.dharmaPath.localizedName()),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -126,8 +145,26 @@ fun SacredTextsScreen(
                     )
                 }
 
-                items(uiState.availableTexts) { textItem ->
-                    SacredTextCard(textItem, onTextClick)
+                // 4. Path-specific text cards
+                items(uiState.availableTexts, key = { "path_${it.textType.name}" }) { textItem ->
+                    SacredTextCard(textItem, isPathText = true, onTextClick = onTextClick)
+                }
+
+                // 5. "All Sacred Texts" section
+                if (uiState.allOtherTexts.isNotEmpty()) {
+                    item(key = "all_header") {
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            stringResource(R.string.all_sacred_texts),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    items(uiState.allOtherTexts, key = { "other_${it.textType.name}" }) { textItem ->
+                        SacredTextCard(textItem, isPathText = false, onTextClick = onTextClick)
+                    }
                 }
             }
         }
@@ -135,86 +172,223 @@ fun SacredTextsScreen(
 }
 
 @Composable
-private fun SacredTextCard(item: SacredTextItem, onTextClick: (SacredTextType) -> Unit) {
-    SacredCard(
-        modifier = Modifier.clickable { onTextClick(item.textType) },
-        isHighlighted = item.isPrimary
+private fun ContinueReadingCard(
+    item: SacredTextItem,
+    onTextClick: (SacredTextType) -> Unit
+) {
+    val localName = item.textType.localizedName()
+
+    SacredHighlightCard(
+        modifier = Modifier.clickable { onTextClick(item.textType) }
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Circular progress ring with icon
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.size(44.dp)) {
-                if (item.totalCount > 0) {
-                    CircularProgressIndicator(
-                        progress = item.currentPosition.toFloat() / item.totalCount.toFloat(),
-                        modifier = Modifier.fillMaxSize(),
-                        strokeWidth = 3.dp,
-                        color = if (item.isPrimary) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurfaceVariant,
-                        trackColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
-                    )
-                }
+            SacredProgressRing(
+                progress = item.progressFraction,
+                size = 52.dp,
+                strokeWidth = 4.dp
+            ) {
                 Icon(
                     imageVector = iconForText(item.textType),
-                    contentDescription = item.textType.displayName,
-                    modifier = Modifier.size(24.dp),
-                    tint = if (item.isPrimary) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
+                    contentDescription = localName,
+                    modifier = Modifier.size(22.dp),
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
-            Spacer(Modifier.width(16.dp))
 
-            // Text info
+            Spacer(Modifier.width(12.dp))
+
+            Column(Modifier.weight(1f)) {
+                Text(
+                    stringResource(R.string.continue_reading),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    localName,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                if (item.totalCount > 0) {
+                    Text(
+                        stringResource(R.string.texts_position_of, item.currentPosition, item.totalCount),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Icon(
+                Icons.Filled.ArrowCircleRight,
+                contentDescription = stringResource(R.string.cd_open),
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(28.dp)
+            )
+        }
+
+        Spacer(Modifier.height(10.dp))
+
+        LinearProgressIndicator(
+            progress = { item.progressFraction },
+            modifier = Modifier.fillMaxWidth().height(5.dp),
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+            strokeCap = StrokeCap.Round
+        )
+    }
+}
+
+@Composable
+private fun SacredTextCard(
+    item: SacredTextItem,
+    isPathText: Boolean,
+    onTextClick: (SacredTextType) -> Unit
+) {
+    val isComplete = item.totalCount > 0 && item.currentPosition > item.totalCount
+    val iconColor = when {
+        isComplete -> MaterialTheme.colorScheme.tertiary
+        item.hasStarted -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
+    val localName = item.textType.localizedName()
+
+    SacredCard(
+        modifier = Modifier.clickable { onTextClick(item.textType) },
+        isHighlighted = isComplete
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            SacredProgressRing(
+                progress = item.progressFraction,
+                color = iconColor
+            ) {
+                Icon(
+                    imageVector = if (isComplete) Icons.Filled.CheckCircle else iconForText(item.textType),
+                    contentDescription = localName,
+                    modifier = Modifier.size(18.dp),
+                    tint = iconColor
+                )
+            }
+
+            Spacer(Modifier.width(12.dp))
+
             Column(Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        item.textType.displayName,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.SemiBold
+                        localName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
                     )
                     if (item.isPrimary) {
                         Spacer(Modifier.width(8.dp))
-                        AssistChip(
-                            onClick = {},
-                            label = {
-                                Text(
-                                    stringResource(R.string.text_primary),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            },
-                            colors = AssistChipDefaults.assistChipColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        Surface(
+                            shape = RoundedCornerShape(50),
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        ) {
+                            Text(
+                                stringResource(R.string.text_primary),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                             )
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(3.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(50),
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+                    ) {
+                        Text(
+                            item.textType.localizedThemeTag(),
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+
+                    if (item.totalCount > 0) {
+                        Text(
+                            "${item.totalCount} ${item.textType.localizedUnitLabel()}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
-                Text(
-                    item.progressLabel,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+
+                if (isPathText || item.hasStarted) {
+                    Spacer(Modifier.height(4.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        LinearProgressIndicator(
+                            progress = { item.progressFraction },
+                            modifier = Modifier.width(60.dp).height(4.dp),
+                            color = if (isComplete) MaterialTheme.colorScheme.tertiary
+                            else MaterialTheme.colorScheme.primary,
+                            trackColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                            strokeCap = StrokeCap.Round
+                        )
+                        Text(
+                            if (isComplete) stringResource(R.string.completed_text)
+                            else stringResource(R.string.texts_position_of, item.currentPosition, item.totalCount),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isComplete) MaterialTheme.colorScheme.tertiary
+                            else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
 
-            // Arrow
-            Spacer(Modifier.width(8.dp))
+            if (item.bookmarkCount > 0) {
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Icon(
+                            Icons.Filled.Favorite,
+                            contentDescription = null,
+                            modifier = Modifier.size(9.dp),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Text(
+                            "${item.bookmarkCount}",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+                Spacer(Modifier.width(4.dp))
+            }
+
             Icon(
                 Icons.Filled.ChevronRight,
                 contentDescription = stringResource(R.string.cd_open),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp)
             )
         }
     }
 }
 
-/**
- * Maps the icon string from SacredTextType to a Material Icon.
- */
 private fun iconForText(textType: SacredTextType): ImageVector {
     return when (textType.icon) {
         "book" -> Icons.Filled.MenuBook
@@ -239,12 +413,12 @@ data class SacredTextItem(
     val textType: SacredTextType,
     val isPrimary: Boolean,
     val currentPosition: Int,
-    val totalCount: Int
+    val totalCount: Int,
+    val bookmarkCount: Int = 0
 ) {
-    val progressLabel: String
-        get() = if (totalCount > 0) {
-            "Position $currentPosition of $totalCount"
-        } else {
-            "Position $currentPosition"
-        }
+    val progressFraction: Float
+        get() = if (totalCount > 0) (currentPosition.toFloat() / totalCount.toFloat()).coerceIn(0f, 1f) else 0f
+
+    val hasStarted: Boolean
+        get() = currentPosition > 1
 }
