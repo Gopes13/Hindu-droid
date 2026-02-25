@@ -1,5 +1,8 @@
 package dev.gopes.hinducalendar.engine
 
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.*
 import java.time.LocalDate
 import java.util.Calendar
@@ -8,7 +11,9 @@ import javax.inject.Singleton
 import kotlin.random.Random
 
 @Singleton
-class GamificationService @Inject constructor() {
+class GamificationService @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
 
     // ── Point Values ────────────────────────────────────────────────────────
     companion object {
@@ -165,18 +170,50 @@ class GamificationService @Inject constructor() {
         }
     }
 
+    private val tithiStringIds = intArrayOf(
+        R.string.tithi_pratipada, R.string.tithi_dwitiya, R.string.tithi_tritiya,
+        R.string.tithi_chaturthi, R.string.tithi_panchami, R.string.tithi_shashthi,
+        R.string.tithi_saptami, R.string.tithi_ashtami, R.string.tithi_navami,
+        R.string.tithi_dashami, R.string.tithi_ekadashi, R.string.tithi_dwadashi,
+        R.string.tithi_trayodashi, R.string.tithi_chaturdashi, R.string.tithi_purnima,
+        R.string.tithi_amavasya
+    )
+
+    private val nakshatraStringIds = intArrayOf(
+        R.string.nakshatra_ashwini, R.string.nakshatra_bharani, R.string.nakshatra_krittika,
+        R.string.nakshatra_rohini, R.string.nakshatra_mrigashira, R.string.nakshatra_ardra,
+        R.string.nakshatra_punarvasu, R.string.nakshatra_pushya, R.string.nakshatra_ashlesha,
+        R.string.nakshatra_magha, R.string.nakshatra_purva_phalguni, R.string.nakshatra_uttara_phalguni,
+        R.string.nakshatra_hasta, R.string.nakshatra_chitra, R.string.nakshatra_swati,
+        R.string.nakshatra_vishakha, R.string.nakshatra_anuradha, R.string.nakshatra_jyeshtha,
+        R.string.nakshatra_mula, R.string.nakshatra_purvashadha, R.string.nakshatra_uttarashadha,
+        R.string.nakshatra_shravana, R.string.nakshatra_dhanishta, R.string.nakshatra_shatabhisha,
+        R.string.nakshatra_purva_bhadrapada, R.string.nakshatra_uttara_bhadrapada, R.string.nakshatra_revati
+    )
+
+    private val ordinalStringIds = intArrayOf(
+        R.string.ordinal_1, R.string.ordinal_2, R.string.ordinal_3,
+        R.string.ordinal_4, R.string.ordinal_5, R.string.ordinal_6,
+        R.string.ordinal_7, R.string.ordinal_8, R.string.ordinal_9,
+        R.string.ordinal_10, R.string.ordinal_11, R.string.ordinal_12,
+        R.string.ordinal_13, R.string.ordinal_14, R.string.ordinal_15,
+        R.string.ordinal_16, R.string.ordinal_17, R.string.ordinal_18,
+        R.string.ordinal_19, R.string.ordinal_20, R.string.ordinal_21,
+        R.string.ordinal_22, R.string.ordinal_23, R.string.ordinal_24,
+        R.string.ordinal_25, R.string.ordinal_26, R.string.ordinal_27
+    )
+
+    private fun s(id: Int): String = context.getString(id)
+    private fun s(id: Int, vararg args: Any): String = context.getString(id, *args)
+
     private fun generatePanchangChallenge(day: Int, rng: Random): DailyChallenge {
         val useTithi = day % 2 == 0
         if (useTithi) {
-            val tithis = listOf(
-                "Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami",
-                "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami",
-                "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima", "Amavasya"
-            )
+            val tithis = tithiStringIds.map { s(it) }
             val correctIdx = day % tithis.size
             val correct = tithis[correctIdx]
-            val ordinal = correctIdx + 1
-            val question = "Which Tithi is the ${ordinal}${ordinalSuffix(ordinal)} lunar day?"
+            val ordinal = s(ordinalStringIds[correctIdx])
+            val question = s(R.string.quiz_tithi_question, ordinal)
             val options = generateOptions(correct, tithis, rng)
             return DailyChallenge(
                 id = "panchang_$day",
@@ -186,18 +223,11 @@ class GamificationService @Inject constructor() {
                 correctOptionIndex = options.second
             )
         } else {
-            val nakshatras = listOf(
-                "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira",
-                "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha",
-                "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati",
-                "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purvashadha",
-                "Uttarashadha", "Shravana", "Dhanishta", "Shatabhisha",
-                "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"
-            )
+            val nakshatras = nakshatraStringIds.map { s(it) }
             val correctIdx = day % nakshatras.size
             val correct = nakshatras[correctIdx]
-            val ordinal = correctIdx + 1
-            val question = "Which is the ${ordinal}${ordinalSuffix(ordinal)} Nakshatra in the zodiac?"
+            val ordinal = s(ordinalStringIds[correctIdx])
+            val question = s(R.string.quiz_nakshatra_question, ordinal)
             val options = generateOptions(correct, nakshatras, rng)
             return DailyChallenge(
                 id = "panchang_$day",
@@ -209,21 +239,22 @@ class GamificationService @Inject constructor() {
         }
     }
 
+    private data class QuizQ(val question: String, val answer: String, val wrong: List<String>)
+
     private fun generateFestivalChallenge(day: Int, rng: Random): DailyChallenge {
-        data class FestivalQ(val festival: String, val question: String, val answer: String, val wrong: List<String>)
         val festivals = listOf(
-            FestivalQ("Diwali", "What does Diwali celebrate?", "Victory of light over darkness", listOf("Harvest season", "New Year only", "Spring equinox")),
-            FestivalQ("Holi", "Holi is also known as the festival of?", "Colors", listOf("Lights", "Music", "Water")),
-            FestivalQ("Navratri", "How many nights does Navratri span?", "Nine", listOf("Seven", "Five", "Ten")),
-            FestivalQ("Raksha Bandhan", "What does a sister tie on her brother's wrist?", "Rakhi (sacred thread)", listOf("Flower garland", "Gold chain", "Silk ribbon")),
-            FestivalQ("Janmashtami", "Janmashtami celebrates the birth of?", "Lord Krishna", listOf("Lord Rama", "Lord Shiva", "Lord Ganesha")),
-            FestivalQ("Ganesh Chaturthi", "How many days does Ganesh Chaturthi typically last?", "10 days", listOf("7 days", "5 days", "3 days")),
-            FestivalQ("Maha Shivaratri", "Maha Shivaratri is dedicated to?", "Lord Shiva", listOf("Lord Vishnu", "Lord Brahma", "Goddess Durga")),
-            FestivalQ("Makar Sankranti", "Makar Sankranti marks the sun's entry into?", "Capricorn (Makar)", listOf("Aries (Mesh)", "Cancer (Karka)", "Libra (Tula)")),
-            FestivalQ("Baisakhi", "Baisakhi is significant for which community?", "Sikh community", listOf("Buddhist community", "Jain community", "Parsi community")),
-            FestivalQ("Ram Navami", "Ram Navami celebrates the birth of?", "Lord Rama", listOf("Lord Krishna", "Lord Hanuman", "Lord Vishnu")),
-            FestivalQ("Hanuman Jayanti", "Hanuman is known as the devotee of?", "Lord Rama", listOf("Lord Shiva", "Lord Krishna", "Lord Vishnu")),
-            FestivalQ("Guru Purnima", "Guru Purnima honors?", "Spiritual teachers", listOf("Harvest gods", "Ancestors", "Warriors"))
+            QuizQ(s(R.string.quiz_festival_diwali_q), s(R.string.quiz_festival_diwali_a), listOf(s(R.string.quiz_festival_diwali_w1), s(R.string.quiz_festival_diwali_w2), s(R.string.quiz_festival_diwali_w3))),
+            QuizQ(s(R.string.quiz_festival_holi_q), s(R.string.quiz_festival_holi_a), listOf(s(R.string.quiz_festival_holi_w1), s(R.string.quiz_festival_holi_w2), s(R.string.quiz_festival_holi_w3))),
+            QuizQ(s(R.string.quiz_festival_navratri_q), s(R.string.quiz_festival_navratri_a), listOf(s(R.string.quiz_festival_navratri_w1), s(R.string.quiz_festival_navratri_w2), s(R.string.quiz_festival_navratri_w3))),
+            QuizQ(s(R.string.quiz_festival_raksha_q), s(R.string.quiz_festival_raksha_a), listOf(s(R.string.quiz_festival_raksha_w1), s(R.string.quiz_festival_raksha_w2), s(R.string.quiz_festival_raksha_w3))),
+            QuizQ(s(R.string.quiz_festival_janmashtami_q), s(R.string.quiz_festival_janmashtami_a), listOf(s(R.string.quiz_festival_janmashtami_w1), s(R.string.quiz_festival_janmashtami_w2), s(R.string.quiz_festival_janmashtami_w3))),
+            QuizQ(s(R.string.quiz_festival_ganesh_q), s(R.string.quiz_festival_ganesh_a), listOf(s(R.string.quiz_festival_ganesh_w1), s(R.string.quiz_festival_ganesh_w2), s(R.string.quiz_festival_ganesh_w3))),
+            QuizQ(s(R.string.quiz_festival_shivaratri_q), s(R.string.quiz_festival_shivaratri_a), listOf(s(R.string.quiz_festival_shivaratri_w1), s(R.string.quiz_festival_shivaratri_w2), s(R.string.quiz_festival_shivaratri_w3))),
+            QuizQ(s(R.string.quiz_festival_sankranti_q), s(R.string.quiz_festival_sankranti_a), listOf(s(R.string.quiz_festival_sankranti_w1), s(R.string.quiz_festival_sankranti_w2), s(R.string.quiz_festival_sankranti_w3))),
+            QuizQ(s(R.string.quiz_festival_baisakhi_q), s(R.string.quiz_festival_baisakhi_a), listOf(s(R.string.quiz_festival_baisakhi_w1), s(R.string.quiz_festival_baisakhi_w2), s(R.string.quiz_festival_baisakhi_w3))),
+            QuizQ(s(R.string.quiz_festival_ramnavami_q), s(R.string.quiz_festival_ramnavami_a), listOf(s(R.string.quiz_festival_ramnavami_w1), s(R.string.quiz_festival_ramnavami_w2), s(R.string.quiz_festival_ramnavami_w3))),
+            QuizQ(s(R.string.quiz_festival_hanuman_q), s(R.string.quiz_festival_hanuman_a), listOf(s(R.string.quiz_festival_hanuman_w1), s(R.string.quiz_festival_hanuman_w2), s(R.string.quiz_festival_hanuman_w3))),
+            QuizQ(s(R.string.quiz_festival_gurupurnima_q), s(R.string.quiz_festival_gurupurnima_a), listOf(s(R.string.quiz_festival_gurupurnima_w1), s(R.string.quiz_festival_gurupurnima_w2), s(R.string.quiz_festival_gurupurnima_w3)))
         )
         val q = festivals[day % festivals.size]
         val allOptions = listOf(q.answer) + q.wrong
@@ -238,16 +269,15 @@ class GamificationService @Inject constructor() {
     }
 
     private fun generateVerseChallenge(day: Int, rng: Random): DailyChallenge {
-        data class VerseQ(val text: String, val question: String, val answer: String, val wrong: List<String>)
         val verses = listOf(
-            VerseQ("Bhagavad Gita", "In the Gita, who is Krishna's charioteer role for?", "Arjuna", listOf("Bhishma", "Duryodhana", "Karna")),
-            VerseQ("Hanuman Chalisa", "How many verses (chaupais) are in the Hanuman Chalisa?", "40", listOf("30", "50", "60")),
-            VerseQ("Japji Sahib", "Who composed Japji Sahib?", "Guru Nanak Dev Ji", listOf("Guru Gobind Singh Ji", "Guru Arjan Dev Ji", "Guru Angad Dev Ji")),
-            VerseQ("Vishnu Sahasranama", "How many names of Vishnu are in the Sahasranama?", "1000", listOf("500", "108", "1008")),
-            VerseQ("Sri Rudram", "Sri Rudram is part of which Veda?", "Yajur Veda", listOf("Rig Veda", "Sama Veda", "Atharva Veda")),
-            VerseQ("Devi Mahatmya", "Devi Mahatmya describes the triumph of?", "Goddess Durga", listOf("Goddess Lakshmi", "Goddess Saraswati", "Goddess Parvati")),
-            VerseQ("Soundarya Lahari", "Who is traditionally credited with composing Soundarya Lahari?", "Adi Shankaracharya", listOf("Tulsidas", "Valmiki", "Vyasa")),
-            VerseQ("Sukhmani Sahib", "Sukhmani Sahib was composed by?", "Guru Arjan Dev Ji", listOf("Guru Nanak Dev Ji", "Guru Gobind Singh Ji", "Guru Tegh Bahadur Ji"))
+            QuizQ(s(R.string.quiz_verse_gita_q), s(R.string.quiz_verse_gita_a), listOf(s(R.string.quiz_verse_gita_w1), s(R.string.quiz_verse_gita_w2), s(R.string.quiz_verse_gita_w3))),
+            QuizQ(s(R.string.quiz_verse_chalisa_q), s(R.string.quiz_verse_chalisa_a), listOf(s(R.string.quiz_verse_chalisa_w1), s(R.string.quiz_verse_chalisa_w2), s(R.string.quiz_verse_chalisa_w3))),
+            QuizQ(s(R.string.quiz_verse_japji_q), s(R.string.quiz_verse_japji_a), listOf(s(R.string.quiz_verse_japji_w1), s(R.string.quiz_verse_japji_w2), s(R.string.quiz_verse_japji_w3))),
+            QuizQ(s(R.string.quiz_verse_sahasranama_q), s(R.string.quiz_verse_sahasranama_a), listOf(s(R.string.quiz_verse_sahasranama_w1), s(R.string.quiz_verse_sahasranama_w2), s(R.string.quiz_verse_sahasranama_w3))),
+            QuizQ(s(R.string.quiz_verse_rudram_q), s(R.string.quiz_verse_rudram_a), listOf(s(R.string.quiz_verse_rudram_w1), s(R.string.quiz_verse_rudram_w2), s(R.string.quiz_verse_rudram_w3))),
+            QuizQ(s(R.string.quiz_verse_devi_q), s(R.string.quiz_verse_devi_a), listOf(s(R.string.quiz_verse_devi_w1), s(R.string.quiz_verse_devi_w2), s(R.string.quiz_verse_devi_w3))),
+            QuizQ(s(R.string.quiz_verse_soundarya_q), s(R.string.quiz_verse_soundarya_a), listOf(s(R.string.quiz_verse_soundarya_w1), s(R.string.quiz_verse_soundarya_w2), s(R.string.quiz_verse_soundarya_w3))),
+            QuizQ(s(R.string.quiz_verse_sukhmani_q), s(R.string.quiz_verse_sukhmani_a), listOf(s(R.string.quiz_verse_sukhmani_w1), s(R.string.quiz_verse_sukhmani_w2), s(R.string.quiz_verse_sukhmani_w3)))
         )
         val q = verses[day % verses.size]
         val allOptions = listOf(q.answer) + q.wrong
@@ -262,16 +292,15 @@ class GamificationService @Inject constructor() {
     }
 
     private fun generateMantraChallenge(day: Int, rng: Random): DailyChallenge {
-        data class MantraQ(val mantra: String, val question: String, val answer: String, val wrong: List<String>)
         val mantras = listOf(
-            MantraQ("Om Namah Shivaya", "Om Namah Shivaya is dedicated to?", "Lord Shiva", listOf("Lord Vishnu", "Lord Brahma", "Lord Ganesha")),
-            MantraQ("Om Namo Narayanaya", "Narayana is another name for?", "Lord Vishnu", listOf("Lord Shiva", "Lord Indra", "Lord Brahma")),
-            MantraQ("Om Gan Ganapataye Namah", "This mantra invokes?", "Lord Ganesha", listOf("Lord Kartikeya", "Lord Hanuman", "Lord Rama")),
-            MantraQ("Gayatri Mantra", "The Gayatri Mantra appears in which Veda?", "Rig Veda", listOf("Yajur Veda", "Sama Veda", "Atharva Veda")),
-            MantraQ("Mahamrityunjaya", "The Mahamrityunjaya mantra is addressed to?", "Lord Shiva (Tryambaka)", listOf("Lord Vishnu", "Lord Yama", "Lord Agni")),
-            MantraQ("Om Aim Hreem Kleem", "Bija mantras like Aim, Hreem, Kleem are associated with?", "Goddess energy (Shakti)", listOf("Planetary energy", "Elemental energy", "Vedic hymns")),
-            MantraQ("Hare Krishna", "The Hare Krishna Maha Mantra has how many words?", "16", listOf("12", "18", "8")),
-            MantraQ("Ik Onkar", "Ik Onkar is the opening of?", "Guru Granth Sahib", listOf("Bhagavad Gita", "Ramayana", "Vedas"))
+            QuizQ(s(R.string.quiz_mantra_shiva_q), s(R.string.quiz_mantra_shiva_a), listOf(s(R.string.quiz_mantra_shiva_w1), s(R.string.quiz_mantra_shiva_w2), s(R.string.quiz_mantra_shiva_w3))),
+            QuizQ(s(R.string.quiz_mantra_narayana_q), s(R.string.quiz_mantra_narayana_a), listOf(s(R.string.quiz_mantra_narayana_w1), s(R.string.quiz_mantra_narayana_w2), s(R.string.quiz_mantra_narayana_w3))),
+            QuizQ(s(R.string.quiz_mantra_ganesha_q), s(R.string.quiz_mantra_ganesha_a), listOf(s(R.string.quiz_mantra_ganesha_w1), s(R.string.quiz_mantra_ganesha_w2), s(R.string.quiz_mantra_ganesha_w3))),
+            QuizQ(s(R.string.quiz_mantra_gayatri_q), s(R.string.quiz_mantra_gayatri_a), listOf(s(R.string.quiz_mantra_gayatri_w1), s(R.string.quiz_mantra_gayatri_w2), s(R.string.quiz_mantra_gayatri_w3))),
+            QuizQ(s(R.string.quiz_mantra_mrityunjaya_q), s(R.string.quiz_mantra_mrityunjaya_a), listOf(s(R.string.quiz_mantra_mrityunjaya_w1), s(R.string.quiz_mantra_mrityunjaya_w2), s(R.string.quiz_mantra_mrityunjaya_w3))),
+            QuizQ(s(R.string.quiz_mantra_bija_q), s(R.string.quiz_mantra_bija_a), listOf(s(R.string.quiz_mantra_bija_w1), s(R.string.quiz_mantra_bija_w2), s(R.string.quiz_mantra_bija_w3))),
+            QuizQ(s(R.string.quiz_mantra_harekrishna_q), s(R.string.quiz_mantra_harekrishna_a), listOf(s(R.string.quiz_mantra_harekrishna_w1), s(R.string.quiz_mantra_harekrishna_w2), s(R.string.quiz_mantra_harekrishna_w3))),
+            QuizQ(s(R.string.quiz_mantra_ikonkar_q), s(R.string.quiz_mantra_ikonkar_a), listOf(s(R.string.quiz_mantra_ikonkar_w1), s(R.string.quiz_mantra_ikonkar_w2), s(R.string.quiz_mantra_ikonkar_w3)))
         )
         val q = mantras[day % mantras.size]
         val allOptions = listOf(q.answer) + q.wrong
@@ -291,13 +320,5 @@ class GamificationService @Inject constructor() {
         val wrong = pool.filter { it != correct }.shuffled(rng).take(3)
         val all = (listOf(correct) + wrong).shuffled(rng)
         return all to all.indexOf(correct)
-    }
-
-    private fun ordinalSuffix(n: Int): String = when {
-        n % 100 in 11..13 -> "th"
-        n % 10 == 1 -> "st"
-        n % 10 == 2 -> "nd"
-        n % 10 == 3 -> "rd"
-        else -> "th"
     }
 }

@@ -4,8 +4,7 @@ import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
@@ -63,9 +62,16 @@ private val AppShapes = Shapes(
     extraLarge = RoundedCornerShape(20.dp),
 )
 
+/** Whether vibrant mode (enhanced visuals with gamification) is active. */
+val LocalVibrantMode = staticCompositionLocalOf { false }
+
+/** Current atmosphere data for time-of-day theming. */
+val LocalAtmosphere = staticCompositionLocalOf { AtmosphereEngine.computeAtmosphere(12.0) }
+
 @Composable
 fun HinduCalendarTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    vibrantMode: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
@@ -79,10 +85,24 @@ fun HinduCalendarTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = AppTypography,
-        shapes = AppShapes,
-        content = content
-    )
+    val atmosphere = remember { mutableStateOf(AtmosphereEngine.computeAtmosphere()) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            atmosphere.value = AtmosphereEngine.computeAtmosphere()
+            kotlinx.coroutines.delay(5 * 60 * 1000L)
+        }
+    }
+
+    CompositionLocalProvider(
+        LocalVibrantMode provides vibrantMode,
+        LocalAtmosphere provides atmosphere.value,
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = AppTypography,
+            shapes = AppShapes,
+            content = content
+        )
+    }
 }
