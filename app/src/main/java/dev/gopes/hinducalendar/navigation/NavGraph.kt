@@ -1,6 +1,7 @@
 package dev.gopes.hinducalendar.navigation
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -35,6 +36,10 @@ import dev.gopes.hinducalendar.ui.texts.reader.GenericReaderScreen
 import dev.gopes.hinducalendar.ui.texts.reader.GitaReaderScreen
 import dev.gopes.hinducalendar.ui.texts.reader.JapjiReaderScreen
 import dev.gopes.hinducalendar.ui.gamification.SadhanaJourneyScreen
+import dev.gopes.hinducalendar.ui.japa.JapaCounterScreen
+import dev.gopes.hinducalendar.ui.diya.SacredDiyaScreen
+import dev.gopes.hinducalendar.ui.kirtans.KirtanListScreen
+import dev.gopes.hinducalendar.ui.kirtans.KirtanReaderScreen
 
 sealed class Screen(val route: String, @StringRes val titleRes: Int, val icon: ImageVector) {
     data object Today : Screen("today", R.string.tab_today, Icons.Filled.WbSunny)
@@ -93,14 +98,19 @@ fun NavGraph() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Today.route) {
-                TodayPanchangScreen(onSadhanaClick = { navController.navigate("sadhana") })
+                TodayPanchangScreen(
+                    onSadhanaClick = { navController.navigate("sadhana") },
+                    onJapaClick = { navController.navigate("japa") },
+                    onDiyaClick = { navController.navigate("diya") }
+                )
             }
             composable(Screen.Texts.route) {
                 SacredTextsScreen(
                     onTextClick = { textType ->
                         navController.navigate("reader/${textType.name}")
                     },
-                    onBookmarksClick = { navController.navigate("bookmarks") }
+                    onBookmarksClick = { navController.navigate("bookmarks") },
+                    onKirtansClick = { navController.navigate("kirtans") }
                 )
             }
             composable(Screen.Calendar.route) { CalendarScreen() }
@@ -121,6 +131,32 @@ fun NavGraph() {
 
             composable("sadhana") {
                 SadhanaJourneyScreen(onBack = { navController.popBackStack() })
+            }
+
+            composable("japa") {
+                JapaCounterScreen(onBack = { navController.popBackStack() })
+            }
+
+            composable("diya") {
+                SacredDiyaScreen(onBack = { navController.popBackStack() })
+            }
+
+            composable("kirtans") {
+                KirtanListScreen(
+                    onKirtanClick = { kirtanId -> navController.navigate("kirtan/$kirtanId") },
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = "kirtan/{kirtanId}",
+                arguments = listOf(navArgument("kirtanId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val kirtanId = backStackEntry.arguments?.getString("kirtanId") ?: ""
+                KirtanReaderScreen(
+                    kirtanId = kirtanId,
+                    onBack = { navController.popBackStack() }
+                )
             }
 
             composable(

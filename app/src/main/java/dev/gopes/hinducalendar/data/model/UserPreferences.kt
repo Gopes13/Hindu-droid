@@ -23,7 +23,9 @@ data class UserPreferences(
     val readingProgress: ReadingProgress = ReadingProgress(),
     val bookmarks: BookmarkCollection = BookmarkCollection(),
     val gamificationData: GamificationData = GamificationData(),
-    val streakData: StreakData = StreakData()
+    val streakData: StreakData = StreakData(),
+    val japaState: JapaState = JapaState(),
+    val diyaState: DiyaState = DiyaState()
 ) {
     /** Returns the active wisdom text, falling back to the dharma path's primary text. */
     val effectiveWisdomText: SacredTextType

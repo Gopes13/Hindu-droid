@@ -30,12 +30,15 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun TodayPanchangScreen(
     onSadhanaClick: () -> Unit = {},
+    onJapaClick: () -> Unit = {},
+    onDiyaClick: () -> Unit = {},
     viewModel: TodayPanchangViewModel = hiltViewModel(),
     gamificationViewModel: dev.gopes.hinducalendar.ui.gamification.GamificationViewModel = hiltViewModel()
 ) {
     val panchang by viewModel.panchang.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val language by viewModel.language.collectAsState()
+    val prefs by viewModel.preferences.collectAsState()
 
     Scaffold(
         topBar = {
@@ -47,7 +50,17 @@ fun TodayPanchangScreen(
                 CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         } else if (panchang != null) {
-            PanchangContent(panchang!!, Modifier.padding(padding), gamificationViewModel, onSadhanaClick, language)
+            PanchangContent(
+                panchang = panchang!!,
+                modifier = Modifier.padding(padding),
+                gamificationViewModel = gamificationViewModel,
+                onSadhanaClick = onSadhanaClick,
+                language = language,
+                japaState = prefs?.japaState ?: JapaState(),
+                diyaState = prefs?.diyaState ?: DiyaState(),
+                onJapaClick = onJapaClick,
+                onDiyaClick = onDiyaClick
+            )
         }
     }
 
@@ -75,7 +88,11 @@ private fun PanchangContent(
     modifier: Modifier,
     gamificationViewModel: dev.gopes.hinducalendar.ui.gamification.GamificationViewModel? = null,
     onSadhanaClick: () -> Unit = {},
-    language: AppLanguage = AppLanguage.ENGLISH
+    language: AppLanguage = AppLanguage.ENGLISH,
+    japaState: JapaState = JapaState(),
+    diyaState: DiyaState = DiyaState(),
+    onJapaClick: () -> Unit = {},
+    onDiyaClick: () -> Unit = {}
 ) {
     val isDark = isSystemInDarkTheme()
 
@@ -120,7 +137,16 @@ private fun PanchangContent(
             }
         }
 
-        // 5. Daily Wisdom Briefing
+        // 5. Japa & Diya card
+        JapaDiyaTodayCard(
+            japaState = japaState,
+            diyaState = diyaState,
+            language = language,
+            onJapaClick = onJapaClick,
+            onDiyaClick = onDiyaClick
+        )
+
+        // 6. Daily Wisdom Briefing
         DailyBriefingCard()
 
         DecorativeDivider(style = DividerStyle.OM)

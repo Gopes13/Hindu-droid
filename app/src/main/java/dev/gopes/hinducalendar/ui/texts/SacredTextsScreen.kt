@@ -30,6 +30,7 @@ import dev.gopes.hinducalendar.ui.util.*
 fun SacredTextsScreen(
     onTextClick: (SacredTextType) -> Unit = {},
     onBookmarksClick: () -> Unit = {},
+    onKirtansClick: () -> Unit = {},
     viewModel: SacredTextsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -125,6 +126,43 @@ fun SacredTextsScreen(
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
+                        }
+                    }
+                }
+
+                // 2b. Kirtans card
+                item(key = "kirtans") {
+                    SacredCard(
+                        modifier = Modifier.clickable { onKirtansClick() }
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Filled.MusicNote,
+                                contentDescription = null,
+                                modifier = Modifier.size(32.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(Modifier.width(16.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(
+                                    stringResource(R.string.kirtans_title),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    stringResource(R.string.kirtans_subtitle),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            Icon(
+                                Icons.Filled.ChevronRight,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
                 }

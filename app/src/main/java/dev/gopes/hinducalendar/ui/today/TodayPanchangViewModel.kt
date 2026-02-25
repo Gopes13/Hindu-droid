@@ -29,6 +29,10 @@ class TodayPanchangViewModel @Inject constructor(
         .map { it.language }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppLanguage.ENGLISH)
 
+    val preferences: StateFlow<UserPreferences?> = preferencesRepository.preferencesFlow
+        .map { it }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
     private val _panchang = MutableStateFlow<PanchangDay?>(null)
     val panchang: StateFlow<PanchangDay?> = _panchang
 

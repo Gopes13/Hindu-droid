@@ -709,6 +709,39 @@
     <string name="quiz_mantra_ikonkar_w2">Ramayana</string>
     <string name="quiz_mantra_ikonkar_w3">Vedas</string>
 
+    <!-- Japa Counter -->
+    <string name="japa_title">Japa</string>
+    <string name="japa_select_material">Select Mala Material</string>
+    <string name="japa_select_mantra">Select Mantra</string>
+    <string name="japa_custom_mantra">Custom Mantra</string>
+    <string name="japa_enter_mantra">Enter your mantra</string>
+    <string name="japa_use_custom">Use Custom</string>
+    <string name="japa_beads_left">Beads Left</string>
+    <string name="japa_rounds_today">Rounds Today</string>
+    <string name="japa_total_rounds">Total Rounds</string>
+    <string name="japa_bead_progress">Bead %d / 108</string>
+    <string name="japa_rounds_count">%d rounds today</string>
+    <string name="japa_mantra">Mantra</string>
+    <string name="back">Back</string>
+
+    <!-- Sacred Diya -->
+    <string name="diya_title">Diya</string>
+    <string name="diya_screen_title">Sacred Diya</string>
+    <string name="diya_lit_today">Lit Today</string>
+    <string name="diya_tap_to_light">Tap to Light</string>
+    <string name="diya_streak_count">%d day streak</string>
+    <string name="diya_light_button">Light Diya</string>
+    <string name="diya_streak_label">Diya Streak</string>
+    <string name="diya_total_days_label">Total Days Lit</string>
+
+    <!-- Kirtans -->
+    <string name="kirtans_title">Kirtans</string>
+    <string name="kirtans_subtitle">Aartis &amp; Bhajans</string>
+    <string name="kirtans_aartis">Aartis</string>
+    <string name="kirtans_bhajans">Bhajans</string>
+    <string name="kirtan_stanza">Stanza</string>
+    <string name="kirtan_meaning">Meaning</string>
+
     <!-- Ordinals for quiz questions -->
     <string name="ordinal_1">1st</string>
     <string name="ordinal_2">2nd</string>

@@ -26,6 +26,10 @@ class GamificationService @Inject constructor(
         const val POINTS_REFLECTION = 5
         const val POINTS_DEEP_STUDY = 3
         const val MAX_DEEP_STUDY_POINTS_PER_DAY = 50
+        const val POINTS_JAPA_ROUND = 10
+        const val MAX_JAPA_ROUNDS_REWARDED = 10
+        const val POINTS_DIYA_LIGHTING = 5
+        const val POINTS_DIYA_STREAK_BONUS = 15
     }
 
     // ── Daily Rewards ───────────────────────────────────────────────────────
@@ -153,6 +157,51 @@ class GamificationService @Inject constructor(
             }
         }
         return updated to newBadges
+    }
+
+    // ── Japa & Diya Rewards ────────────────────────────────────────────────
+
+    fun rewardJapaRound(data: GamificationData, japaState: dev.gopes.hinducalendar.data.model.JapaState): GamificationData {
+        if (!data.isEnabled) return data
+        if (japaState.roundsRewardedToday >= MAX_JAPA_ROUNDS_REWARDED) return data
+        return data.addPoints(POINTS_JAPA_ROUND)
+    }
+
+    fun rewardDiyaLighting(data: GamificationData, diyaState: dev.gopes.hinducalendar.data.model.DiyaState): GamificationData {
+        if (!data.isEnabled) return data
+        val today = LocalDate.now().toString()
+        if (diyaState.lastDiyaRewardDate == today) return data
+        var updated = data.addPoints(POINTS_DIYA_LIGHTING)
+        // 7-day streak bonus
+        if (diyaState.lightingStreak > 0 && diyaState.lightingStreak % 7 == 0) {
+            updated = updated.addPoints(POINTS_DIYA_STREAK_BONUS)
+        }
+        return updated
+    }
+
+    // ── Japa & Diya Badge Checks ───────────────────────────────────────────
+
+    fun checkJapaBadges(data: GamificationData, japaState: dev.gopes.hinducalendar.data.model.JapaState): GamificationData {
+        var updated = data
+        val rounds = japaState.totalRoundsLifetime
+        if (rounds >= 10 && !updated.hasBadge("badge_japa_10")) updated = updated.awardBadge("badge_japa_10")
+        if (rounds >= 108 && !updated.hasBadge("badge_japa_108")) updated = updated.awardBadge("badge_japa_108")
+        if (rounds >= 1008 && !updated.hasBadge("badge_japa_1008")) updated = updated.awardBadge("badge_japa_1008")
+        val streak = japaState.japaStreak
+        if (streak >= 7 && !updated.hasBadge("badge_japa_streak_7")) updated = updated.awardBadge("badge_japa_streak_7")
+        if (streak >= 30 && !updated.hasBadge("badge_japa_streak_30")) updated = updated.awardBadge("badge_japa_streak_30")
+        return updated
+    }
+
+    fun checkDiyaBadges(data: GamificationData, diyaState: dev.gopes.hinducalendar.data.model.DiyaState): GamificationData {
+        var updated = data
+        val days = diyaState.totalDaysLit
+        if (days >= 7 && !updated.hasBadge("badge_diya_7")) updated = updated.awardBadge("badge_diya_7")
+        if (days >= 30 && !updated.hasBadge("badge_diya_30")) updated = updated.awardBadge("badge_diya_30")
+        if (days >= 108 && !updated.hasBadge("badge_diya_108")) updated = updated.awardBadge("badge_diya_108")
+        val streak = diyaState.lightingStreak
+        if (streak >= 7 && !updated.hasBadge("badge_diya_streak_7")) updated = updated.awardBadge("badge_diya_streak_7")
+        return updated
     }
 
     // ── Daily Challenge Generation ──────────────────────────────────────────

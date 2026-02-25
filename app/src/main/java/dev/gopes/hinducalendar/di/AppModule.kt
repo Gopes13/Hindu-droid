@@ -11,6 +11,7 @@ import dev.gopes.hinducalendar.engine.AudioDownloadManager
 import dev.gopes.hinducalendar.engine.AudioPlayerService
 import dev.gopes.hinducalendar.engine.FestivalRulesEngine
 import dev.gopes.hinducalendar.engine.GamificationService
+import dev.gopes.hinducalendar.engine.KirtanService
 import dev.gopes.hinducalendar.engine.PanchangService
 import dev.gopes.hinducalendar.engine.SacredTextService
 import dev.gopes.hinducalendar.service.CalendarSyncService
@@ -61,6 +62,12 @@ object AppModule {
     @Singleton
     fun provideGamificationService(@ApplicationContext context: Context): GamificationService {
         return GamificationService(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideKirtanService(@ApplicationContext context: Context): KirtanService {
+        return KirtanService(context)
     }
 
     @Provides
