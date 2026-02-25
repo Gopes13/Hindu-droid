@@ -30,6 +30,9 @@ class GamificationService @Inject constructor(
         const val MAX_JAPA_ROUNDS_REWARDED = 10
         const val POINTS_DIYA_LIGHTING = 5
         const val POINTS_DIYA_STREAK_BONUS = 15
+        const val POINTS_SANSKRIT_LETTER = 5
+        const val POINTS_SANSKRIT_MODULE = 50
+        const val POINTS_SANSKRIT_VERSE = 5
     }
 
     // ── Daily Rewards ───────────────────────────────────────────────────────
@@ -201,6 +204,45 @@ class GamificationService @Inject constructor(
         if (days >= 108 && !updated.hasBadge("badge_diya_108")) updated = updated.awardBadge("badge_diya_108")
         val streak = diyaState.lightingStreak
         if (streak >= 7 && !updated.hasBadge("badge_diya_streak_7")) updated = updated.awardBadge("badge_diya_streak_7")
+        return updated
+    }
+
+    // ── Sanskrit Rewards ───────────────────────────────────────────────────
+
+    fun rewardSanskritLesson(data: GamificationData, points: Int): GamificationData {
+        if (!data.isEnabled) return data
+        return data.addPoints(points)
+    }
+
+    fun rewardSanskritLetter(data: GamificationData): GamificationData {
+        if (!data.isEnabled) return data
+        return data.addPoints(POINTS_SANSKRIT_LETTER)
+    }
+
+    fun rewardSanskritModule(data: GamificationData): GamificationData {
+        if (!data.isEnabled) return data
+        return data.addPoints(POINTS_SANSKRIT_MODULE)
+    }
+
+    fun rewardSanskritVerse(data: GamificationData): GamificationData {
+        if (!data.isEnabled) return data
+        return data.addPoints(POINTS_SANSKRIT_VERSE)
+    }
+
+    fun checkSanskritBadges(data: GamificationData, progress: SanskritProgress): GamificationData {
+        var updated = data
+        if (progress.isModuleComplete("module1") && !updated.hasBadge("badge_sanskrit_first_letters")) {
+            updated = updated.awardBadge("badge_sanskrit_first_letters")
+        }
+        if (progress.lessonsCount >= 10 && !updated.hasBadge("badge_sanskrit_student")) {
+            updated = updated.awardBadge("badge_sanskrit_student")
+        }
+        if (progress.lettersCount >= 20 && !updated.hasBadge("badge_sanskrit_scholar")) {
+            updated = updated.awardBadge("badge_sanskrit_scholar")
+        }
+        if (progress.isModuleComplete("module5") && !updated.hasBadge("badge_sanskrit_mantra_reader")) {
+            updated = updated.awardBadge("badge_sanskrit_mantra_reader")
+        }
         return updated
     }
 

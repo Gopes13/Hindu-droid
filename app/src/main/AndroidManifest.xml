@@ -35,6 +35,29 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+        <receiver
+            android:name=".widget.JapaMalaWidgetReceiver"
+            android:exported="true"
+            android:label="Japa Mala">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/japa_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.SacredDiyaWidgetReceiver"
+            android:exported="true"
+            android:label="Sacred Diya">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/diya_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

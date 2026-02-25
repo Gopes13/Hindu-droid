@@ -25,7 +25,8 @@ data class UserPreferences(
     val gamificationData: GamificationData = GamificationData(),
     val streakData: StreakData = StreakData(),
     val japaState: JapaState = JapaState(),
-    val diyaState: DiyaState = DiyaState()
+    val diyaState: DiyaState = DiyaState(),
+    val sanskritProgress: SanskritProgress = SanskritProgress()
 ) {
     /** Returns the active wisdom text, falling back to the dharma path's primary text. */
     val effectiveWisdomText: SacredTextType

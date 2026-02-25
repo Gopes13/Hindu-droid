@@ -40,6 +40,11 @@ import dev.gopes.hinducalendar.ui.japa.JapaCounterScreen
 import dev.gopes.hinducalendar.ui.diya.SacredDiyaScreen
 import dev.gopes.hinducalendar.ui.kirtans.KirtanListScreen
 import dev.gopes.hinducalendar.ui.kirtans.KirtanReaderScreen
+import dev.gopes.hinducalendar.ui.sanskrit.SanskritLearnScreen
+import dev.gopes.hinducalendar.ui.sanskrit.SanskritLessonScreen
+import dev.gopes.hinducalendar.ui.sanskrit.SanskritVerseScreen
+import dev.gopes.hinducalendar.ui.sanskrit.SanskritViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 sealed class Screen(val route: String, @StringRes val titleRes: Int, val icon: ImageVector) {
     data object Today : Screen("today", R.string.tab_today, Icons.Filled.WbSunny)
@@ -110,7 +115,8 @@ fun NavGraph() {
                         navController.navigate("reader/${textType.name}")
                     },
                     onBookmarksClick = { navController.navigate("bookmarks") },
-                    onKirtansClick = { navController.navigate("kirtans") }
+                    onKirtansClick = { navController.navigate("kirtans") },
+                    onSanskritClick = { navController.navigate("sanskrit") }
                 )
             }
             composable(Screen.Calendar.route) { CalendarScreen() }
@@ -155,6 +161,43 @@ fun NavGraph() {
                 val kirtanId = backStackEntry.arguments?.getString("kirtanId") ?: ""
                 KirtanReaderScreen(
                     kirtanId = kirtanId,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable("sanskrit") {
+                val sanskritViewModel: SanskritViewModel = hiltViewModel()
+                SanskritLearnScreen(
+                    onLessonClick = { lessonId -> navController.navigate("sanskrit_lesson/$lessonId") },
+                    onVerseClick = { navController.navigate("sanskrit_verses") },
+                    onBack = { navController.popBackStack() },
+                    viewModel = sanskritViewModel
+                )
+            }
+
+            composable(
+                route = "sanskrit_lesson/{lessonId}",
+                arguments = listOf(navArgument("lessonId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
+                val sanskritViewModel: SanskritViewModel = hiltViewModel()
+                SanskritLessonScreen(
+                    lessonId = lessonId,
+                    onComplete = { correct, total, letters ->
+                        sanskritViewModel.recordLessonCompletion(lessonId, correct, total, letters)
+                    },
+                    onSpeak = { sanskritViewModel.speak(it) },
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable("sanskrit_verses") {
+                val sanskritViewModel: SanskritViewModel = hiltViewModel()
+                val uiState by sanskritViewModel.uiState.collectAsState()
+                SanskritVerseScreen(
+                    progress = uiState.progress,
+                    onVerseExplored = { sanskritViewModel.recordVerseExplored(it) },
+                    onSpeak = { sanskritViewModel.speak(it) },
                     onBack = { navController.popBackStack() }
                 )
             }

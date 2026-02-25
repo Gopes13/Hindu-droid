@@ -742,6 +742,31 @@
     <string name="kirtan_stanza">Stanza</string>
     <string name="kirtan_meaning">Meaning</string>
 
+    <!-- Sanskrit Learning -->
+    <string name="sanskrit_title">Learn Sanskrit</string>
+    <string name="sanskrit_subtitle">Letters, Words &amp; Shlokas</string>
+    <string name="sanskrit_letters_mastered">Letters Mastered</string>
+    <string name="sanskrit_lessons_done">Lessons Done</string>
+    <string name="sanskrit_continue_learning">Continue Learning</string>
+    <string name="sanskrit_next_lesson">Your next lesson awaits</string>
+    <string name="sanskrit_alphabet_ref">Alphabet Reference</string>
+    <string name="sanskrit_all_letters">All</string>
+    <string name="sanskrit_transliteration_label">Transliteration</string>
+    <string name="sanskrit_pronunciation_label">Pronunciation</string>
+    <string name="sanskrit_example_label">Example</string>
+    <string name="sanskrit_meaning_label">Meaning</string>
+    <string name="sanskrit_mastered">Mastered</string>
+    <string name="sanskrit_speak">Speak</string>
+    <string name="sanskrit_start_lesson">Start Lesson</string>
+    <string name="sanskrit_next">Next</string>
+    <string name="sanskrit_done">Done</string>
+    <string name="sanskrit_perfect">Perfect!</string>
+    <string name="sanskrit_well_done">Well Done!</string>
+    <string name="sanskrit_letters_learned">Letters Learned</string>
+    <string name="sanskrit_verse_reader">Verse Reader</string>
+    <string name="sanskrit_verse_reader_desc">Read sacred shlokas word by word</string>
+    <string name="sanskrit_word_by_word">Word by Word</string>
+
     <!-- Ordinals for quiz questions -->
     <string name="ordinal_1">1st</string>
     <string name="ordinal_2">2nd</string>

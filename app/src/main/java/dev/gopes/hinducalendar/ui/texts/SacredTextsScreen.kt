@@ -31,6 +31,7 @@ fun SacredTextsScreen(
     onTextClick: (SacredTextType) -> Unit = {},
     onBookmarksClick: () -> Unit = {},
     onKirtansClick: () -> Unit = {},
+    onSanskritClick: () -> Unit = {},
     viewModel: SacredTextsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -154,6 +155,43 @@ fun SacredTextsScreen(
                                 )
                                 Text(
                                     stringResource(R.string.kirtans_subtitle),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            Icon(
+                                Icons.Filled.ChevronRight,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+
+                // 2c. Sanskrit Learning card
+                item(key = "sanskrit") {
+                    SacredCard(
+                        modifier = Modifier.clickable { onSanskritClick() }
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Filled.Translate,
+                                contentDescription = null,
+                                modifier = Modifier.size(32.dp),
+                                tint = MaterialTheme.colorScheme.tertiary
+                            )
+                            Spacer(Modifier.width(16.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(
+                                    stringResource(R.string.sanskrit_title),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    stringResource(R.string.sanskrit_subtitle),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
