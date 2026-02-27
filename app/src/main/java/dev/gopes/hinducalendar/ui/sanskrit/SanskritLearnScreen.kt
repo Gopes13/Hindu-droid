@@ -77,8 +77,14 @@ fun SanskritLearnScreen(
                 SacredHighlightCard {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
+                        Text(
+                            "\u0950",
+                            fontSize = 44.sp,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                        )
                         ProgressStat(
                             label = stringResource(R.string.sanskrit_letters_mastered),
                             value = "${uiState.progress.lettersCount}",
@@ -205,7 +211,7 @@ fun SanskritLearnScreen(
 private fun ProgressStat(label: String, value: String, total: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(verticalAlignment = Alignment.Bottom) {
-            Text(value, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text(value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Text(" / $total", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

@@ -1,8 +1,5 @@
 package dev.gopes.hinducalendar.ui.components
 
-import android.graphics.RenderEffect
-import android.graphics.Shader
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -19,9 +16,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.gopes.hinducalendar.ui.theme.LocalVibrantMode
@@ -63,6 +58,7 @@ fun GlassSurface(
 
     Box(
         modifier = modifier
+            .cardBreathing()
             .fillMaxWidth()
             // Primary shadow (colored)
             .shadow(
@@ -79,22 +75,6 @@ fun GlassSurface(
                 spotColor = Color.Black.copy(alpha = props.ambientShadowOpacity)
             )
             .clip(shape)
-            // Blur effect on API 31+
-            .then(
-                if (tier == DeviceCapabilities.RenderTier.FULL && Build.VERSION.SDK_INT >= 31) {
-                    Modifier.graphicsLayer {
-                        renderEffect = RenderEffect
-                            .createBlurEffect(
-                                props.blurRadius,
-                                props.blurRadius,
-                                Shader.TileMode.CLAMP
-                            )
-                            .asComposeRenderEffect()
-                    }
-                } else {
-                    Modifier
-                }
-            )
             // Background: tinted glass or solid fallback
             .background(glassBackground(elevation, isDark, isVibrant, accentColor, tier))
             // Border
@@ -132,6 +112,8 @@ fun GlassSurface(
                     Modifier
                 }
             )
+            // Animated glow border (vibrant mode only)
+            .glowBorder(color = accentColor, cornerRadius = cornerRadius)
     ) {
         Column(Modifier.padding(16.dp), content = content)
     }

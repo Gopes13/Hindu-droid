@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
@@ -24,6 +25,7 @@ import dev.gopes.hinducalendar.data.model.FestivalCategory
 import dev.gopes.hinducalendar.data.model.FestivalOccurrence
 import dev.gopes.hinducalendar.data.model.PanchangDay
 import dev.gopes.hinducalendar.ui.components.*
+import dev.gopes.hinducalendar.ui.theme.LocalVibrantMode
 import dev.gopes.hinducalendar.ui.util.localizedName
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -54,18 +56,21 @@ fun FestivalListScreen(
                 )
             }
         } else {
+            val isVibrant = LocalVibrantMode.current
             LazyColumn(
                 modifier = Modifier.padding(padding),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(festivals, key = { it.first.id }) { (occurrence, panchang) ->
-                    FestivalRow(
-                        occurrence = occurrence,
-                        panchang = panchang,
-                        language = language,
-                        onClick = { onFestivalClick(occurrence.festival.id) }
-                    )
+                itemsIndexed(festivals, key = { _, item -> item.first.id }) { index, (occurrence, panchang) ->
+                    Box(Modifier.entranceAnimation(index, isVibrant)) {
+                        FestivalRow(
+                            occurrence = occurrence,
+                            panchang = panchang,
+                            language = language,
+                            onClick = { onFestivalClick(occurrence.festival.id) }
+                        )
+                    }
                 }
             }
         }
@@ -189,7 +194,7 @@ private fun CountdownBadge(daysAway: Int, language: AppLanguage) {
             fontSize = 10.sp,
             fontWeight = FontWeight.SemiBold,
             color = contentColor,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 3.dp)
         )
     }
 }

@@ -287,7 +287,7 @@ fun SettingsScreen(
             }
 
             // Festival Date Reference
-            SettingsSection("Festival Dates") {
+            SettingsSection(stringResource(R.string.festival_dates_section)) {
                 Box {
                     Row(
                         modifier = Modifier
@@ -298,19 +298,19 @@ fun SettingsScreen(
                     ) {
                         Column(Modifier.weight(1f)) {
                             Text(
-                                prefs.festivalDateReference.displayName,
+                                stringResource(if (prefs.festivalDateReference == FestivalDateReference.INDIAN_STANDARD) R.string.festival_ref_ist else R.string.festival_ref_location),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium
                             )
                             Text(
-                                "Compute festival dates using IST or your local sunrise",
+                                stringResource(R.string.festival_dates_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                         Icon(
                             Icons.Filled.ExpandMore,
-                            contentDescription = "Change festival date reference",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -322,7 +322,7 @@ fun SettingsScreen(
                             DropdownMenuItem(
                                 text = {
                                     Text(
-                                        ref.displayName,
+                                        stringResource(if (ref == FestivalDateReference.INDIAN_STANDARD) R.string.festival_ref_ist else R.string.festival_ref_location),
                                         fontWeight = if (ref == prefs.festivalDateReference) FontWeight.Bold else FontWeight.Normal
                                     )
                                 },
@@ -738,11 +738,13 @@ private fun ContentToggleRow(
             )
         }
         Spacer(Modifier.width(8.dp))
+        val enabledStr = stringResource(R.string.switch_enabled)
+        val disabledStr = stringResource(R.string.switch_disabled)
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
             modifier = Modifier.semantics {
-                stateDescription = if (checked) "Enabled" else "Disabled"
+                stateDescription = if (checked) enabledStr else disabledStr
             },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,

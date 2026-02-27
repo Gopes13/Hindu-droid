@@ -6,6 +6,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
@@ -30,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.*
+import dev.gopes.hinducalendar.ui.components.SacredCard
 import dev.gopes.hinducalendar.ui.util.*
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -57,12 +60,12 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
             Column {
                 // Month navigation
                 Row(
-                    Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+                    Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { viewModel.previousMonth() }) {
-                        Icon(Icons.Filled.ChevronLeft, stringResource(R.string.cd_previous_month), tint = MaterialTheme.colorScheme.primary)
+                        Icon(Icons.Filled.ChevronLeft, stringResource(R.string.cd_previous_month), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
                     }
                     Text(
                         displayedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
@@ -71,12 +74,12 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
                         color = MaterialTheme.colorScheme.primary
                     )
                     IconButton(onClick = { viewModel.nextMonth() }) {
-                        Icon(Icons.Filled.ChevronRight, stringResource(R.string.cd_next_month), tint = MaterialTheme.colorScheme.primary)
+                        Icon(Icons.Filled.ChevronRight, stringResource(R.string.cd_next_month), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
                     }
                 }
 
                 // Weekday headers
-                Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+                Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp).padding(bottom = 4.dp)) {
                     DayOfWeek.entries.forEach { dow ->
                         Text(
                             dow.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
@@ -98,7 +101,7 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height((rows * 44).dp)
+                        .height((rows * 36 + 4).dp)
                         .pointerInput(displayedMonth) {
                             detectHorizontalDragGestures(
                                 onDragEnd = {
@@ -126,13 +129,13 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
                             columns = GridCells.Fixed(7),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height((mRows * 44).dp)
+                                .height((mRows * 36 + 4).dp)
                                 .padding(horizontal = 8.dp),
                             contentPadding = PaddingValues(2.dp)
                         ) {
                             items(mTotal) { index ->
                                 if (index < mOffset) {
-                                    Spacer(Modifier.size(44.dp))
+                                    Spacer(Modifier.size(36.dp))
                                 } else {
                                     val day = index - mOffset + 1
                                     val date = month.atDay(day)
@@ -156,16 +159,22 @@ fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
                 }
             }
 
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
-            // ── DETAIL: fills remaining space, content top-aligned ──
+            // ── DETAIL: scrollable, wrapped in SacredCard ──
             // When IST reference is selected, show Delhi panchang for consistency
-            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.TopStart) {
+            Column(
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 12.dp, bottom = 16.dp)
+            ) {
                 selectedPanchang?.let { panchang ->
                     val detailPanchang = if (festivalRef == FestivalDateReference.INDIAN_STANDARD) {
                         refPanchangByDay[panchang.date.dayOfMonth] ?: panchang
                     } else panchang
-                    DayDetailPanel(detailPanchang, language)
+                    SacredCard {
+                        DayDetailContent(detailPanchang, language)
+                    }
                 }
             }
         }
@@ -178,21 +187,21 @@ private fun DayCell(
     hasFestival: Boolean, hasMajorFestival: Boolean, onClick: () -> Unit
 ) {
     val bgColor = when {
-        isSelected -> MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+        isSelected -> MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
         isToday -> MaterialTheme.colorScheme.primary.copy(alpha = 0.06f)
         else -> Color.Transparent
     }
 
     Column(
         modifier = Modifier
-            .size(44.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .size(36.dp)
+            .clip(RoundedCornerShape(6.dp))
             .background(bgColor)
             .then(
                 if (isToday) Modifier.border(
-                    1.dp,
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                    RoundedCornerShape(8.dp)
+                    1.5.dp,
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                    RoundedCornerShape(6.dp)
                 ) else Modifier
             )
             .clickable(onClick = onClick),
@@ -201,7 +210,7 @@ private fun DayCell(
     ) {
         Text(
             language.localizedNumber(day),
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
             color = if (isToday || isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
         )
@@ -222,14 +231,11 @@ private fun DayCell(
 }
 
 @Composable
-private fun DayDetailPanel(panchang: PanchangDay, language: AppLanguage) {
+private fun ColumnScope.DayDetailContent(panchang: PanchangDay, language: AppLanguage) {
     val timeFmt = DateTimeFormatter.ofPattern("h:mm a")
 
     Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(top = 10.dp),
+        Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // ── Hindu date header: name (left) | year (right) ──
@@ -240,7 +246,7 @@ private fun DayDetailPanel(panchang: PanchangDay, language: AppLanguage) {
         ) {
             Column(Modifier.weight(1f)) {
                 Text(
-                    panchang.hinduDate.displayString,
+                    panchang.hinduDate.localizedDisplayString(),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -252,7 +258,7 @@ private fun DayDetailPanel(panchang: PanchangDay, language: AppLanguage) {
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    panchang.hinduDate.yearDisplayForTradition(panchang.tradition),
+                    panchang.hinduDate.localizedYearDisplay(panchang.tradition),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary
                 )

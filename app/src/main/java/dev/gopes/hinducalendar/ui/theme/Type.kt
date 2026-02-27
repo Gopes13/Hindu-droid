@@ -46,15 +46,15 @@ val AppTypography = Typography(
         lineHeight = 28.sp,
     ),
     titleMedium = TextStyle(
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.15.sp,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 18.sp,
+        lineHeight = 26.sp,
+        letterSpacing = 0.1.sp,
     ),
     titleSmall = TextStyle(
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        lineHeight = 22.sp,
         letterSpacing = 0.1.sp,
     ),
     bodyLarge = TextStyle(
@@ -77,8 +77,8 @@ val AppTypography = Typography(
     ),
     labelLarge = TextStyle(
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
+        fontSize = 13.sp,
+        lineHeight = 18.sp,
         letterSpacing = 0.1.sp,
     ),
     labelMedium = TextStyle(
@@ -123,7 +123,20 @@ object SacredTypography {
     )
     val numericLarge = TextStyle(
         fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
-        lineHeight = 30.sp,
+        fontSize = 22.sp,
+        lineHeight = 28.sp,
+        fontFamily = FontFamily.Monospace,
+    )
+    val numericMedium = TextStyle(
+        fontWeight = FontWeight.Medium,
+        fontSize = 17.sp,
+        lineHeight = 24.sp,
+        fontFamily = FontFamily.Monospace,
+    )
+    val numericSmall = TextStyle(
+        fontWeight = FontWeight.Medium,
+        fontSize = 13.sp,
+        lineHeight = 18.sp,
+        fontFamily = FontFamily.Monospace,
     )
 }

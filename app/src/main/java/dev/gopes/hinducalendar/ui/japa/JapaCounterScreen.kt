@@ -172,7 +172,7 @@ private fun StatColumn(label: String, value: Int) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         NumericTransition(
             value = value,
-            style = MaterialTheme.typography.headlineSmall,
+            style = SacredTypography.numericMedium,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Bold,
         )

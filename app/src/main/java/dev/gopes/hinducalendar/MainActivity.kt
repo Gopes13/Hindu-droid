@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +19,7 @@ import dev.gopes.hinducalendar.data.repository.PreferencesRepository
 import dev.gopes.hinducalendar.navigation.NavGraph
 import dev.gopes.hinducalendar.ui.theme.HinduCalendarTheme
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -46,7 +49,11 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setContent {
-            HinduCalendarTheme {
+            val vibrantMode by preferencesRepository.preferencesFlow
+                .map { it.gamificationData.isEnabled }
+                .collectAsState(initial = false)
+
+            HinduCalendarTheme(vibrantMode = vibrantMode) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

@@ -21,6 +21,7 @@ import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.ui.components.ConfettiOverlay
 import dev.gopes.hinducalendar.ui.components.GlassSurface
 import dev.gopes.hinducalendar.ui.components.SurfaceElevation
+import dev.gopes.hinducalendar.ui.theme.SacredTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,8 +83,8 @@ fun SacredDiyaScreen(
                         onClick = { viewModel.lightDiya() },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 24.dp)
-                            .height(52.dp),
+                            .padding(horizontal = 24.dp),
+                        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFFE88A2D)
@@ -97,7 +98,7 @@ fun SacredDiyaScreen(
                         Spacer(Modifier.width(8.dp))
                         Text(
                             stringResource(R.string.diya_light_button),
-                            style = MaterialTheme.typography.titleSmall,
+                            style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -116,7 +117,7 @@ fun SacredDiyaScreen(
                 GlassSurface(elevation = SurfaceElevation.STANDARD) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                        horizontalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterHorizontally)
                     ) {
                         StatColumn(
                             value = language.localizedNumber(state.lightingStreak),
@@ -147,7 +148,7 @@ private fun StatColumn(value: String, label: String) {
     ) {
         Text(
             text = value,
-            style = MaterialTheme.typography.headlineMedium,
+            style = SacredTypography.numericMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )

@@ -18,6 +18,7 @@ import kotlin.math.*
 /**
  * Compose Canvas rendering of a 108-bead mala ring.
  * Ported 1:1 from iOS MalaRingView.swift with exact geometry.
+ * All hard-coded values are density-scaled to match iOS point values.
  */
 @Composable
 fun MalaRingCanvas(
@@ -32,16 +33,17 @@ fun MalaRingCanvas(
     Canvas(modifier = modifier.fillMaxSize()) {
         val w = size.width
         val h = size.height
+        val dp = density // pixels per dp — scales iOS "point" values to Android pixels
 
-        // Ellipse center & radii (matching iOS exactly)
+        // Ellipse center & radii (caps in dp, matching iOS points)
         val cx = w / 2f
         val cy = h * 0.55f
-        val hw = minOf(w * 0.38f, 150f)
-        val hh = minOf(h * 0.35f, 200f)
+        val hw = minOf(w * 0.38f, 150f * dp)
+        val hh = minOf(h * 0.35f, 200f * dp)
 
-        // Bead sizing via perimeter approximation
+        // Bead sizing via perimeter approximation (caps in dp)
         val perimeter = PI.toFloat() * (3f * (hw + hh) - sqrt((3f * hw + hh) * (hw + 3f * hh)))
-        val beadDia = maxOf(5f, minOf(8f, perimeter / 145f))
+        val beadDia = maxOf(5f * dp, minOf(8f * dp, perimeter / 145f))
         val sumeruDia = beadDia * 2f
 
         // Sumeru position & gap
@@ -56,11 +58,11 @@ fun MalaRingCanvas(
         }
 
         // 1. Draw thread
-        drawThread(cx, cy, hw, hh, sumeruAngle, sumeruGap, beadDia)
+        drawThread(cx, cy, hw, hh, sumeruAngle, sumeruGap, beadDia, dp)
 
         // 2. Draw tassel below sumeru
         val sumeruPos = malaPoint(cx, cy, hw, hh, sumeruAngle)
-        drawTassel(sumeruPos, sumeruDia, h)
+        drawTassel(sumeruPos, sumeruDia, h, dp)
 
         // 3. Draw all 108 beads
         beadPositions.forEachIndexed { i, pos ->
@@ -69,11 +71,11 @@ fun MalaRingCanvas(
                 i == currentBead -> BeadState.ACTIVE
                 else -> BeadState.FUTURE
             }
-            drawBead(pos, beadDia, beadColors, state, isRudraksha)
+            drawBead(pos, beadDia, beadColors, state, isRudraksha, dp)
         }
 
         // 4. Draw sumeru bead
-        drawSumeruBead(sumeruPos, sumeruDia, sumeruColor)
+        drawSumeruBead(sumeruPos, sumeruDia, sumeruColor, dp)
     }
 }
 
@@ -97,14 +99,15 @@ private fun DrawScope.drawBead(
     dia: Float,
     colors: List<Color>,
     state: BeadState,
-    isRudraksha: Boolean
+    isRudraksha: Boolean,
+    dp: Float
 ) {
     val alpha = when (state) {
         BeadState.COMPLETED -> 1f
         BeadState.ACTIVE -> 1f
         BeadState.FUTURE -> 0.3f
     }
-    val radius = if (state == BeadState.ACTIVE) dia / 2f + 2f else dia / 2f
+    val radius = if (state == BeadState.ACTIVE) dia / 2f + 2f * dp else dia / 2f
 
     // Glow for active bead
     if (state == BeadState.ACTIVE) {
@@ -112,9 +115,9 @@ private fun DrawScope.drawBead(
             val paint = Paint().apply {
                 isAntiAlias = true
                 color = colors[0].copy(alpha = 0.5f).toArgb()
-                maskFilter = BlurMaskFilter(5f, BlurMaskFilter.Blur.NORMAL)
+                maskFilter = BlurMaskFilter(5f * dp, BlurMaskFilter.Blur.NORMAL)
             }
-            canvas.nativeCanvas.drawCircle(pos.x, pos.y, radius + 3f, paint)
+            canvas.nativeCanvas.drawCircle(pos.x, pos.y, radius + 3f * dp, paint)
         }
     }
 
@@ -131,27 +134,27 @@ private fun DrawScope.drawBead(
     )
 
     // Rudraksha ridge texture
-    if (isRudraksha && state != BeadState.FUTURE) {
+    if (isRudraksha && state != BeadState.FUTURE && dia >= 6f * dp) {
         drawLine(
             color = Color.Black.copy(alpha = 0.3f),
             start = Offset(pos.x, pos.y - dia * 0.3f),
             end = Offset(pos.x, pos.y + dia * 0.3f),
-            strokeWidth = 0.5f
+            strokeWidth = 0.5f * dp
         )
     }
 }
 
 // ── Sumeru Bead ─────────────────────────────────────────────────────────────
 
-private fun DrawScope.drawSumeruBead(pos: Offset, dia: Float, color: Color) {
+private fun DrawScope.drawSumeruBead(pos: Offset, dia: Float, color: Color, dp: Float) {
     // Glow
     drawIntoCanvas { canvas ->
         val paint = Paint().apply {
             isAntiAlias = true
             this.color = color.copy(alpha = 0.4f).toArgb()
-            maskFilter = BlurMaskFilter(6f, BlurMaskFilter.Blur.NORMAL)
+            maskFilter = BlurMaskFilter(6f * dp, BlurMaskFilter.Blur.NORMAL)
         }
-        canvas.nativeCanvas.drawCircle(pos.x, pos.y, dia / 2f + 3f, paint)
+        canvas.nativeCanvas.drawCircle(pos.x, pos.y, dia / 2f + 3f * dp, paint)
     }
     // Body
     drawCircle(
@@ -168,7 +171,7 @@ private fun DrawScope.drawSumeruBead(pos: Offset, dia: Float, color: Color) {
         color = color.copy(alpha = 0.6f),
         radius = dia / 2f,
         center = pos,
-        style = Stroke(width = 1f)
+        style = Stroke(width = 1f * dp)
     )
 }
 
@@ -176,7 +179,8 @@ private fun DrawScope.drawSumeruBead(pos: Offset, dia: Float, color: Color) {
 
 private fun DrawScope.drawThread(
     cx: Float, cy: Float, hw: Float, hh: Float,
-    sumeruAngle: Float, sumeruGap: Float, beadDia: Float
+    sumeruAngle: Float, sumeruGap: Float, beadDia: Float,
+    dp: Float
 ) {
     val path = Path()
     val segments = 200
@@ -193,15 +197,15 @@ private fun DrawScope.drawThread(
     drawPath(
         path = path,
         color = Color(0xFFBF9940).copy(alpha = 0.5f),
-        style = Stroke(width = 1.5f, cap = StrokeCap.Round)
+        style = Stroke(width = 1.5f * dp, cap = StrokeCap.Round)
     )
 }
 
 // ── Tassel ──────────────────────────────────────────────────────────────────
 
-private fun DrawScope.drawTassel(sumeruPos: Offset, sumeruDia: Float, canvasHeight: Float) {
+private fun DrawScope.drawTassel(sumeruPos: Offset, sumeruDia: Float, canvasHeight: Float, dp: Float) {
     val cx = sumeruPos.x
-    val topY = sumeruPos.y + sumeruDia / 2f + 2f
+    val topY = sumeruPos.y + sumeruDia / 2f + 2f * dp
 
     // 1. Red connector bead
     val connectorSize = sumeruDia * 0.45f
@@ -234,34 +238,31 @@ private fun DrawScope.drawTassel(sumeruPos: Offset, sumeruDia: Float, canvasHeig
             color = Color(0xFFD4A046).copy(alpha = 0.6f),
             start = Offset(cx - bandHalfW, bandY),
             end = Offset(cx + bandHalfW, bandY),
-            strokeWidth = 1f
+            strokeWidth = 1f * dp
         )
     }
 
-    // 4. Red tassel threads (14 curved threads)
+    // 4. Red tassel threads (14 curved threads, matching iOS curvature)
     val threadStartY = topY + connectorSize / 2f
     val spreadWidth = sumeruDia * 1.6f
-    val threadLength = minOf(40f, canvasHeight - threadStartY - 8f)
+    val threadLength = minOf(40f * dp, canvasHeight - threadStartY - 8f * dp)
     if (threadLength <= 0f) return
 
     for (i in 0 until 14) {
-        val t = i.toFloat() / 13f
-        val endX = cx - spreadWidth / 2f + t * spreadWidth
-        val endY = threadStartY + threadLength
+        val f = i.toFloat() / 13f - 0.5f                              // -0.5 to +0.5
+        val endX = cx + f * spreadWidth
+        val endY = threadStartY + threadLength * (1f - 0.2f * abs(f) * 2f) // curves up at edges
+        val ctrlX = cx + f * spreadWidth * 0.3f                       // control X = 30% of spread
+        val ctrlY = (threadStartY + endY) / 2f                        // control Y = midpoint
 
         val path = Path().apply {
             moveTo(cx, threadStartY)
-            quadraticBezierTo(
-                (cx + endX) / 2f,
-                threadStartY + threadLength * 0.6f,
-                endX,
-                endY
-            )
+            quadraticBezierTo(ctrlX, ctrlY, endX, endY)
         }
         drawPath(
             path = path,
             color = Color(0xFFA61414).copy(alpha = 0.75f),
-            style = Stroke(width = 1.5f, cap = StrokeCap.Round)
+            style = Stroke(width = 1.5f * dp, cap = StrokeCap.Round)
         )
     }
 }

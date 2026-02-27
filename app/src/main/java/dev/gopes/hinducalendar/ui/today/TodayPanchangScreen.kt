@@ -95,85 +95,114 @@ private fun PanchangContent(
     onDiyaClick: () -> Unit = {}
 ) {
     val isDark = isSystemInDarkTheme()
+    val isVibrant = LocalVibrantMode.current
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         // 1. Greeting Banner (first, matching iOS)
-        GreetingBanner(
-            isDarkTheme = isDark,
-            gamificationData = gamificationViewModel?.gamificationData,
-            streakData = gamificationViewModel?.streakData,
-            language = language
-        )
+        Box(Modifier.entranceAnimation(0, isVibrant)) {
+            GreetingBanner(
+                isDarkTheme = isDark,
+                gamificationData = gamificationViewModel?.gamificationData,
+                streakData = gamificationViewModel?.streakData,
+                language = language
+            )
+        }
 
         // 2. Streak Badge (outside gamification conditional, matching iOS)
         gamificationViewModel?.let { gvm ->
-            dev.gopes.hinducalendar.ui.gamification.StreakBadgeView(
-                streakData = gvm.streakData,
-                gamificationData = gvm.gamificationData,
-                language = language
-            )
+            Box(Modifier.entranceAnimation(1, isVibrant)) {
+                dev.gopes.hinducalendar.ui.gamification.StreakBadgeView(
+                    streakData = gvm.streakData,
+                    gamificationData = gvm.gamificationData,
+                    language = language
+                )
+            }
 
             // 3-4. Sadhana + Daily Challenge (conditional on gamification)
             if (gvm.gamificationData.isEnabled) {
-                dev.gopes.hinducalendar.ui.gamification.SadhanaStatusBar(
-                    data = gvm.gamificationData,
-                    onClick = onSadhanaClick,
-                    language = language
-                )
-                gvm.dailyChallenge?.let { challenge ->
-                    dev.gopes.hinducalendar.ui.gamification.DailyChallengeCard(
-                        challenge = challenge,
-                        gamificationData = gvm.gamificationData,
-                        onAnswered = { correct -> gvm.onChallengeAnswered(correct) },
+                Box(Modifier.entranceAnimation(2, isVibrant)) {
+                    dev.gopes.hinducalendar.ui.gamification.SadhanaStatusBar(
+                        data = gvm.gamificationData,
+                        onClick = onSadhanaClick,
                         language = language
                     )
+                }
+                gvm.dailyChallenge?.let { challenge ->
+                    Box(Modifier.entranceAnimation(3, isVibrant)) {
+                        dev.gopes.hinducalendar.ui.gamification.DailyChallengeCard(
+                            challenge = challenge,
+                            gamificationData = gvm.gamificationData,
+                            onAnswered = { correct -> gvm.onChallengeAnswered(correct) },
+                            language = language
+                        )
+                    }
                 }
             }
         }
 
         // 5. Japa & Diya card
-        JapaDiyaTodayCard(
-            japaState = japaState,
-            diyaState = diyaState,
-            language = language,
-            onJapaClick = onJapaClick,
-            onDiyaClick = onDiyaClick
-        )
+        Box(Modifier.entranceAnimation(4, isVibrant)) {
+            JapaDiyaTodayCard(
+                japaState = japaState,
+                diyaState = diyaState,
+                language = language,
+                onJapaClick = onJapaClick,
+                onDiyaClick = onDiyaClick
+            )
+        }
 
         // 6. Daily Wisdom Briefing
-        DailyBriefingCard()
+        Box(Modifier.entranceAnimation(5, isVibrant)) {
+            DailyBriefingCard()
+        }
 
         DecorativeDivider(style = DividerStyle.OM)
 
         // 7. Hindu Date Header
-        HinduDateHeader(panchang)
+        Box(Modifier.entranceAnimation(6, isVibrant)) {
+            HinduDateHeader(panchang)
+        }
 
         // 8. Sun & Moon Times
-        SunMoonCard(panchang)
+        Box(Modifier.entranceAnimation(7, isVibrant)) {
+            SunMoonCard(panchang)
+        }
 
         DecorativeDivider(style = DividerStyle.LOTUS)
 
         // 10. Panchang Elements
-        PanchangElementsCard(panchang)
+        Box(Modifier.entranceAnimation(8, isVibrant)) {
+            PanchangElementsCard(panchang)
+        }
 
         // 11. Inauspicious Periods
-        InauspiciousPeriodsCard(panchang)
+        Box(Modifier.entranceAnimation(9, isVibrant)) {
+            InauspiciousPeriodsCard(panchang)
+        }
 
         // 12. Auspicious Period
-        panchang.abhijitMuhurta?.let { AuspiciousPeriodCard(it) }
+        panchang.abhijitMuhurta?.let {
+            Box(Modifier.entranceAnimation(10, isVibrant)) {
+                AuspiciousPeriodCard(it)
+            }
+        }
 
         DecorativeDivider(style = DividerStyle.DIAMOND)
 
         // 14. Festivals
         if (panchang.hasFestivals) {
-            FestivalsCard(panchang.festivals, language)
+            Box(Modifier.entranceAnimation(11, isVibrant)) {
+                FestivalsCard(panchang.festivals, language)
+            }
         }
+
+        Spacer(Modifier.height(32.dp))
     }
 }
 
@@ -185,7 +214,7 @@ private fun HinduDateHeader(panchang: PanchangDay) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "${panchang.hinduDate.displayString}, ${panchang.hinduDate.yearDisplayForTradition(panchang.tradition)}",
+                "${panchang.hinduDate.localizedDisplayString()}, ${panchang.hinduDate.localizedYearDisplay(panchang.tradition)}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -216,10 +245,12 @@ private fun SunMoonCard(panchang: PanchangDay) {
             TimeItem(Icons.Filled.WbSunny, stringResource(R.string.today_sunrise), panchang.sunrise.format(timeFmt), SunriseColor)
             TimeItem(Icons.Filled.WbTwilight, stringResource(R.string.today_sunset), panchang.sunset.format(timeFmt), SunsetColor)
         }
-        panchang.moonrise?.let { moonrise ->
+        if (panchang.moonrise != null || panchang.moonset != null) {
             Spacer(Modifier.height(8.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                TimeItem(Icons.Filled.NightsStay, stringResource(R.string.today_moonrise), moonrise.format(timeFmt), MoonriseColor)
+                panchang.moonrise?.let { moonrise ->
+                    TimeItem(Icons.Filled.NightsStay, stringResource(R.string.today_moonrise), moonrise.format(timeFmt), MoonriseColor)
+                }
                 panchang.moonset?.let { moonset ->
                     TimeItem(Icons.Filled.Nightlight, stringResource(R.string.today_moonset), moonset.format(timeFmt), MoonsetColor)
                 }
@@ -233,7 +264,7 @@ private fun TimeItem(icon: ImageVector, label: String, time: String, tint: andro
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(icon, contentDescription = label, tint = tint, modifier = Modifier.size(28.dp))
         Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(time, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+        Text(time, style = SacredTypography.numericSmall, fontWeight = FontWeight.Medium)
     }
 }
 
@@ -252,7 +283,7 @@ private fun PanchangElementsCard(panchang: PanchangDay) {
 @Composable
 private fun ElementRow(icon: ImageVector, label: String, value: String, detail: String?, iconRotation: Float = 0f) {
     Row(
-        Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        Modifier.fillMaxWidth().padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

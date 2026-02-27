@@ -2,20 +2,21 @@ package dev.gopes.hinducalendar.ui.components
 
 import android.provider.Settings
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.gopes.hinducalendar.ui.theme.LocalVibrantMode
 import dev.gopes.hinducalendar.ui.util.DeviceCapabilities
@@ -148,12 +149,14 @@ fun Modifier.subtleShimmer(): Modifier = composed {
 // ── Glow Border ─────────────────────────────────────────────────────────────
 
 /**
- * Animated gradient border opacity (2.5s loop) on prominent cards.
- * Opacity ranges 0.15 → 0.35. Stroke 1.5dp.
+ * Animated golden border (2.5s loop) on cards when vibrant mode is active.
+ * Opacity ranges 0.15 → 0.35. Width 1.5dp.
+ * Uses standard Compose .border() for reliable rendering inside clipped surfaces.
  * Only active in vibrant mode on FULL/STANDARD devices.
  */
 fun Modifier.glowBorder(
     color: Color = Color.Unspecified,
+    cornerRadius: Dp = 16.dp,
 ): Modifier = composed {
     val isVibrant = LocalVibrantMode.current
     val glowColor = if (color == Color.Unspecified) {
@@ -174,22 +177,12 @@ fun Modifier.glowBorder(
     )
 
     val borderOpacity = 0.15f + glowPhase * 0.20f
-    val shadowOpacity = 0.08f + glowPhase * 0.10f
 
-    this
-        .shadow(
-            elevation = 16.dp,
-            ambientColor = glowColor.copy(alpha = shadowOpacity),
-            spotColor = glowColor.copy(alpha = shadowOpacity),
-        )
-        .drawWithContent {
-            drawContent()
-            drawRoundRect(
-                color = glowColor.copy(alpha = borderOpacity),
-                style = Stroke(width = 1.5.dp.toPx()),
-                cornerRadius = androidx.compose.ui.geometry.CornerRadius(16.dp.toPx())
-            )
-        }
+    this.border(
+        width = 1.5.dp,
+        color = glowColor.copy(alpha = borderOpacity),
+        shape = RoundedCornerShape(cornerRadius)
+    )
 }
 
 // ── Icon Pulse ──────────────────────────────────────────────────────────────
