@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.Kirtan
 import dev.gopes.hinducalendar.data.repository.PreferencesRepository
+import dev.gopes.hinducalendar.engine.AudioPlayerService
 import dev.gopes.hinducalendar.engine.KirtanService
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class KirtanReaderViewModel @Inject constructor(
     private val kirtanService: KirtanService,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    val audioPlayerService: AudioPlayerService
 ) : ViewModel() {
 
     var kirtan by mutableStateOf<Kirtan?>(null)
@@ -34,5 +36,15 @@ class KirtanReaderViewModel @Inject constructor(
 
     fun loadKirtan(id: String) {
         kirtan = kirtanService.kirtanById(id)
+    }
+
+    fun playKirtan() {
+        val k = kirtan ?: return
+        audioPlayerService.toggle(k.audioId, k.title(language))
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        // Don't stop audio — foreground service manages playback lifecycle
     }
 }

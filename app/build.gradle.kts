@@ -98,6 +98,9 @@ dependencies {
     // Desugaring (java.time on API < 26)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
+    // Media session (background kirtan playback + notification controls)
+    implementation("androidx.media:media:1.7.0")
+
     // AppCompat (for per-app language switching)
     implementation("androidx.appcompat:appcompat:1.7.0")
 

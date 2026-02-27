@@ -24,6 +24,7 @@ class NotificationHelper @Inject constructor(
     companion object {
         const val CHANNEL_ID_DAILY = DailyNotificationWorker.CHANNEL_ID
         const val CHANNEL_ID_FESTIVALS = "festival_reminders"
+        const val CHANNEL_ID_PLAYBACK = "kirtan_playback"
     }
 
     /**
@@ -54,6 +55,17 @@ class NotificationHelper @Inject constructor(
                 description = "Reminders for upcoming Hindu festivals and observances"
             }
             notificationManager.createNotificationChannel(festivalChannel)
+
+            // Kirtan Playback channel (low importance — no sound, just ongoing notification)
+            val playbackChannel = NotificationChannel(
+                CHANNEL_ID_PLAYBACK,
+                "Kirtan Playback",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "Controls for kirtan audio playback"
+                setSound(null, null)
+            }
+            notificationManager.createNotificationChannel(playbackChannel)
         }
     }
 

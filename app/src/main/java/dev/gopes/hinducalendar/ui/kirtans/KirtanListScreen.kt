@@ -24,6 +24,7 @@ import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.Kirtan
 import dev.gopes.hinducalendar.data.model.KirtanCategory
 import dev.gopes.hinducalendar.ui.components.SacredCard
+import dev.gopes.hinducalendar.ui.util.localizedOriginLanguage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -160,7 +161,7 @@ private fun KirtanRow(
                         color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.1f)
                     ) {
                         Text(
-                            kirtan.originLanguage,
+                            localizedOriginLanguage(kirtan.originLanguage),
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.9f),
