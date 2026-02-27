@@ -1,20 +1,26 @@
 package dev.gopes.hinducalendar.navigation
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
+import dev.gopes.hinducalendar.ui.components.GlassNavItem
+import dev.gopes.hinducalendar.ui.components.GlassNavigationBar
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,12 +29,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.ui.theme.AtmosphereEngine
+import dev.gopes.hinducalendar.ui.theme.LocalAtmosphere
 import dev.gopes.hinducalendar.data.model.SacredTextType
 import dev.gopes.hinducalendar.ui.today.TodayPanchangScreen
 import dev.gopes.hinducalendar.ui.calendar.CalendarScreen
 import dev.gopes.hinducalendar.ui.festivals.FestivalDetailScreen
 import dev.gopes.hinducalendar.ui.festivals.FestivalListScreen
 import dev.gopes.hinducalendar.ui.settings.SettingsScreen
+import dev.gopes.hinducalendar.ui.texts.LibraryLandingScreen
 import dev.gopes.hinducalendar.ui.texts.SacredTextsScreen
 import dev.gopes.hinducalendar.ui.texts.bookmarks.BookmarksScreen
 import dev.gopes.hinducalendar.ui.texts.reader.ChalisaReaderScreen
@@ -64,44 +73,81 @@ fun NavGraph() {
     val currentRoute = currentEntry?.destination?.route
 
     val isMainScreen = screens.any { it.route == currentRoute }
+        || currentRoute == "sacred_texts" || currentRoute == "kirtans"
 
-    Scaffold(
-        bottomBar = {
-            if (!isMainScreen) return@Scaffold
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            ) {
-                screens.forEach { screen ->
-                    val title = stringResource(screen.titleRes)
-                    NavigationBarItem(
-                        icon = { Icon(screen.icon, contentDescription = title) },
-                        label = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                        selected = currentRoute == screen.route,
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            selectedTextColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        ),
-                        onClick = {
-                            navController.navigate(screen.route) {
-                                popUpTo(navController.graph.startDestinationId) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
+    // Derive library section from current route for dynamic tab label/icon
+    val librarySection = when {
+        currentRoute == "sacred_texts" || currentRoute?.startsWith("reader/") == true
+            || currentRoute == "bookmarks" || currentRoute?.startsWith("sanskrit") == true -> "texts"
+        currentRoute == "kirtans" || currentRoute?.startsWith("kirtan/") == true -> "kirtans"
+        else -> "landing"
+    }
+
+    // Atmospheric background behind entire app
+    val atmosphere = LocalAtmosphere.current
+    val atmosphereBrush = AtmosphereEngine.atmosphereBrush(atmosphere)
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Layer 1: Atmospheric gradient (15% opacity)
+        Box(
+            Modifier
+                .fillMaxSize()
+                .alpha(0.15f)
+                .background(atmosphereBrush)
+        )
+        // Layer 2: Surface color overlay (85% opacity)
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.85f))
+        )
+        // Layer 3: Content
+        Scaffold(
+            containerColor = androidx.compose.ui.graphics.Color.Transparent,
+            bottomBar = {
+                if (!isMainScreen) return@Scaffold
+                GlassNavigationBar(
+                    items = screens.map { screen ->
+                        val title = if (screen == Screen.Texts) {
+                            when (librarySection) {
+                                "texts" -> stringResource(R.string.tab_text)
+                                "kirtans" -> stringResource(R.string.tab_kirtan)
+                                else -> stringResource(R.string.tab_media)
                             }
+                        } else {
+                            stringResource(screen.titleRes)
                         }
-                    )
-                }
+                        val icon = if (screen == Screen.Texts) {
+                            when (librarySection) {
+                                "texts" -> Icons.AutoMirrored.Filled.MenuBook
+                                "kirtans" -> Icons.Filled.MusicNote
+                                else -> Icons.Filled.VideoLibrary
+                            }
+                        } else {
+                            screen.icon
+                        }
+                        GlassNavItem(
+                            icon = icon,
+                            label = title,
+                            selected = currentRoute == screen.route
+                                || (screen == Screen.Texts && (currentRoute == "sacred_texts" || currentRoute == "kirtans")),
+                            onClick = {
+                                navController.navigate(screen.route) {
+                                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
+                )
             }
-        }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Today.route,
-            modifier = Modifier.padding(innerPadding)
-        ) {
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Today.route,
+                modifier = Modifier.padding(innerPadding)
+            ) {
             composable(Screen.Today.route) {
                 TodayPanchangScreen(
                     onSadhanaClick = { navController.navigate("sadhana") },
@@ -110,13 +156,19 @@ fun NavGraph() {
                 )
             }
             composable(Screen.Texts.route) {
+                LibraryLandingScreen(
+                    onSelectTexts = { navController.navigate("sacred_texts") },
+                    onSelectKirtans = { navController.navigate("kirtans") }
+                )
+            }
+            composable("sacred_texts") {
                 SacredTextsScreen(
                     onTextClick = { textType ->
                         navController.navigate("reader/${textType.name}")
                     },
                     onBookmarksClick = { navController.navigate("bookmarks") },
-                    onKirtansClick = { navController.navigate("kirtans") },
-                    onSanskritClick = { navController.navigate("sanskrit") }
+                    onSanskritClick = { navController.navigate("sanskrit") },
+                    onBack = { navController.popBackStack() }
                 )
             }
             composable(Screen.Calendar.route) { CalendarScreen() }
@@ -229,6 +281,7 @@ fun NavGraph() {
                     else -> GenericReaderScreen(onBack = onBack)
                 }
             }
+        }
         }
     }
 }

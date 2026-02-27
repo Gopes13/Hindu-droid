@@ -656,7 +656,7 @@ private fun SutraContent(data: SutraTextData, lang: AppLanguage, modifier: Modif
                         modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
                     ) {
                         Text(
-                            "Ch ${ch.chapter}",
+                            stringResource(R.string.text_chapter_short, ch.chapter),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold,
                             color = if (isSelected) MaterialTheme.colorScheme.onPrimary
@@ -839,7 +839,7 @@ private fun JainContent(data: JainPrayersData, lang: AppLanguage, modifier: Modi
             // Line-by-line breakdown
             if (nm.lineByLine.isNotEmpty()) {
                 items(nm.lineByLine) { line ->
-                    val ref = "Line ${line.line}"
+                    val ref = "${stringResource(R.string.text_line)} ${line.line}"
                     VerseCard(
                         badge = ref,
                         originalText = line.sanskrit,

@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.SacredTextType
 import dev.gopes.hinducalendar.ui.components.*
+import dev.gopes.hinducalendar.ui.theme.LocalVibrantMode
 import dev.gopes.hinducalendar.ui.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,15 +32,22 @@ import dev.gopes.hinducalendar.ui.util.*
 fun SacredTextsScreen(
     onTextClick: (SacredTextType) -> Unit = {},
     onBookmarksClick: () -> Unit = {},
-    onKirtansClick: () -> Unit = {},
     onSanskritClick: () -> Unit = {},
+    onBack: () -> Unit = {},
     viewModel: SacredTextsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.sacred_texts_title)) })
+            TopAppBar(
+                title = { Text(stringResource(R.string.sacred_texts_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
+                    }
+                }
+            )
         }
     ) { padding ->
         if (uiState.isLoading) {
@@ -75,6 +84,7 @@ fun SacredTextsScreen(
                 }
             }
         } else {
+            val isVibrant = LocalVibrantMode.current
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -83,40 +93,30 @@ fun SacredTextsScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                // 1. Continue Reading hero card
-                val primaryText = uiState.availableTexts.firstOrNull { it.hasStarted }
-                    ?: uiState.availableTexts.firstOrNull()
-                if (primaryText != null) {
-                    item(key = "continue_reading") {
-                        ContinueReadingCard(primaryText, onTextClick)
-                    }
-                }
-
-                // 2. Bookmarks quick access
-                if (uiState.bookmarkCount > 0) {
-                    item(key = "bookmarks") {
+                // 1. Sanskrit Pathshala card (matches iOS order)
+                item(key = "sanskrit") {
+                    Box(Modifier.entranceAnimation(0, isVibrant)) {
                         SacredCard(
-                            modifier = Modifier.clickable { onBookmarksClick() }
+                            modifier = Modifier.clickable { onSanskritClick() }
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    Icons.Filled.Favorite,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(32.dp),
-                                    tint = MaterialTheme.colorScheme.error
+                                Text(
+                                    "\uD83D\uDD49",
+                                    fontSize = 30.sp,
+                                    modifier = Modifier.size(32.dp)
                                 )
                                 Spacer(Modifier.width(16.dp))
                                 Column(Modifier.weight(1f)) {
                                     Text(
-                                        stringResource(R.string.bookmarks_title),
+                                        stringResource(R.string.sanskrit_title),
                                         style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.SemiBold
                                     )
                                     Text(
-                                        stringResource(R.string.bookmarks_saved_count, uiState.bookmarkCount),
+                                        stringResource(R.string.sanskrit_subtitle),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -131,115 +131,103 @@ fun SacredTextsScreen(
                     }
                 }
 
-                // 2b. Kirtans card
-                item(key = "kirtans") {
-                    SacredCard(
-                        modifier = Modifier.clickable { onKirtansClick() }
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Filled.MusicNote,
-                                contentDescription = null,
-                                modifier = Modifier.size(32.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(Modifier.width(16.dp))
-                            Column(Modifier.weight(1f)) {
-                                Text(
-                                    stringResource(R.string.kirtans_title),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    stringResource(R.string.kirtans_subtitle),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                            Icon(
-                                Icons.Filled.ChevronRight,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                // 2. Continue Reading hero card
+                val primaryText = uiState.availableTexts.firstOrNull { it.hasStarted }
+                    ?: uiState.availableTexts.firstOrNull()
+                if (primaryText != null) {
+                    item(key = "continue_reading") {
+                        Box(Modifier.entranceAnimation(1, isVibrant)) {
+                            ContinueReadingCard(primaryText, onTextClick)
                         }
                     }
                 }
 
-                // 2c. Sanskrit Learning card
-                item(key = "sanskrit") {
-                    SacredCard(
-                        modifier = Modifier.clickable { onSanskritClick() }
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Filled.Translate,
-                                contentDescription = null,
-                                modifier = Modifier.size(32.dp),
-                                tint = MaterialTheme.colorScheme.tertiary
-                            )
-                            Spacer(Modifier.width(16.dp))
-                            Column(Modifier.weight(1f)) {
-                                Text(
-                                    stringResource(R.string.sanskrit_title),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    stringResource(R.string.sanskrit_subtitle),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                // 3. Bookmarks quick access
+                if (uiState.bookmarkCount > 0) {
+                    item(key = "bookmarks") {
+                        Box(Modifier.entranceAnimation(2, isVibrant)) {
+                            SacredCard(
+                                modifier = Modifier.clickable { onBookmarksClick() }
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Favorite,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(32.dp),
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                    Spacer(Modifier.width(16.dp))
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            stringResource(R.string.bookmarks_title),
+                                            style = MaterialTheme.typography.titleSmall,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                        Text(
+                                            stringResource(R.string.bookmarks_saved_count, uiState.bookmarkCount),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    Icon(
+                                        Icons.Filled.ChevronRight,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             }
-                            Icon(
-                                Icons.Filled.ChevronRight,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
                         }
                     }
                 }
 
-                // 3. "Your Path" section header — localized path name
+                // 4. "Your Path" section header — localized path name
                 item(key = "path_header") {
-                    Text(
-                        stringResource(R.string.your_path_texts, uiState.dharmaPath.localizedName()),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        stringResource(R.string.daily_readings_desc),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Box(Modifier.entranceAnimation(3, isVibrant)) {
+                        Column {
+                            Text(
+                                stringResource(R.string.your_path_texts, uiState.dharmaPath.localizedName()),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                stringResource(R.string.daily_readings_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
 
                 // 4. Path-specific text cards
                 items(uiState.availableTexts, key = { "path_${it.textType.name}" }) { textItem ->
-                    SacredTextCard(textItem, isPathText = true, onTextClick = onTextClick)
+                    Box(Modifier.entranceAnimation(4, isVibrant)) {
+                        SacredTextCard(textItem, isPathText = true, onTextClick = onTextClick)
+                    }
                 }
 
                 // 5. "All Sacred Texts" section
                 if (uiState.allOtherTexts.isNotEmpty()) {
                     item(key = "all_header") {
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            stringResource(R.string.all_sacred_texts),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        Box(Modifier.entranceAnimation(5, isVibrant)) {
+                            Column {
+                                Spacer(Modifier.height(8.dp))
+                                Text(
+                                    stringResource(R.string.all_sacred_texts),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                     }
 
                     items(uiState.allOtherTexts, key = { "other_${it.textType.name}" }) { textItem ->
-                        SacredTextCard(textItem, isPathText = false, onTextClick = onTextClick)
+                        Box(Modifier.entranceAnimation(6, isVibrant)) {
+                            SacredTextCard(textItem, isPathText = false, onTextClick = onTextClick)
+                        }
                     }
                 }
             }

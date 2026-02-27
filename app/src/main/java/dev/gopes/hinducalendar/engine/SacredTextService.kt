@@ -1,8 +1,11 @@
 package dev.gopes.hinducalendar.engine
 
 import android.content.Context
+import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.DharmaPath
 import dev.gopes.hinducalendar.data.model.ReadingProgress
@@ -407,6 +410,35 @@ class SacredTextService @Inject constructor(
     private val cachedShlokaTexts = mutableMapOf<String, ShlokaTextData>()
     private val cachedVerseTexts = mutableMapOf<String, VerseTextData>()
     private val cachedChapterTexts = mutableMapOf<String, ChapterTextData>()
+
+    private fun getLocalizedContext(): Context {
+        val locales = AppCompatDelegate.getApplicationLocales()
+        if (locales.isEmpty) return context
+        val locale = locales[0] ?: return context
+        val config = Configuration(context.resources.configuration).apply { setLocale(locale) }
+        return context.createConfigurationContext(config)
+    }
+
+    private fun s(id: Int): String = getLocalizedContext().getString(id)
+    private fun s(id: Int, vararg args: Any): String = getLocalizedContext().getString(id, *args)
+
+    private fun localizedTextName(textType: SacredTextType): String = when (textType) {
+        SacredTextType.GITA -> s(R.string.text_name_gita)
+        SacredTextType.HANUMAN_CHALISA -> s(R.string.text_name_hanuman_chalisa)
+        SacredTextType.JAPJI_SAHIB -> s(R.string.text_name_japji_sahib)
+        SacredTextType.BHAGAVATA -> s(R.string.text_name_bhagavata)
+        SacredTextType.VISHNU_SAHASRANAMA -> s(R.string.text_name_vishnu_sahasranama)
+        SacredTextType.SHIVA_PURANA -> s(R.string.text_name_shiva_purana)
+        SacredTextType.RUDRAM -> s(R.string.text_name_rudram)
+        SacredTextType.DEVI_MAHATMYA -> s(R.string.text_name_devi_mahatmya)
+        SacredTextType.SOUNDARYA_LAHARI -> s(R.string.text_name_soundarya_lahari)
+        SacredTextType.SHIKSHAPATRI -> s(R.string.text_name_shikshapatri)
+        SacredTextType.VACHANAMRUT -> s(R.string.text_name_vachanamrut)
+        SacredTextType.SUKHMANI -> s(R.string.text_name_sukhmani)
+        SacredTextType.GURBANI -> s(R.string.text_name_gurbani)
+        SacredTextType.TATTVARTHA_SUTRA -> s(R.string.text_name_tattvartha_sutra)
+        SacredTextType.JAIN_PRAYERS -> s(R.string.text_name_jain_prayers)
+    }
     private val cachedSutraTexts = mutableMapOf<String, SutraTextData>()
     private val cachedDiscourseTexts = mutableMapOf<String, DiscourseTextData>()
 
@@ -501,8 +533,8 @@ class SacredTextService @Inject constructor(
                 val verse = chapter.verses.getOrNull(verseIndex) ?: return null
                 return DailyVerse(
                     textType = SacredTextType.GITA,
-                    title = "Bhagavad Gita",
-                    subtitle = "Chapter ${chapter.chapter} - Verse ${verse.verse}",
+                    title = s(R.string.text_name_gita),
+                    subtitle = s(R.string.chapter_verse_format, chapter.chapter, verse.verse),
                     sanskrit = verse.sanskrit,
                     transliteration = verse.transliteration,
                     translation = verse.translation(lang),
@@ -528,8 +560,8 @@ class SacredTextService @Inject constructor(
         val verse = allVerses.getOrNull(safeIndex) ?: return null
         return DailyVerse(
             textType = SacredTextType.HANUMAN_CHALISA,
-            title = "Hanuman Chalisa",
-            subtitle = "${(verse.type ?: "Verse").replaceFirstChar { it.uppercase() }} ${verse.verse}",
+            title = s(R.string.text_name_hanuman_chalisa),
+            subtitle = s(R.string.verse_ref_format, (verse.type ?: s(R.string.text_verse)).replaceFirstChar { it.uppercase() }, verse.verse),
             sanskrit = verse.sanskrit,
             transliteration = verse.transliteration,
             translation = verse.translation(lang),
@@ -550,8 +582,8 @@ class SacredTextService @Inject constructor(
         val pauri = japji.pauris.firstOrNull { it.pauri == safeNumber } ?: return null
         return DailyVerse(
             textType = SacredTextType.JAPJI_SAHIB,
-            title = "Japji Sahib",
-            subtitle = "Pauri $safeNumber",
+            title = s(R.string.text_name_japji_sahib),
+            subtitle = s(R.string.verse_ref_format, s(R.string.text_pauri), safeNumber),
             sanskrit = pauri.punjabi,
             transliteration = pauri.transliteration,
             translation = pauri.translation(lang),
@@ -589,8 +621,8 @@ class SacredTextService @Inject constructor(
                 val ep = data.episodes.firstOrNull { it.episode == safeIndex } ?: return null
                 return DailyVerse(
                     textType = textType,
-                    title = textType.displayName,
-                    subtitle = "Episode $safeIndex: ${ep.title(lang)}",
+                    title = localizedTextName(textType),
+                    subtitle = "${s(R.string.text_episode)} $safeIndex: ${ep.title(lang)}",
                     sanskrit = ep.relatedVerse?.sanskrit ?: ep.relatedMantra?.sanskrit,
                     transliteration = ep.relatedVerse?.transliteration ?: ep.relatedMantra?.transliteration,
                     translation = ep.summary(lang),
@@ -609,8 +641,8 @@ class SacredTextService @Inject constructor(
                 val shloka = data.shlokas.getOrNull(safeIndex - 1) ?: return null
                 return DailyVerse(
                     textType = textType,
-                    title = textType.displayName,
-                    subtitle = "Shloka ${shloka.shloka}",
+                    title = localizedTextName(textType),
+                    subtitle = s(R.string.verse_ref_format, s(R.string.text_shloka), shloka.shloka),
                     sanskrit = shloka.sanskrit,
                     transliteration = shloka.transliteration,
                     translation = shloka.translation(lang),
@@ -629,8 +661,8 @@ class SacredTextService @Inject constructor(
                 val verse = data.verses.getOrNull(safeIndex - 1) ?: return null
                 return DailyVerse(
                     textType = textType,
-                    title = textType.displayName,
-                    subtitle = "Verse ${verse.verse}",
+                    title = localizedTextName(textType),
+                    subtitle = s(R.string.verse_ref_format, s(R.string.text_verse), verse.verse),
                     sanskrit = verse.sanskrit,
                     transliteration = verse.transliteration,
                     translation = verse.translation(lang),

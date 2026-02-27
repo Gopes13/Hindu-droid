@@ -1,5 +1,8 @@
 package dev.gopes.hinducalendar.ui.texts.reader
 
+import android.content.Context
+import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +11,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.BookmarkCollection
 import dev.gopes.hinducalendar.data.model.SacredTextType
@@ -35,11 +40,22 @@ enum class ReaderMode { NORMAL, STUDY, FOCUS }
 
 @HiltViewModel
 class ReaderViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val sacredTextService: SacredTextService,
     private val preferencesRepository: PreferencesRepository,
     val audioPlayerService: AudioPlayerService,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    private fun getLocalizedContext(): Context {
+        val locales = AppCompatDelegate.getApplicationLocales()
+        if (locales.isEmpty) return context
+        val locale = locales[0] ?: return context
+        val config = Configuration(context.resources.configuration).apply { setLocale(locale) }
+        return context.createConfigurationContext(config)
+    }
+
+    private fun s(id: Int): String = getLocalizedContext().getString(id)
 
     val textType: SacredTextType? = savedStateHandle.get<String>("textType")
         ?.let { name -> SacredTextType.entries.find { it.name == name } }
@@ -177,7 +193,7 @@ class ReaderViewModel @Inject constructor(
             }
             chalisaData != null -> chalisaData!!.allVerses.map { v ->
                 StudyVerse(
-                    reference = "${(v.type ?: "Verse").replaceFirstChar { c -> c.uppercase() }} ${v.verse}",
+                    reference = "${(v.type ?: s(R.string.text_verse)).replaceFirstChar { c -> c.uppercase() }} ${v.verse}",
                     originalText = v.sanskrit,
                     transliteration = v.transliteration,
                     translation = v.translation(lang),
@@ -187,7 +203,7 @@ class ReaderViewModel @Inject constructor(
             }
             japjiData != null -> japjiData!!.pauris.map { p ->
                 StudyVerse(
-                    reference = "Pauri ${p.pauri}",
+                    reference = "${s(R.string.text_pauri)} ${p.pauri}",
                     originalText = p.punjabi,
                     transliteration = p.transliteration,
                     translation = p.translation(lang),
@@ -199,7 +215,7 @@ class ReaderViewModel @Inject constructor(
                 val prefix = textType?.jsonFileName ?: "shloka"
                 shlokaData!!.shlokas.map { s ->
                     StudyVerse(
-                        reference = "Shloka ${s.shloka}",
+                        reference = "${s(R.string.text_shloka)} ${s.shloka}",
                         originalText = s.sanskrit,
                         transliteration = s.transliteration,
                         translation = s.translation(lang),
@@ -211,7 +227,7 @@ class ReaderViewModel @Inject constructor(
             }
             verseData != null -> verseData!!.verses.map { v ->
                 StudyVerse(
-                    reference = "Verse ${v.verse}",
+                    reference = "${s(R.string.text_verse)} ${v.verse}",
                     originalText = v.sanskrit,
                     transliteration = v.transliteration,
                     translation = v.translation(lang),
@@ -224,7 +240,7 @@ class ReaderViewModel @Inject constructor(
                 val sectionName = if (rudramData!!.namakam != null) "namakam" else "chamakam"
                 section?.anuvakas?.map { a ->
                     StudyVerse(
-                        reference = "Anuvaka ${a.anuvaka}",
+                        reference = "${s(R.string.text_anuvaka)} ${a.anuvaka}",
                         originalText = a.sanskrit,
                         transliteration = a.transliteration,
                         translation = a.translation(lang),
@@ -235,7 +251,7 @@ class ReaderViewModel @Inject constructor(
             }
             gurbaniData != null -> gurbaniData!!.shabads.mapIndexed { index, s ->
                 StudyVerse(
-                    reference = "Shabad ${s.day}",
+                    reference = "${s(R.string.text_shabad)} ${s.day}",
                     originalText = s.punjabi,
                     transliteration = s.transliteration,
                     translation = s.translation(lang),
@@ -272,7 +288,7 @@ class ReaderViewModel @Inject constructor(
                 episodeData!!.episodes.map { e ->
                     val hasMantra = e.relatedMantra != null
                     StudyVerse(
-                        reference = "Episode ${e.episode}",
+                        reference = "${s(R.string.text_episode)} ${e.episode}",
                         originalText = e.relatedVerse?.sanskrit ?: e.title(lang),
                         transliteration = e.relatedVerse?.transliteration,
                         translation = e.summary(lang),
@@ -284,7 +300,7 @@ class ReaderViewModel @Inject constructor(
             }
             discourseData != null -> discourseData!!.discourses.map { d ->
                 StudyVerse(
-                    reference = "Discourse ${d.discourse}",
+                    reference = "${s(R.string.text_discourse)} ${d.discourse}",
                     originalText = d.title(lang),
                     transliteration = null,
                     translation = d.summary(lang),
@@ -294,7 +310,7 @@ class ReaderViewModel @Inject constructor(
             jainPrayersData != null -> {
                 val lines = jainPrayersData!!.namokarMantra?.lineByLine?.map { l ->
                     StudyVerse(
-                        reference = "Line ${l.line}",
+                        reference = "${s(R.string.text_line)} ${l.line}",
                         originalText = l.sanskrit,
                         transliteration = l.transliteration,
                         translation = l.translation(lang),
@@ -304,7 +320,7 @@ class ReaderViewModel @Inject constructor(
                 } ?: emptyList()
                 val teachings = jainPrayersData!!.mahaviraTeachings.map { t ->
                     StudyVerse(
-                        reference = "Teaching ${t.episode}",
+                        reference = "${s(R.string.text_teaching)} ${t.episode}",
                         originalText = t.title(lang),
                         transliteration = null,
                         translation = t.content(lang),

@@ -247,7 +247,7 @@ private fun RevealSection(
                 )
                 Spacer(Modifier.width(4.dp))
                 Text(
-                    "Tap to reveal $label",
+                    stringResource(R.string.tap_to_reveal_format, label),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

@@ -97,7 +97,7 @@ fun GitaReaderScreen(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
                         ) {
                             Text(
-                                "Ch ${ch.chapter}",
+                                stringResource(R.string.text_chapter_short, ch.chapter),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = if (isSelected) MaterialTheme.colorScheme.onPrimary
