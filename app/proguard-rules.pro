@@ -1,7 +1,7 @@
 # Hindu Calendar ProGuard Rules
 
-# Keep Gson serialization classes
--keepclassmembers class dev.gopes.hinducalendar.engine.** { *; }
+# Keep Gson serialization classes (data models only)
+-keepclassmembers class dev.gopes.hinducalendar.data.model.** { *; }
 -keep class com.google.gson.** { *; }
 
 # Keep Hilt generated classes

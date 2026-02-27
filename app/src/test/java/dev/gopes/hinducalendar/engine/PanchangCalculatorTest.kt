@@ -1,6 +1,8 @@
 package dev.gopes.hinducalendar.engine
 
-import dev.gopes.hinducalendar.data.model.*
+import dev.gopes.hinducalendar.data.engine.AstronomyEngine
+import dev.gopes.hinducalendar.data.engine.PanchangCalculator
+import dev.gopes.hinducalendar.domain.model.*
 import org.junit.Assert.*
 import org.junit.Test
 

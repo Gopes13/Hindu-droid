@@ -17,7 +17,7 @@ import androidx.glance.layout.*
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import dev.gopes.hinducalendar.data.model.DiyaState
+import dev.gopes.hinducalendar.domain.model.DiyaState
 
 class SacredDiyaWidget : GlanceAppWidget() {
 

@@ -19,8 +19,8 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.google.gson.Gson
-import dev.gopes.hinducalendar.data.model.JapaState
-import dev.gopes.hinducalendar.data.model.UserPreferences
+import dev.gopes.hinducalendar.domain.model.JapaState
+import dev.gopes.hinducalendar.domain.model.UserPreferences
 import java.io.File
 
 class JapaMalaWidget : GlanceAppWidget() {

@@ -1,5 +1,6 @@
 package dev.gopes.hinducalendar.engine
 
+import dev.gopes.hinducalendar.data.engine.AstronomyEngine
 import org.junit.Assert.*
 import org.junit.Test
 import kotlin.math.abs

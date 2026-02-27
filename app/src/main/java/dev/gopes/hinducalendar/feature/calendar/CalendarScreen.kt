@@ -1,0 +1,379 @@
+package dev.gopes.hinducalendar.feature.calendar
+
+import androidx.compose.animation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.filled.WbTwilight
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import dev.gopes.hinducalendar.R
+import dev.gopes.hinducalendar.domain.model.*
+import dev.gopes.hinducalendar.core.ui.components.SacredCard
+import dev.gopes.hinducalendar.core.util.*
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.*
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CalendarScreen(viewModel: CalendarViewModel = hiltViewModel()) {
+    val displayedMonth by viewModel.displayedMonth.collectAsState()
+    val selectedPanchang by viewModel.selectedPanchang.collectAsState()
+    val language by viewModel.language.collectAsState()
+    val monthFestivals by viewModel.monthFestivals.collectAsState()
+    val refPanchangByDay by viewModel.refPanchangByDay.collectAsState()
+    val festivalRef by viewModel.festivalDateReference.collectAsState()
+
+    var dragDirection by remember { mutableIntStateOf(0) }
+
+    Scaffold(
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.tab_calendar)) }) }
+    ) { padding ->
+        Column(Modifier.padding(padding).fillMaxSize()) {
+            // ── PINNED: month nav + weekdays + grid ──
+            Column {
+                // Month navigation
+                Row(
+                    Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { viewModel.previousMonth() }) {
+                        Icon(Icons.Filled.ChevronLeft, stringResource(R.string.cd_previous_month), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
+                    }
+                    Text(
+                        displayedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    IconButton(onClick = { viewModel.nextMonth() }) {
+                        Icon(Icons.Filled.ChevronRight, stringResource(R.string.cd_next_month), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
+                    }
+                }
+
+                // Weekday headers
+                Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp).padding(bottom = 4.dp)) {
+                    DayOfWeek.entries.forEach { dow ->
+                        Text(
+                            dow.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                // Calendar grid
+                val firstDay = displayedMonth.atDay(1)
+                val offset = firstDay.dayOfWeek.value % 7
+                val days = displayedMonth.lengthOfMonth()
+                val total = offset + days
+                val rows = (total + 6) / 7
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height((rows * 36 + 4).dp)
+                        .pointerInput(displayedMonth) {
+                            detectHorizontalDragGestures(
+                                onDragEnd = {
+                                    if (dragDirection < 0) viewModel.previousMonth()
+                                    else if (dragDirection > 0) viewModel.nextMonth()
+                                    dragDirection = 0
+                                },
+                                onHorizontalDrag = { _, dragAmount ->
+                                    dragDirection = if (dragAmount < 0) 1 else -1
+                                }
+                            )
+                        }
+                ) {
+                    Crossfade(
+                        targetState = displayedMonth,
+                        label = "month_transition"
+                    ) { month ->
+                        val mFirstDay = month.atDay(1)
+                        val mOffset = mFirstDay.dayOfWeek.value % 7
+                        val mDays = month.lengthOfMonth()
+                        val mTotal = mOffset + mDays
+                        val mRows = (mTotal + 6) / 7
+
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(7),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height((mRows * 36 + 4).dp)
+                                .padding(horizontal = 8.dp),
+                            contentPadding = PaddingValues(2.dp)
+                        ) {
+                            items(mTotal) { index ->
+                                if (index < mOffset) {
+                                    Spacer(Modifier.size(36.dp))
+                                } else {
+                                    val day = index - mOffset + 1
+                                    val date = month.atDay(day)
+                                    val isToday = date == LocalDate.now()
+                                    val isSelected = selectedPanchang?.date == date
+                                    val refFests = monthFestivals[day] ?: emptyList()
+
+                                    DayCell(
+                                        day = day,
+                                        language = language,
+                                        isToday = isToday,
+                                        isSelected = isSelected,
+                                        hasFestival = refFests.isNotEmpty(),
+                                        hasMajorFestival = refFests.any { it.festival.category == FestivalCategory.MAJOR },
+                                        onClick = { viewModel.selectDate(date) }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ── DETAIL: scrollable, wrapped in SacredCard ──
+            // When IST reference is selected, show Delhi panchang for consistency
+            Column(
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 12.dp, bottom = 16.dp)
+            ) {
+                selectedPanchang?.let { panchang ->
+                    val detailPanchang = if (festivalRef == FestivalDateReference.INDIAN_STANDARD) {
+                        refPanchangByDay[panchang.date.dayOfMonth] ?: panchang
+                    } else panchang
+                    SacredCard {
+                        DayDetailContent(detailPanchang, language)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DayCell(
+    day: Int, language: AppLanguage, isToday: Boolean, isSelected: Boolean,
+    hasFestival: Boolean, hasMajorFestival: Boolean, onClick: () -> Unit
+) {
+    val bgColor = when {
+        isSelected -> MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
+        isToday -> MaterialTheme.colorScheme.primary.copy(alpha = 0.06f)
+        else -> Color.Transparent
+    }
+
+    Column(
+        modifier = Modifier
+            .size(36.dp)
+            .clip(RoundedCornerShape(6.dp))
+            .background(bgColor)
+            .then(
+                if (isToday) Modifier.border(
+                    1.5.dp,
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                    RoundedCornerShape(6.dp)
+                ) else Modifier
+            )
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            language.localizedNumber(day),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+            color = if (isToday || isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+        )
+        if (hasFestival) {
+            Box(
+                Modifier
+                    .size(4.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (hasMajorFestival) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+            )
+        } else {
+            Spacer(Modifier.size(4.dp))
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.DayDetailContent(panchang: PanchangDay, language: AppLanguage) {
+    val timeFmt = DateTimeFormatter.ofPattern("h:mm a")
+
+    Column(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // ── Hindu date header: name (left) | year (right) ──
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    panchang.hinduDate.localizedDisplayString(),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    language.localizedDigits(panchang.date.format(DateTimeFormatter.ofPattern("EEE, MMM d, yyyy"))),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    panchang.hinduDate.localizedYearDisplay(panchang.tradition),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+        // ── Panchang table: label | value | time range ──
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            ElementRow(
+                stringResource(R.string.panchang_tithi),
+                localizedTithiName(panchang.tithiInfo.number),
+                language.localizedDigits(panchang.tithiInfo.timeRangeString)
+            )
+            ElementRow(
+                stringResource(R.string.panchang_nakshatra),
+                localizedNakshatraName(panchang.nakshatraInfo.number),
+                language.localizedDigits(panchang.nakshatraInfo.timeRangeString)
+            )
+            ElementRow(
+                stringResource(R.string.panchang_yoga),
+                localizedYogaName(panchang.yogaInfo.number),
+                null
+            )
+            ElementRow(
+                stringResource(R.string.panchang_karana),
+                localizedKaranaName(panchang.karanaInfo.number),
+                null
+            )
+        }
+
+        // ── Sunrise / Sunset with icons ──
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                Icons.Filled.WbSunny,
+                contentDescription = stringResource(R.string.today_sunrise),
+                tint = Color(0xFFE8A317),
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(Modifier.width(4.dp))
+            Text(
+                language.localizedDigits(panchang.sunrise.format(timeFmt)),
+                style = MaterialTheme.typography.labelMedium,
+                color = Color(0xFFE8A317)
+            )
+            Spacer(Modifier.width(32.dp))
+            Icon(
+                Icons.Filled.WbTwilight,
+                contentDescription = stringResource(R.string.today_sunset),
+                tint = Color(0xFFE86017),
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(Modifier.width(4.dp))
+            Text(
+                language.localizedDigits(panchang.sunset.format(timeFmt)),
+                style = MaterialTheme.typography.labelMedium,
+                color = Color(0xFFE86017)
+            )
+        }
+
+        // ── Festivals ──
+        if (panchang.festivals.isNotEmpty()) {
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            panchang.festivals.forEach { occurrence ->
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Filled.Star,
+                        contentDescription = stringResource(R.string.cd_festival_on_date),
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        occurrence.festival.displayName(language),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ElementRow(label: String, value: String, detail: String?) {
+    Row(
+        Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.width(80.dp)
+        )
+        Text(
+            value,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f)
+        )
+        detail?.takeIf { it.isNotEmpty() }?.let {
+            Text(
+                it,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}

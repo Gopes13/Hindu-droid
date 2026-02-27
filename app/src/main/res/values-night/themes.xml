@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.HinduCalendar" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">#1A1118</item>
+    </style>
+
+    <style name="Theme.HinduCalendar.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#1A1118</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.HinduCalendar</item>
+    </style>
+</resources>

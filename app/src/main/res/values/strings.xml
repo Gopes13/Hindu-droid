@@ -87,6 +87,13 @@
     <string name="common_share">Share</string>
     <string name="common_of">of</string>
     <string name="common_close">Close</string>
+
+    <!-- Error messages -->
+    <string name="error_data_load">Could not load data. Please try again.</string>
+    <string name="error_network">Network error. Check your connection.</string>
+    <string name="error_persistence">Could not save your changes.</string>
+    <string name="error_panchang">Could not compute panchang for this date.</string>
+    <string name="error_audio_download">Audio download failed. Please try again.</string>
     <string name="common_back">Back</string>
 
     <!-- Today Panchang Screen -->
@@ -204,6 +211,13 @@
     <string name="notif_channel_name">Daily Briefing</string>
     <string name="notif_channel_description">Morning notification with daily Panchang and sacred text wisdom</string>
     <string name="notif_fallback_body">Open the app for today\'s Panchang and sacred readings.</string>
+
+    <!-- Festival Reminder Notifications -->
+    <string name="notif_festival_today">%s is today!</string>
+    <string name="notif_festival_tomorrow">%s is tomorrow</string>
+    <string name="notif_festival_upcoming">%1$s in %2$d days</string>
+    <string name="notif_festival_major">Major Festival</string>
+    <string name="notif_festival_vrat">Vrat (Fast)</string>
 
     <!-- Reader Screen -->
     <string name="reader_understand">Understand this verse</string>
@@ -863,4 +877,116 @@
     <string name="thiruvalluvar_format">Thiruvalluvar %d</string>
     <string name="kollavarsham_format">Kollavarsham %d</string>
     <string name="bangabda_format">Bangabda %d</string>
+
+    <!-- Playback Notification Actions -->
+    <string name="action_rewind">Rewind</string>
+    <string name="action_play">Play</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_forward">Forward</string>
+
+    <!-- Accessibility Content Descriptions -->
+    <string name="cd_skip_back">Skip back 15 seconds</string>
+    <string name="cd_skip_forward">Skip forward 15 seconds</string>
+    <string name="cd_select_festival_ref">Select festival date reference</string>
+    <string name="cd_add_bookmark">Add bookmark</string>
+    <string name="cd_remove_bookmark">Remove bookmark</string>
+
+    <!-- Accessibility: DailyBriefingCard -->
+    <string name="cd_daily_wisdom">Daily wisdom</string>
+    <string name="cd_mark_verse_read">Mark verse as read</string>
+    <string name="cd_reading_completed">Reading completed</string>
+    <string name="cd_sacred_text">Sacred text</string>
+    <string name="cd_text_selected">Currently selected</string>
+    <string name="cd_retry_loading">Retry loading</string>
+    <string name="cd_loading">Loading</string>
+
+    <!-- Accessibility: SanskritLearnScreen -->
+    <string name="cd_start_lesson">Start lesson</string>
+    <string name="cd_module_locked">Module locked</string>
+    <string name="cd_module_complete">Module completed</string>
+    <string name="cd_lesson_complete">Lesson completed</string>
+    <string name="cd_lesson_incomplete">Lesson not completed</string>
+    <string name="cd_verse_reader">Verse reader</string>
+
+    <!-- Accessibility: SacredTextsScreen -->
+    <string name="cd_no_texts">No texts available</string>
+    <string name="cd_bookmarks">Bookmarks</string>
+    <string name="cd_open_text">Open text</string>
+    <string name="cd_continue_reading">Continue reading</string>
+    <string name="cd_bookmark_count">Bookmark count</string>
+
+    <!-- Accessibility: TodayPanchangScreen -->
+    <string name="cd_panchang_element">Panchang element</string>
+    <string name="cd_inauspicious_period">Inauspicious period</string>
+    <string name="cd_auspicious_period">Auspicious period</string>
+    <string name="cd_festival_today">Festival today</string>
+
+    <!-- Accessibility: FestivalDetailScreen -->
+    <string name="cd_festival_type">Festival type</string>
+    <string name="cd_festival_story">Festival story</string>
+    <string name="cd_festival_significance">Festival significance</string>
+
+    <!-- Accessibility: LibraryLandingScreen -->
+    <string name="cd_sacred_texts">Sacred texts</string>
+    <string name="cd_kirtans_section">Kirtans</string>
+
+    <!-- Accessibility: GreetingBanner -->
+    <string name="cd_sadhana_level">Sadhana level</string>
+    <string name="cd_time_greeting">Time of day greeting</string>
+
+    <!-- Accessibility: LocationPickerSheet -->
+    <string name="cd_use_location">Use current location</string>
+    <string name="cd_search_locations">Search locations</string>
+    <string name="cd_location_marker">Location</string>
+
+    <!-- Accessibility: SanskritLessonScreen / SanskritVerseScreen -->
+    <string name="cd_pronounce">Pronounce</string>
+    <string name="cd_answer_correct">Answer correct</string>
+    <string name="cd_answer_incorrect">Answer incorrect</string>
+    <string name="cd_verse_explored">Verse explored</string>
+    <string name="cd_toggle_details">Toggle details</string>
+
+    <!-- Accessibility: KirtanListScreen -->
+    <string name="cd_kirtan_category">Kirtan category</string>
+    <string name="cd_open_kirtan">Open kirtan</string>
+
+    <!-- Accessibility: RevealableVerseCard -->
+    <string name="cd_verse_revealed">Verse fully revealed</string>
+    <string name="cd_tap_reveal">Tap to reveal</string>
+    <string name="cd_section_label">Section label</string>
+
+    <!-- Accessibility: CollapsibleExplanation -->
+    <string name="cd_toggle_explanation">Toggle explanation</string>
+    <string name="cd_explanation">Explanation</string>
+
+    <!-- Accessibility: DailyChallengeCard -->
+    <string name="cd_answer_feedback">Answer feedback</string>
+    <string name="cd_challenge_complete">Challenge completed</string>
+
+    <!-- Accessibility: BadgeDetailSheet / SadhanaJourneyScreen -->
+    <string name="cd_badge_locked">Badge not yet earned</string>
+    <string name="cd_badge_earned">Badge earned</string>
+    <string name="cd_badges_section">Badges</string>
+
+    <!-- Accessibility: JapaCounterScreen -->
+    <string name="cd_bead_material">Bead material</string>
+    <string name="cd_select_mantra">Select mantra</string>
+
+    <!-- Accessibility: JapaDiyaTodayCard -->
+    <string name="cd_japa_practice">Japa practice</string>
+    <string name="cd_sacred_lamp">Sacred lamp</string>
+
+    <!-- Accessibility: Pickers -->
+    <string name="cd_item_selected">Selected</string>
+
+    <!-- Accessibility: Misc -->
+    <string name="cd_streak_flame">Streak indicator</string>
+    <string name="cd_feature_icon">Feature</string>
+    <string name="cd_festival_on_date">Festival on this date</string>
+    <string name="cd_light_lamp">Light the lamp</string>
+    <string name="cd_points_earned">Points earned</string>
+    <string name="cd_chapter_complete">Chapter completed</string>
+    <string name="cd_word_by_word">Word-by-word translation</string>
+    <string name="cd_audio_playback_error">Audio playback error</string>
+    <string name="cd_verse_explanation">Verse explanation</string>
 </resources>

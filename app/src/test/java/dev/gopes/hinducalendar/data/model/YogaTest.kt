@@ -1,4 +1,4 @@
-package dev.gopes.hinducalendar.data.model
+package dev.gopes.hinducalendar.domain.model
 
 import org.junit.Assert.*
 import org.junit.Test

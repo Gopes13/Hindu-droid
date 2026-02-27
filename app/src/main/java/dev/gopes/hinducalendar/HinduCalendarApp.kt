@@ -1,17 +1,20 @@
 package dev.gopes.hinducalendar
 
 import android.app.Application
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
-import dev.gopes.hinducalendar.engine.AudioPlayerService
-import dev.gopes.hinducalendar.service.NotificationHelper
+import dev.gopes.hinducalendar.domain.repository.AudioPlaybackRepository
+import dev.gopes.hinducalendar.data.service.NotificationHelper
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
-class HinduCalendarApp : Application() {
+class HinduCalendarApp : Application(), Configuration.Provider {
 
-    @Inject lateinit var audioPlayerService: AudioPlayerService
+    @Inject lateinit var audioPlaybackRepository: AudioPlaybackRepository
     @Inject lateinit var notificationHelper: NotificationHelper
+    @Inject lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
@@ -19,6 +22,11 @@ class HinduCalendarApp : Application() {
             Timber.plant(Timber.DebugTree())
         }
         notificationHelper.createNotificationChannels()
-        audioPlayerService.loadManifest()
+        audioPlaybackRepository.loadManifest()
     }
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
 }

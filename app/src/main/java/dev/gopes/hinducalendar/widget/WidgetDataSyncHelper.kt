@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.updateAll
 import com.google.gson.Gson
-import dev.gopes.hinducalendar.data.model.UserPreferences
+import dev.gopes.hinducalendar.domain.model.UserPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
