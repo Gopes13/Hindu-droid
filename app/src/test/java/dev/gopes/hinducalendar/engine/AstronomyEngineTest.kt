@@ -219,6 +219,46 @@ class AstronomyEngineTest {
             dayLength in 0.33..0.67)
     }
 
+    // ==================== moonrise / moonset ====================
+
+    @Test
+    fun `moonrise for Delhi returns non-null on normal date`() {
+        val jd = AstronomyEngine.dateToJD(2025, 6, 15)
+        val moonrise = AstronomyEngine.moonrise(jd, 28.6139, 77.2090)
+        assertNotNull("Moonrise should not be null for a normal Shukla Paksha date", moonrise)
+    }
+
+    @Test
+    fun `moonset for Delhi returns non-null on normal date`() {
+        val jd = AstronomyEngine.dateToJD(2025, 6, 15)
+        val moonset = AstronomyEngine.moonset(jd, 28.6139, 77.2090)
+        assertNotNull("Moonset should not be null for a normal Shukla Paksha date", moonset)
+    }
+
+    @Test
+    fun `moonrise for Delhi during Krishna Paksha Ekadashi`() {
+        val jd = AstronomyEngine.dateToJD(2026, 2, 26)
+        val moonrise = AstronomyEngine.moonrise(jd, 28.6139, 77.2090)
+        assertNotNull("Moonrise should not be null during Krishna Paksha", moonrise)
+    }
+
+    @Test
+    fun `moonset for Delhi during Krishna Paksha Ekadashi`() {
+        val jd = AstronomyEngine.dateToJD(2026, 2, 26)
+        val moonset = AstronomyEngine.moonset(jd, 28.6139, 77.2090)
+        assertNotNull("Moonset should not be null during Krishna Paksha", moonset)
+    }
+
+    @Test
+    fun `moonrise exists for most days in a month`() {
+        var count = 0
+        for (day in 1..28) {
+            val jd = AstronomyEngine.dateToJD(2026, 2, day)
+            if (AstronomyEngine.moonrise(jd, 28.6139, 77.2090) != null) count++
+        }
+        assertTrue("At least 23 of 28 days should have moonrise, got $count", count >= 23)
+    }
+
     // ==================== tropicalToSidereal / lahiriAyanamsa ====================
 
     @Test

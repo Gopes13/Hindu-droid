@@ -228,12 +228,24 @@ object AstronomyEngine {
         moonRiseSet(jd, lat, lon, isRise = false)
 
     private fun moonRiseSet(jd: Double, lat: Double, lon: Double, isRise: Boolean): Double? {
+        // Try multiple starting offsets to handle late-rising/setting moons.
+        // The default ±0.25 (6 AM/6 PM) works for waxing moons but fails for waning
+        // moons whose rise time is 12–20 hours away from the initial guess.
+        val offsets = if (isRise) doubleArrayOf(-0.25, 0.25, 0.5) else doubleArrayOf(0.25, -0.25, 0.5)
+        for (offset in offsets) {
+            val result = moonRiseSetFromGuess(jd, lat, lon, isRise, offset)
+            if (result != null) return result
+        }
+        return null
+    }
+
+    private fun moonRiseSetFromGuess(jd: Double, lat: Double, lon: Double, isRise: Boolean, offset: Double): Double? {
         val altCorr = 0.125
         // Same transit formula as sunRiseSet: Int(jd) + 1.0 - lon/360
         val jdNoon = jd.toInt().toDouble() + 1.0 - lon / 360.0
-        var jdResult = jdNoon + if (isRise) -0.25 else 0.25
+        var jdResult = jdNoon + offset
 
-        repeat(10) {
+        for (iteration in 0 until 10) {
             val moonLong = moonTropicalLongitude(jdResult)
             val T = centuriesFromJ2000(jdResult)
             val epsilon = toRad(23.439291 - 0.0130042 * T)
@@ -243,8 +255,11 @@ object AstronomyEngine {
 
             val latRad = toRad(lat); val decRad = toRad(dec)
             val cosH = (sin(toRad(altCorr)) - sin(latRad) * sin(decRad)) / (cos(latRad) * cos(decRad))
-            if (cosH < -1 || cosH > 1) return null
-            var H = toDeg(acos(cosH))
+            if (cosH < -1.0 || cosH > 1.0) {
+                if (iteration == 9) return null // genuinely doesn't rise/set
+            }
+            val clampedCosH = cosH.coerceIn(-1.0, 1.0)
+            var H = toDeg(acos(clampedCosH))
             if (isRise) H = -H
             val gmst = greenwichMeanSiderealTime(jdResult)
             val lst = normalize(gmst + lon)
