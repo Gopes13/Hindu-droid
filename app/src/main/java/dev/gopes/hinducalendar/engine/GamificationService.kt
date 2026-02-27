@@ -1,6 +1,8 @@
 package dev.gopes.hinducalendar.engine
 
 import android.content.Context
+import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.*
@@ -26,10 +28,10 @@ class GamificationService @Inject constructor(
         const val POINTS_REFLECTION = 5
         const val POINTS_DEEP_STUDY = 3
         const val MAX_DEEP_STUDY_POINTS_PER_DAY = 50
-        const val POINTS_JAPA_ROUND = 10
+        const val POINTS_JAPA_ROUND = 1
         const val MAX_JAPA_ROUNDS_REWARDED = 10
-        const val POINTS_DIYA_LIGHTING = 5
-        const val POINTS_DIYA_STREAK_BONUS = 15
+        const val POINTS_DIYA_LIGHTING = 2
+        const val POINTS_DIYA_STREAK_BONUS = 5
         const val POINTS_SANSKRIT_LETTER = 5
         const val POINTS_SANSKRIT_MODULE = 50
         const val POINTS_SANSKRIT_VERSE = 5
@@ -294,8 +296,18 @@ class GamificationService @Inject constructor(
         R.string.ordinal_25, R.string.ordinal_26, R.string.ordinal_27
     )
 
-    private fun s(id: Int): String = context.getString(id)
-    private fun s(id: Int, vararg args: Any): String = context.getString(id, *args)
+    private fun getLocalizedContext(): Context {
+        val locales = AppCompatDelegate.getApplicationLocales()
+        if (locales.isEmpty) return context
+        val locale = locales[0] ?: return context
+        val config = Configuration(context.resources.configuration).apply {
+            setLocale(locale)
+        }
+        return context.createConfigurationContext(config)
+    }
+
+    private fun s(id: Int): String = getLocalizedContext().getString(id)
+    private fun s(id: Int, vararg args: Any): String = getLocalizedContext().getString(id, *args)
 
     private fun generatePanchangChallenge(day: Int, rng: Random): DailyChallenge {
         val useTithi = day % 2 == 0

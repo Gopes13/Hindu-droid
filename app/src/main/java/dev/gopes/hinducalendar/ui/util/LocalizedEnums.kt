@@ -275,6 +275,9 @@ fun SadhanaBadge.BadgeCategory.localizedName(): String = when (this) {
     SadhanaBadge.BadgeCategory.PANCHANG -> stringResource(R.string.badge_cat_panchang)
     SadhanaBadge.BadgeCategory.CHALLENGE -> stringResource(R.string.badge_cat_challenge)
     SadhanaBadge.BadgeCategory.ENGAGEMENT -> stringResource(R.string.badge_cat_engagement)
+    SadhanaBadge.BadgeCategory.SANSKRIT -> stringResource(R.string.badge_cat_sanskrit)
+    SadhanaBadge.BadgeCategory.JAPA -> stringResource(R.string.badge_cat_japa)
+    SadhanaBadge.BadgeCategory.DIYA -> stringResource(R.string.badge_cat_diya)
 }
 
 /** Localized display name for a [SadhanaBadge]. */
@@ -302,9 +305,64 @@ fun SadhanaBadge.localizedName(): String = stringResource(
         "badge_reflections_25" -> R.string.badge_reflections_25
         "badge_deep_study_7" -> R.string.badge_deep_study_7
         "badge_deep_study_30" -> R.string.badge_deep_study_30
+        "badge_sanskrit_first_letters" -> R.string.badge_sanskrit_first_letters
+        "badge_sanskrit_student" -> R.string.badge_sanskrit_student
+        "badge_sanskrit_scholar" -> R.string.badge_sanskrit_scholar
+        "badge_sanskrit_mantra_reader" -> R.string.badge_sanskrit_mantra_reader
+        "badge_japa_10" -> R.string.badge_japa_10
+        "badge_japa_108" -> R.string.badge_japa_108
+        "badge_japa_1008" -> R.string.badge_japa_1008
+        "badge_japa_streak_7" -> R.string.badge_japa_streak_7
+        "badge_japa_streak_30" -> R.string.badge_japa_streak_30
+        "badge_diya_7" -> R.string.badge_diya_7
+        "badge_diya_30" -> R.string.badge_diya_30
+        "badge_diya_108" -> R.string.badge_diya_108
+        "badge_diya_streak_7" -> R.string.badge_diya_streak_7
         else -> R.string.punya_points
     }
 )
+
+/** Localized origin language name for kirtans (e.g. "Hindi" → "हिन्दी"). */
+@Composable
+fun localizedOriginLanguage(originLanguage: String): String = when (originLanguage) {
+    "Hindi" -> stringResource(R.string.origin_lang_hindi)
+    "Awadhi" -> stringResource(R.string.origin_lang_awadhi)
+    "Sanskrit" -> stringResource(R.string.origin_lang_sanskrit)
+    "Gujarati" -> stringResource(R.string.origin_lang_gujarati)
+    "Marathi" -> stringResource(R.string.origin_lang_marathi)
+    "Bengali" -> stringResource(R.string.origin_lang_bengali)
+    "Telugu" -> stringResource(R.string.origin_lang_telugu)
+    "Kannada" -> stringResource(R.string.origin_lang_kannada)
+    "Tamil" -> stringResource(R.string.origin_lang_tamil)
+    "Malayalam" -> stringResource(R.string.origin_lang_malayalam)
+    "Odia" -> stringResource(R.string.origin_lang_odia)
+    "Assamese" -> stringResource(R.string.origin_lang_assamese)
+    "Punjabi" -> stringResource(R.string.origin_lang_punjabi)
+    else -> originLanguage
+}
+
+/** Localized Hindu date string, e.g. "फाल्गुन शुक्ल नवमी". */
+@Composable
+fun HinduDate.localizedDisplayString(): String {
+    val adhik = if (isAdhikMaas) stringResource(R.string.adhik_prefix) + " " else ""
+    val monthStr = month.localizedName()
+    val pakshaStr = paksha.localizedName()
+    val tithiStr = tithi.localizedName()
+    return "$adhik$monthStr $pakshaStr $tithiStr"
+}
+
+/** Localized year display, e.g. "विक्रम संवत 2082". */
+@Composable
+fun HinduDate.localizedYearDisplay(tradition: CalendarTradition): String = when (tradition) {
+    CalendarTradition.PURNIMANT, CalendarTradition.AMANT, CalendarTradition.GUJARATI ->
+        stringResource(R.string.vikram_samvat_format, samvatYear)
+    CalendarTradition.TAMIL ->
+        stringResource(R.string.thiruvalluvar_format, thiruvalluvarYear)
+    CalendarTradition.MALAYALAM ->
+        stringResource(R.string.kollavarsham_format, kollavarshamYear)
+    CalendarTradition.BENGALI ->
+        stringResource(R.string.bangabda_format, bangabdaYear)
+}
 
 /** Helper to resolve a [PanchangElement] number to a localized Tithi name. */
 @Composable

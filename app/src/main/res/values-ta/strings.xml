@@ -42,6 +42,16 @@
     <string name="text_ashtpadi">அஷ்டபதி</string>
     <string name="text_sutra">சூத்திரம்</string>
     <string name="text_discourse">சொற்பொழிவு</string>
+    <string name="text_anuvaka">அனுவாகம்</string>
+    <string name="text_line">வரி</string>
+    <string name="text_teaching">போதனை</string>
+    <string name="chapter_verse_format">அத்தியாயம் %1$d - வசனம் %2$d</string>
+    <string name="verse_ref_format">%1$s %2$d</string>
+    <string name="text_chapter_short">அ %1$d</string>
+    <string name="tap_to_reveal_format">பார்க்க தட்டவும் %1$s</string>
+    <string name="tab_media">மீடியா</string>
+    <string name="tab_text">நூல்</string>
+    <string name="tab_kirtan">கீர்த்தனை</string>
     <string name="text_continue_reading">தொடர்ந்து படிக்கவும்</string>
     <string name="text_start_reading">படிக்கத் தொடங்குங்கள்</string>
     <string name="text_mark_read">படித்ததாகக் குறி</string>
@@ -535,6 +545,9 @@
     <string name="badge_cat_panchang">பஞ்சாங்கம்</string>
     <string name="badge_cat_challenge">சவால்</string>
     <string name="badge_cat_engagement">ஈடுபாடு</string>
+    <string name="badge_cat_sanskrit">சமஸ்கிருதம்</string>
+    <string name="badge_cat_japa">ஜபம்</string>
+    <string name="badge_cat_diya">தீபம்</string>
     <string name="badge_category_count">%1$s (%2$d/%3$d)</string>
     <string name="badge_type_label">%s பேட்ஜ்</string>
 
@@ -560,6 +573,19 @@
     <string name="badge_reflections_25">25 சிந்தனைகள்</string>
     <string name="badge_deep_study_7">7 கற்றல் அமர்வுகள்</string>
     <string name="badge_deep_study_30">30 கற்றல் அமர்வுகள்</string>
+    <string name="badge_sanskrit_first_letters">முதல் எழுத்துக்கள்</string>
+    <string name="badge_sanskrit_student">சமஸ்கிருத மாணவர்</string>
+    <string name="badge_sanskrit_scholar">சமஸ்கிருத அறிஞர்</string>
+    <string name="badge_sanskrit_mantra_reader">மந்திர வாசகர்</string>
+    <string name="badge_japa_10">ஜப ஆரம்பம்</string>
+    <string name="badge_japa_108">அர்ப்பணிப்பு ஜபகர்</string>
+    <string name="badge_japa_1008">ஜப குரு</string>
+    <string name="badge_japa_streak_7">வாராந்திர ஜபகர்</string>
+    <string name="badge_japa_streak_30">மாதாந்திர ஜபகர்</string>
+    <string name="badge_diya_7">தீப காவலர்</string>
+    <string name="badge_diya_30">நிரந்தர தீபம்</string>
+    <string name="badge_diya_108">புனித ஒளி</string>
+    <string name="badge_diya_streak_7">நிலையான தீபம்</string>
 
     <!-- Accessibility states -->
     <string name="state_enabled">இயக்கப்பட்டது</string>
@@ -738,4 +764,87 @@
     <string name="ordinal_26">26வது</string>
     <string name="ordinal_27">27வது</string>
     <string name="ordinal_30">30வது</string>
+
+    <!-- Japa Counter -->
+    <string name="japa_title">ஜபம்</string>
+    <string name="japa_select_material">மாலை பொருள் தேர்வு</string>
+    <string name="japa_select_mantra">மந்திரம் தேர்வு</string>
+    <string name="japa_custom_mantra">தனிப்பயன் மந்திரம்</string>
+    <string name="japa_enter_mantra">உங்கள் மந்திரத்தை உள்ளிடுங்கள்</string>
+    <string name="japa_use_custom">தனிப்பயன் பயன்படுத்து</string>
+    <string name="japa_beads_left">மீதமுள்ள மணிகள்</string>
+    <string name="japa_rounds_today">இன்றைய சுற்றுகள்</string>
+    <string name="japa_total_rounds">மொத்த சுற்றுகள்</string>
+    <string name="japa_bead_progress">மணி %d / 108</string>
+    <string name="japa_rounds_count">%d சுற்றுகள் இன்று</string>
+    <string name="japa_mantra">மந்திரம்</string>
+    <string name="back">பின்</string>
+
+    <!-- Sacred Diya -->
+    <string name="diya_title">தீபம்</string>
+    <string name="diya_screen_title">புனித தீபம்</string>
+    <string name="diya_lit_today">இன்று ஏற்றியது</string>
+    <string name="diya_tap_to_light">ஏற்ற தட்டவும்</string>
+    <string name="diya_streak_count">%d நாள் தொடர்</string>
+    <string name="diya_light_button">தீபம் ஏற்றுங்கள்</string>
+    <string name="diya_streak_label">தீபத் தொடர்</string>
+    <string name="diya_total_days_label">மொத்த நாட்கள் ஏற்றியது</string>
+
+    <!-- Origin Language Names -->
+    <string name="origin_lang_hindi">இந்தி</string>
+    <string name="origin_lang_awadhi">அவதி</string>
+    <string name="origin_lang_sanskrit">சமஸ்கிருதம்</string>
+    <string name="origin_lang_gujarati">குஜராத்தி</string>
+    <string name="origin_lang_marathi">மராத்தி</string>
+    <string name="origin_lang_bengali">வங்காளம்</string>
+    <string name="origin_lang_telugu">தெலுங்கு</string>
+    <string name="origin_lang_kannada">கன்னடம்</string>
+    <string name="origin_lang_tamil">தமிழ்</string>
+    <string name="origin_lang_malayalam">மலையாளம்</string>
+    <string name="origin_lang_odia">ஒடியா</string>
+    <string name="origin_lang_assamese">அஸ்ஸாமி</string>
+    <string name="origin_lang_punjabi">பஞ்சாபி</string>
+
+    <!-- Kirtans -->
+    <string name="kirtans_title">கீர்த்தனை</string>
+    <string name="kirtans_subtitle">ஆரத்தி &amp; பஜனை</string>
+    <string name="kirtans_aartis">ஆரத்திகள்</string>
+    <string name="kirtans_bhajans">பஜனைகள்</string>
+    <string name="kirtan_stanza">பதம்</string>
+    <string name="kirtan_meaning">பொருள்</string>
+
+    <!-- Sanskrit Learning -->
+    <string name="sanskrit_title">சமஸ்கிருத பாடசாலை</string>
+    <string name="sanskrit_subtitle">தேவமொழி படிக்க கற்றுக்கொள்ளுங்கள்</string>
+    <string name="sanskrit_letters_mastered">எழுத்துகள் கற்றது</string>
+    <string name="sanskrit_lessons_done">பாடங்கள் முடிந்தது</string>
+    <string name="sanskrit_continue_learning">கற்றலைத் தொடரவும்</string>
+    <string name="sanskrit_next_lesson">உங்கள் அடுத்த பாடம் தயார்</string>
+    <string name="sanskrit_alphabet_ref">எழுத்து குறிப்பு</string>
+    <string name="sanskrit_all_letters">அனைத்தும்</string>
+    <string name="sanskrit_transliteration_label">ஒலிபெயர்ப்பு</string>
+    <string name="sanskrit_pronunciation_label">உச்சரிப்பு</string>
+    <string name="sanskrit_example_label">உதாரணம்</string>
+    <string name="sanskrit_meaning_label">பொருள்</string>
+    <string name="sanskrit_mastered">தேர்ச்சி</string>
+    <string name="sanskrit_speak">பேசு</string>
+    <string name="sanskrit_start_lesson">பாடம் தொடங்கு</string>
+    <string name="sanskrit_next">அடுத்து</string>
+    <string name="sanskrit_done">முடிந்தது</string>
+    <string name="sanskrit_perfect">சிறப்பு!</string>
+    <string name="sanskrit_well_done">நன்றாக செய்தீர்!</string>
+    <string name="sanskrit_letters_learned">எழுத்துகள் கற்றது</string>
+    <string name="sanskrit_verse_reader">ஸ்லோக வாசகர்</string>
+    <string name="sanskrit_verse_reader_desc">புனித ஸ்லோகங்களை சொல் சொல்லாக படியுங்கள்</string>
+    <string name="sanskrit_word_by_word">சொல் சொல்லாக</string>
+
+    <!-- Library -->
+    <string name="sacred_texts_landing_subtitle">கீதை, சாலிசா, ஜப்ஜி &amp; மேலும்</string>
+
+    <!-- Hindu Date Formats -->
+    <string name="adhik_prefix">அதிக</string>
+    <string name="vikram_samvat_format">விக்ரம சம்வத் %d</string>
+    <string name="thiruvalluvar_format">திருவள்ளுவர் %d</string>
+    <string name="kollavarsham_format">கொல்லவர்ஷம் %d</string>
+    <string name="bangabda_format">பங்காப்தா %d</string>
 </resources>

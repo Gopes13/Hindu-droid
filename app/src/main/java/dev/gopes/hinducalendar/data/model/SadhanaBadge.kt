@@ -15,7 +15,10 @@ data class SadhanaBadge(
         LANGUAGE("badge_cat_language", "translate"),
         PANCHANG("badge_cat_panchang", "nightlight"),
         CHALLENGE("badge_cat_challenge", "help"),
-        ENGAGEMENT("badge_cat_engagement", "lightbulb")
+        ENGAGEMENT("badge_cat_engagement", "lightbulb"),
+        SANSKRIT("badge_cat_sanskrit", "translate"),
+        JAPA("badge_cat_japa", "radio_button_checked"),
+        DIYA("badge_cat_diya", "local_fire_department")
     }
 
     companion object {
@@ -64,6 +67,25 @@ data class SadhanaBadge(
             add(SadhanaBadge("reflections_25", "badge_reflections_25", BadgeCategory.ENGAGEMENT, "edit_note") { g, _ -> g.reflectionsWritten >= 25 })
             add(SadhanaBadge("deep_study_7", "badge_deep_study_7", BadgeCategory.ENGAGEMENT, "psychology") { g, _ -> g.deepStudySessions >= 7 })
             add(SadhanaBadge("deep_study_30", "badge_deep_study_30", BadgeCategory.ENGAGEMENT, "psychology") { g, _ -> g.deepStudySessions >= 30 })
+
+            // Sanskrit badges
+            add(SadhanaBadge("badge_sanskrit_first_letters", "badge_sanskrit_first_letters", BadgeCategory.SANSKRIT, "translate") { g, _ -> g.hasBadge("badge_sanskrit_first_letters") })
+            add(SadhanaBadge("badge_sanskrit_student", "badge_sanskrit_student", BadgeCategory.SANSKRIT, "school") { g, _ -> g.hasBadge("badge_sanskrit_student") })
+            add(SadhanaBadge("badge_sanskrit_scholar", "badge_sanskrit_scholar", BadgeCategory.SANSKRIT, "workspace_premium") { g, _ -> g.hasBadge("badge_sanskrit_scholar") })
+            add(SadhanaBadge("badge_sanskrit_mantra_reader", "badge_sanskrit_mantra_reader", BadgeCategory.SANSKRIT, "auto_stories") { g, _ -> g.hasBadge("badge_sanskrit_mantra_reader") })
+
+            // Japa badges
+            add(SadhanaBadge("badge_japa_10", "badge_japa_10", BadgeCategory.JAPA, "radio_button_checked") { g, _ -> g.hasBadge("badge_japa_10") })
+            add(SadhanaBadge("badge_japa_108", "badge_japa_108", BadgeCategory.JAPA, "radio_button_checked") { g, _ -> g.hasBadge("badge_japa_108") })
+            add(SadhanaBadge("badge_japa_1008", "badge_japa_1008", BadgeCategory.JAPA, "auto_awesome") { g, _ -> g.hasBadge("badge_japa_1008") })
+            add(SadhanaBadge("badge_japa_streak_7", "badge_japa_streak_7", BadgeCategory.JAPA, "local_fire_department") { g, _ -> g.hasBadge("badge_japa_streak_7") })
+            add(SadhanaBadge("badge_japa_streak_30", "badge_japa_streak_30", BadgeCategory.JAPA, "local_fire_department") { g, _ -> g.hasBadge("badge_japa_streak_30") })
+
+            // Diya badges
+            add(SadhanaBadge("badge_diya_7", "badge_diya_7", BadgeCategory.DIYA, "local_fire_department") { g, _ -> g.hasBadge("badge_diya_7") })
+            add(SadhanaBadge("badge_diya_30", "badge_diya_30", BadgeCategory.DIYA, "local_fire_department") { g, _ -> g.hasBadge("badge_diya_30") })
+            add(SadhanaBadge("badge_diya_108", "badge_diya_108", BadgeCategory.DIYA, "auto_awesome") { g, _ -> g.hasBadge("badge_diya_108") })
+            add(SadhanaBadge("badge_diya_streak_7", "badge_diya_streak_7", BadgeCategory.DIYA, "local_fire_department") { g, _ -> g.hasBadge("badge_diya_streak_7") })
         }
 
         fun forId(id: String): SadhanaBadge? = allBadges.find { it.id == id }

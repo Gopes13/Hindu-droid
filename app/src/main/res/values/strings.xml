@@ -42,6 +42,16 @@
     <string name="text_ashtpadi">Ashtpadi</string>
     <string name="text_sutra">Sutra</string>
     <string name="text_discourse">Discourse</string>
+    <string name="text_anuvaka">Anuvaka</string>
+    <string name="text_line">Line</string>
+    <string name="text_teaching">Teaching</string>
+    <string name="chapter_verse_format">Chapter %1$d - Verse %2$d</string>
+    <string name="verse_ref_format">%1$s %2$d</string>
+    <string name="text_chapter_short">Ch %1$d</string>
+    <string name="tap_to_reveal_format">Tap to reveal %1$s</string>
+    <string name="tab_media">Media</string>
+    <string name="tab_text">Texts</string>
+    <string name="tab_kirtan">Kirtan</string>
     <string name="text_continue_reading">Continue Reading</string>
     <string name="text_start_reading">Start Reading</string>
     <string name="text_mark_read">Mark as Read</string>
@@ -77,6 +87,7 @@
     <string name="common_share">Share</string>
     <string name="common_of">of</string>
     <string name="common_close">Close</string>
+    <string name="common_back">Back</string>
 
     <!-- Today Panchang Screen -->
     <string name="section_sun_moon">Sun &amp; Moon</string>
@@ -148,9 +159,10 @@
 
     <!-- Sacred Texts Screen -->
     <string name="sacred_texts_title">Sacred Texts</string>
+    <string name="sacred_texts_landing_subtitle">Gita, Chalisa, Japji &amp; more</string>
     <string name="no_texts_for_path">No texts available for your path.</string>
     <string name="update_path_in_settings">Update your Spiritual Path in Settings.</string>
-    <string name="your_path_texts">Your %s Texts</string>
+    <string name="your_path_texts">Your Path: %s</string>
     <string name="daily_readings_desc">Daily readings based on your spiritual path</string>
     <string name="text_primary">Primary</string>
     <string name="cd_open">Open</string>
@@ -535,6 +547,9 @@
     <string name="badge_cat_panchang">Panchang</string>
     <string name="badge_cat_challenge">Challenge</string>
     <string name="badge_cat_engagement">Engagement</string>
+    <string name="badge_cat_sanskrit">Sanskrit</string>
+    <string name="badge_cat_japa">Japa</string>
+    <string name="badge_cat_diya">Diya</string>
     <string name="badge_category_count">%1$s (%2$d/%3$d)</string>
     <string name="badge_type_label">%s badge</string>
 
@@ -560,6 +575,25 @@
     <string name="badge_reflections_25">25 Reflections</string>
     <string name="badge_deep_study_7">7 Study Sessions</string>
     <string name="badge_deep_study_30">30 Study Sessions</string>
+
+    <!-- Gamification: Sanskrit badges -->
+    <string name="badge_sanskrit_first_letters">First Letters</string>
+    <string name="badge_sanskrit_student">Sanskrit Student</string>
+    <string name="badge_sanskrit_scholar">Sanskrit Scholar</string>
+    <string name="badge_sanskrit_mantra_reader">Mantra Reader</string>
+
+    <!-- Gamification: Japa badges -->
+    <string name="badge_japa_10">Japa Beginner</string>
+    <string name="badge_japa_108">Devoted Japist</string>
+    <string name="badge_japa_1008">Japa Master</string>
+    <string name="badge_japa_streak_7">Weekly Japist</string>
+    <string name="badge_japa_streak_30">Monthly Japist</string>
+
+    <!-- Gamification: Diya badges -->
+    <string name="badge_diya_7">Flame Keeper</string>
+    <string name="badge_diya_30">Eternal Flame</string>
+    <string name="badge_diya_108">Sacred Light</string>
+    <string name="badge_diya_streak_7">Steady Flame</string>
 
     <!-- Accessibility states -->
     <string name="state_enabled">Enabled</string>
@@ -741,10 +775,28 @@
     <string name="kirtans_bhajans">Bhajans</string>
     <string name="kirtan_stanza">Stanza</string>
     <string name="kirtan_meaning">Meaning</string>
+    <string name="kirtan_play_full">Play Full Kirtan</string>
+    <string name="kirtan_playing">Playing</string>
+    <string name="kirtan_stanzas_count">%d stanzas</string>
+
+    <!-- Origin Language Names (for kirtan badges) -->
+    <string name="origin_lang_hindi">Hindi</string>
+    <string name="origin_lang_awadhi">Awadhi</string>
+    <string name="origin_lang_sanskrit">Sanskrit</string>
+    <string name="origin_lang_gujarati">Gujarati</string>
+    <string name="origin_lang_marathi">Marathi</string>
+    <string name="origin_lang_bengali">Bengali</string>
+    <string name="origin_lang_telugu">Telugu</string>
+    <string name="origin_lang_kannada">Kannada</string>
+    <string name="origin_lang_tamil">Tamil</string>
+    <string name="origin_lang_malayalam">Malayalam</string>
+    <string name="origin_lang_odia">Odia</string>
+    <string name="origin_lang_assamese">Assamese</string>
+    <string name="origin_lang_punjabi">Punjabi</string>
 
     <!-- Sanskrit Learning -->
-    <string name="sanskrit_title">Learn Sanskrit</string>
-    <string name="sanskrit_subtitle">Letters, Words &amp; Shlokas</string>
+    <string name="sanskrit_title">Sanskrit Pathshala</string>
+    <string name="sanskrit_subtitle">Learn to read the language of the gods</string>
     <string name="sanskrit_letters_mastered">Letters Mastered</string>
     <string name="sanskrit_lessons_done">Lessons Done</string>
     <string name="sanskrit_continue_learning">Continue Learning</string>
@@ -796,4 +848,19 @@
     <string name="ordinal_26">26th</string>
     <string name="ordinal_27">27th</string>
     <string name="ordinal_30">30th</string>
+
+    <!-- Settings hardcoded fix -->
+    <string name="festival_dates_section">Festival Dates</string>
+    <string name="festival_dates_desc">Compute festival dates using IST or your local sunrise</string>
+    <string name="festival_ref_ist">Indian Standard (IST)</string>
+    <string name="festival_ref_location">My Location</string>
+    <string name="switch_enabled">Enabled</string>
+    <string name="switch_disabled">Disabled</string>
+
+    <!-- Hindu Date Formats -->
+    <string name="adhik_prefix">Adhik</string>
+    <string name="vikram_samvat_format">Vikram Samvat %d</string>
+    <string name="thiruvalluvar_format">Thiruvalluvar %d</string>
+    <string name="kollavarsham_format">Kollavarsham %d</string>
+    <string name="bangabda_format">Bangabda %d</string>
 </resources>

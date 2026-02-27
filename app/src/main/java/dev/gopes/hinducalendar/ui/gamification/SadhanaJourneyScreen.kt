@@ -27,12 +27,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.data.model.AppLanguage
 import dev.gopes.hinducalendar.data.model.SadhanaBadge
 import dev.gopes.hinducalendar.data.model.SadhanaLevel
 import dev.gopes.hinducalendar.ui.components.SacredCard
+import dev.gopes.hinducalendar.ui.components.entranceAnimation
+import dev.gopes.hinducalendar.ui.theme.LocalVibrantMode
 import dev.gopes.hinducalendar.ui.util.localizedName
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,15 +70,17 @@ fun SadhanaJourneyScreen(
             )
         }
     ) { padding ->
+        val isVibrant = LocalVibrantMode.current
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
             // ── Level Header ────────────────────────────────────────────
             item {
+                Box(Modifier.entranceAnimation(0, isVibrant)) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
@@ -83,14 +88,14 @@ fun SadhanaJourneyScreen(
                     // Progress ring
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.size(140.dp)
+                        modifier = Modifier.size(110.dp)
                     ) {
                         val primary = MaterialTheme.colorScheme.primary
                         val tertiary = MaterialTheme.colorScheme.tertiary
                         val trackColor = MaterialTheme.colorScheme.surfaceVariant
 
                         Canvas(Modifier.fillMaxSize()) {
-                            val strokeWidth = 8.dp.toPx()
+                            val strokeWidth = 6.dp.toPx()
                             // Background ring
                             drawArc(
                                 color = trackColor,
@@ -112,8 +117,8 @@ fun SadhanaJourneyScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
                                 language.localizedDigits(stringResource(R.string.lv_format, level.level)),
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Bold,
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Black,
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Text(
@@ -170,10 +175,12 @@ fun SadhanaJourneyScreen(
                         )
                     }
                 }
+                }
             }
 
             // ── Stats Row ───────────────────────────────────────────────
             item {
+                Box(Modifier.entranceAnimation(1, isVibrant)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
@@ -185,10 +192,13 @@ fun SadhanaJourneyScreen(
                         language.localizedDigits("${data.earnedBadges.size}/${SadhanaBadge.allBadges.size}")
                     )
                 }
+                }
             }
 
             // ── Badges ──────────────────────────────────────────────────
             item {
+                Box(Modifier.entranceAnimation(2, isVibrant)) {
+                Column {
                 Divider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(Modifier.height(8.dp))
                 Row(
@@ -206,6 +216,8 @@ fun SadhanaJourneyScreen(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
+                }
+                }
                 }
             }
 
@@ -261,7 +273,7 @@ private fun StatItem(label: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             value,
-            style = MaterialTheme.typography.titleLarge,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
@@ -289,7 +301,7 @@ private fun BadgeItem(
     ) {
         Box(
             modifier = Modifier
-                .size(56.dp)
+                .size(52.dp)
                 .clip(CircleShape)
                 .then(
                     if (isEarned) Modifier.background(
@@ -305,7 +317,7 @@ private fun BadgeItem(
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(44.dp)
                     .clip(CircleShape)
                     .background(
                         if (isEarned) Brush.radialGradient(
@@ -327,7 +339,7 @@ private fun BadgeItem(
                         Icons.Filled.Lock,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 } else {
                     Text(
