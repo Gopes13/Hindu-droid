@@ -42,6 +42,7 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.ui.tooling.preview.Preview
 import kotlin.math.abs
 import dev.gopes.hinducalendar.core.ui.theme.HinduCalendarTheme
+import dev.gopes.hinducalendar.core.ui.theme.LocalAtmosphere
 import dev.gopes.hinducalendar.core.ui.theme.LocalVibrantMode
 import dev.gopes.hinducalendar.core.util.DeviceCapabilities
 
@@ -69,16 +70,17 @@ fun GlassNavigationBar(
     val surfaceColor = MaterialTheme.colorScheme.surface
     val primaryColor = MaterialTheme.colorScheme.primary
     val onSurfaceVariantColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val atmosphere = LocalAtmosphere.current
 
     val barShape = RoundedCornerShape(28.dp)
 
-    // ── Liquid Glass Gradient ───────────────────────────────────────────────
+    // ── Liquid Glass Gradient (atmosphere-tinted) ─────────────────────────
     val barBrush = if (tier == DeviceCapabilities.RenderTier.BASIC) {
         Brush.verticalGradient(colors = listOf(surfaceColor, surfaceColor))
     } else if (isDark) {
         Brush.verticalGradient(
             colors = listOf(
-                Color.White.copy(alpha = if (isVibrant) 0.12f else 0.06f),
+                atmosphere.accentTint.copy(alpha = if (isVibrant) 0.10f else 0.06f),
                 surfaceColor.copy(alpha = 0.35f),
                 surfaceColor.copy(alpha = 0.60f)
             )
@@ -86,7 +88,7 @@ fun GlassNavigationBar(
     } else {
         Brush.verticalGradient(
             colors = listOf(
-                Color.White.copy(alpha = if (isVibrant) 0.60f else 0.45f),
+                atmosphere.accentTint.copy(alpha = if (isVibrant) 0.12f else 0.06f),
                 surfaceColor.copy(alpha = 0.45f),
                 surfaceColor.copy(alpha = 0.70f)
             )
@@ -137,11 +139,11 @@ fun GlassNavigationBar(
         label = "indicatorW"
     )
 
-    // ── Indicator colors (clear glass) ──────────────────────────────────────
+    // ── Indicator colors (atmosphere-tinted glass) ─────────────────────────
     val indicatorFill = if (isDark) {
-        Color.White.copy(alpha = 0.12f)
+        atmosphere.accentTint.copy(alpha = 0.10f)
     } else {
-        Color.White.copy(alpha = 0.25f)
+        atmosphere.accentTint.copy(alpha = 0.08f)
     }
     val indicatorBorderColor = if (isDark) {
         Color.White.copy(alpha = 0.20f)

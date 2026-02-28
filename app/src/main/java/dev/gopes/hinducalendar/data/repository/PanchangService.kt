@@ -132,6 +132,57 @@ class PanchangService @Inject constructor(
             noon.plusMinutes((muhurtaDur / 2).toLong())
         )
 
+        // Night duration (for muhurta/choghadiya/hora systems)
+        val nextSunriseJD = AstronomyEngine.sunrise(jdMidnight + 1.0, location.latitude, location.longitude)
+        val nextSunrise = jdToLocalDateTime(nextSunriseJD ?: (jdMidnight + 1.0), location.timeZoneId)
+        val nightDurMin = Duration.between(sunset, nextSunrise).toMinutes().toDouble()
+
+        // Muhurta system (30 muhurtas)
+        val muhurtaResult = PanchangCalculator.calculateMuhurtas(dayDurMin, nightDurMin)
+        val muhurtaPeriods = muhurtaResult.daySlots.map { slot ->
+            MuhurtaPeriod(
+                muhurta = Muhurta.fromNumber(slot.muhurtaNumber),
+                start = sunrise.plusMinutes(slot.startMinutes.toLong()),
+                end = sunrise.plusMinutes(slot.endMinutes.toLong())
+            )
+        } + muhurtaResult.nightSlots.map { slot ->
+            MuhurtaPeriod(
+                muhurta = Muhurta.fromNumber(slot.muhurtaNumber),
+                start = sunset.plusMinutes(slot.startMinutes.toLong()),
+                end = sunset.plusMinutes(slot.endMinutes.toLong())
+            )
+        }
+
+        // Choghadiya system (16 periods)
+        val choghadiyaResult = PanchangCalculator.calculateChoghadiyas(dayDurMin, nightDurMin, weekday)
+        val choghadiyaPeriods = choghadiyaResult.daySlots.map { slot ->
+            ChoghadiyaPeriod(
+                type = ChoghadiyaType.atPosition(weekday, slot.position, true),
+                start = sunrise.plusMinutes(slot.startMinutes.toLong()),
+                end = sunrise.plusMinutes(slot.endMinutes.toLong()),
+                isDay = true
+            )
+        } + choghadiyaResult.nightSlots.map { slot ->
+            ChoghadiyaPeriod(
+                type = ChoghadiyaType.atPosition(weekday, slot.position, false),
+                start = sunset.plusMinutes(slot.startMinutes.toLong()),
+                end = sunset.plusMinutes(slot.endMinutes.toLong()),
+                isDay = false
+            )
+        }
+
+        // Hora system (24 horas)
+        val horaResult = PanchangCalculator.calculateHoras(dayDurMin, nightDurMin)
+        val horaPeriods = horaResult.slots.map { slot ->
+            HoraPeriod(
+                planet = HoraPlanet.atHoraIndex(weekday, slot.horaIndex),
+                start = sunrise.plusMinutes(slot.startMinutes.toLong()),
+                end = sunrise.plusMinutes(slot.endMinutes.toLong()),
+                horaNumber = slot.horaIndex + 1,
+                isDay = slot.isDay
+            )
+        }
+
         // Moonrise/Moonset
         val moonriseJD = AstronomyEngine.moonrise(jdMidnight, location.latitude, location.longitude)
         val moonsetJD = AstronomyEngine.moonset(jdMidnight, location.latitude, location.longitude)
@@ -176,6 +227,9 @@ class PanchangService @Inject constructor(
             yamaghanda = yamaghanda,
             gulikaKaal = gulikaKaal,
             abhijitMuhurta = abhijit,
+            muhurtas = muhurtaPeriods,
+            choghadiyas = choghadiyaPeriods,
+            horas = horaPeriods,
             festivals = festivals
         ).also { cache.put(key, it) }
     }

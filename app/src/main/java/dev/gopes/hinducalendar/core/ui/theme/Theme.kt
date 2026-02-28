@@ -85,18 +85,43 @@ fun HinduCalendarTheme(
         }
     }
 
-    val atmosphere = remember { mutableStateOf(AtmosphereEngine.computeAtmosphere()) }
+    // Smooth atmosphere transitions: track previous and current, lerp between them
+    val targetAtmosphere = remember { mutableStateOf(AtmosphereEngine.computeAtmosphere()) }
+    val previousAtmosphere = remember { mutableStateOf(targetAtmosphere.value) }
+    val transitionFraction = remember { androidx.compose.animation.core.Animatable(1f) }
 
     LaunchedEffect(Unit) {
         while (true) {
-            atmosphere.value = AtmosphereEngine.computeAtmosphere()
-            kotlinx.coroutines.delay(5 * 60 * 1000L)
+            val newAtmosphere = AtmosphereEngine.computeAtmosphere()
+            if (newAtmosphere.period != targetAtmosphere.value.period) {
+                // Period changed — animate the transition
+                previousAtmosphere.value = targetAtmosphere.value
+                targetAtmosphere.value = newAtmosphere
+                transitionFraction.snapTo(0f)
+                transitionFraction.animateTo(
+                    1f,
+                    animationSpec = androidx.compose.animation.core.tween(3000)
+                )
+            } else {
+                targetAtmosphere.value = newAtmosphere
+            }
+            kotlinx.coroutines.delay(60_000L) // Check every 1 minute
         }
+    }
+
+    val currentAtmosphere = if (transitionFraction.value >= 1f) {
+        targetAtmosphere.value
+    } else {
+        AtmosphereEngine.lerpAtmosphere(
+            previousAtmosphere.value,
+            targetAtmosphere.value,
+            transitionFraction.value
+        )
     }
 
     CompositionLocalProvider(
         LocalVibrantMode provides vibrantMode,
-        LocalAtmosphere provides atmosphere.value,
+        LocalAtmosphere provides currentAtmosphere,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

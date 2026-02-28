@@ -2,6 +2,9 @@ package dev.gopes.hinducalendar.feature.texts.reader
 
 import android.content.Context
 import android.content.res.Configuration
+import android.media.AudioAttributes
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -10,7 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gopes.hinducalendar.R
 import dev.gopes.hinducalendar.domain.model.*
-import dev.gopes.hinducalendar.domain.repository.AudioPlaybackRepository
+import dev.gopes.hinducalendar.domain.repository.AudioPlaybackState
 import dev.gopes.hinducalendar.domain.repository.PreferencesRepository
 import dev.gopes.hinducalendar.domain.repository.SacredTextRepository
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +25,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 import javax.inject.Inject
 
 data class StudyVerse(
@@ -68,41 +72,88 @@ class ReaderViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val sacredTextRepository: SacredTextRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val audioPlaybackRepository: AudioPlaybackRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    // Stable callback references — created once per ViewModel lifetime
-    private val audioToggle: (String) -> Unit = { audioPlaybackRepository.toggle(it) }
-    private val audioSeek: (Int) -> Unit = { audioPlaybackRepository.seekTo(it) }
-    private val audioSkipForward: () -> Unit = { audioPlaybackRepository.skipForward() }
-    private val audioSkipBackward: () -> Unit = { audioPlaybackRepository.skipBackward() }
-    private val audioSetSpeed: (Float) -> Unit = { audioPlaybackRepository.setSpeed(it) }
-    private val audioHasAudio: (String) -> Boolean = { audioPlaybackRepository.hasAudio(it) }
-    private val audioDuration: (String) -> Int? = { audioPlaybackRepository.duration(it) }
+    // ── TTS engine ──────────────────────────────────────────────────────
+    private var tts: TextToSpeech? = null
+    private var ttsReady = false
+    private val ttsTextMap = mutableMapOf<String, String>()
+    private val _ttsPlayingId = MutableStateFlow<String?>(null)
+    private val _ttsState = MutableStateFlow(AudioPlaybackState.IDLE)
+
+    private fun initTts() {
+        tts = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                ttsReady = true
+                val locale = ttsLocaleForTextType(textType)
+                val result = tts?.setLanguage(locale) ?: TextToSpeech.LANG_NOT_SUPPORTED
+                if (result == TextToSpeech.LANG_NOT_SUPPORTED || result == TextToSpeech.LANG_MISSING_DATA) {
+                    tts?.language = Locale("hi", "IN") // fallback to Hindi
+                }
+                tts?.setSpeechRate(0.8f)
+                tts?.setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build()
+                )
+                tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) {
+                        _ttsState.value = AudioPlaybackState.PLAYING
+                    }
+                    override fun onDone(utteranceId: String?) {
+                        _ttsPlayingId.value = null
+                        _ttsState.value = AudioPlaybackState.IDLE
+                    }
+                    @Deprecated("Deprecated in API")
+                    override fun onError(utteranceId: String?) {
+                        _ttsPlayingId.value = null
+                        _ttsState.value = AudioPlaybackState.IDLE
+                    }
+                })
+            }
+        }
+    }
+
+    private fun ttsLocaleForTextType(type: SacredTextType?): Locale = when (type) {
+        SacredTextType.JAPJI_SAHIB, SacredTextType.GURBANI, SacredTextType.SUKHMANI ->
+            Locale("pa", "IN")
+        else -> Locale("sa", "IN") // Sanskrit — better pronunciation for compounds/names
+    }
+
+    private fun ttsToggle(audioId: String) {
+        if (_ttsPlayingId.value == audioId && _ttsState.value == AudioPlaybackState.PLAYING) {
+            tts?.stop()
+            _ttsPlayingId.value = null
+            _ttsState.value = AudioPlaybackState.IDLE
+        } else {
+            val text = ttsTextMap[audioId] ?: return
+            val clean = cleanForTts(text)
+            tts?.stop()
+            _ttsPlayingId.value = audioId
+            _ttsState.value = AudioPlaybackState.PLAYING
+            tts?.speak(clean, TextToSpeech.QUEUE_FLUSH, null, audioId)
+        }
+    }
 
     val audioUiState: StateFlow<AudioUiState> = combine(
-        audioPlaybackRepository.state,
-        audioPlaybackRepository.currentlyPlayingId,
-        audioPlaybackRepository.playbackProgress,
-        audioPlaybackRepository.currentPositionMs,
-        audioPlaybackRepository.playbackSpeed
-    ) { state, id, progress, position, speed ->
+        _ttsState,
+        _ttsPlayingId
+    ) { state, id ->
         AudioUiState(
             playbackState = state,
             currentlyPlayingId = id,
-            playbackProgress = progress,
-            currentPositionMs = position,
-            playbackSpeed = speed,
-            onToggle = audioToggle,
-            onSeek = audioSeek,
-            onSkipForward = audioSkipForward,
-            onSkipBackward = audioSkipBackward,
-            onSetSpeed = audioSetSpeed,
-            hasAudio = audioHasAudio,
-            duration = audioDuration
+            onToggle = ::ttsToggle,
+            hasAudio = { ttsReady && ttsTextMap.containsKey(it) }
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, AudioUiState())
+
+    override fun onCleared() {
+        tts?.stop()
+        tts?.shutdown()
+        super.onCleared()
+    }
 
     private fun getLocalizedContext(): Context {
         val locales = AppCompatDelegate.getApplicationLocales()
@@ -143,6 +194,7 @@ class ReaderViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ReaderUiState.Loading)
 
     init {
+        initTts()
         loadData()
     }
 
@@ -187,6 +239,96 @@ class ReaderViewModel @Inject constructor(
                 }
             }
             _loadedContent.value = content
+            content?.let { buildTtsTextMap(it) }
+        }
+    }
+
+    // ── TTS text helpers ────────────────────────────────────────────────
+
+    private val verseNumberRegex = Regex("\\|\\|[०-९0-9]+\\|\\|")
+
+    private fun cleanForTts(text: String): String {
+        return text
+            .replace(verseNumberRegex, "")   // strip ||१|| or ||1||
+            .replace("|", " , ")             // caesura → brief pause
+            .replace(Regex("\\s+"), " ")
+            .trim()
+    }
+
+    @Suppress("CyclomaticComplexity")
+    private fun buildTtsTextMap(content: TextContent) {
+        ttsTextMap.clear()
+        when (content) {
+            is TextContent.Gita -> content.data.chapters.forEach { ch ->
+                ch.verses.forEach { v ->
+                    ttsTextMap["gita_${ch.chapter}_${v.verse}"] = v.sanskrit
+                }
+            }
+            is TextContent.Chalisa -> content.data.allVerses.forEach { v ->
+                ttsTextMap["chalisa_${v.type ?: "verse"}_${v.verse}"] = v.sanskrit
+            }
+            is TextContent.Japji -> {
+                content.data.moolMantar?.let { ttsTextMap["japji_moolmantar"] = it.punjabi }
+                content.data.pauris.forEach { p ->
+                    ttsTextMap["japji_pauri_${p.pauri}"] = p.punjabi
+                }
+                content.data.salok?.let { ttsTextMap["japji_salok"] = it.punjabi }
+            }
+            is TextContent.Shloka -> {
+                val prefix = textType?.jsonFileName ?: "shloka"
+                content.data.shlokas.forEach { s ->
+                    ttsTextMap["${prefix}_${s.shloka}"] = s.sanskrit
+                }
+            }
+            is TextContent.Verse -> content.data.verses.forEach { v ->
+                ttsTextMap["soundarya_${v.verse}"] = v.sanskrit
+            }
+            is TextContent.Rudram -> {
+                val section = content.data.namakam ?: content.data.chamakam
+                val sectionName = if (content.data.namakam != null) "namakam" else "chamakam"
+                section?.anuvakas?.forEach { a ->
+                    ttsTextMap["rudram_${sectionName}_${a.anuvaka}"] = a.sanskrit
+                }
+            }
+            is TextContent.Gurbani -> content.data.shabads.forEachIndexed { index, shabad ->
+                ttsTextMap["gurbani_day_${index + 1}"] = shabad.punjabi
+            }
+            is TextContent.Sukhmani -> content.data.ashtpadis.forEach { section ->
+                section.salok?.let { ttsTextMap["sukhmani_${section.ashtpadi}_salok"] = it.punjabi }
+                section.stanzas.forEach { st ->
+                    ttsTextMap["sukhmani_${section.ashtpadi}_stanza_${st.stanza}"] = st.punjabi
+                }
+            }
+            is TextContent.Sutra -> content.data.chapters.forEach { ch ->
+                ch.sutras.forEach { sutra ->
+                    ttsTextMap["tattvartha_${ch.chapter}_${sutra.sutra}"] = sutra.sanskrit
+                }
+            }
+            is TextContent.Episode -> {
+                val prefix = textType?.jsonFileName ?: "episode"
+                content.data.episodes.forEach { e ->
+                    val hasMantra = e.relatedMantra != null
+                    val key = if (hasMantra) "${prefix}_ep_${e.episode}_mantra"
+                              else "${prefix}_ep_${e.episode}_verse"
+                    val text = if (hasMantra) e.relatedMantra?.sanskrit
+                               else e.relatedVerse?.sanskrit
+                    text?.let { ttsTextMap[key] = it }
+                }
+            }
+            is TextContent.Jain -> {
+                content.data.namokarMantra?.lineByLine?.firstOrNull()?.let { l ->
+                    ttsTextMap["jain_namokar"] = l.sanskrit
+                }
+            }
+            is TextContent.Chapter -> {
+                content.data.kavach?.let { ttsTextMap["devi_mahatmya_kavach"] = it.sanskrit }
+                content.data.chapters.forEach { ch ->
+                    ch.keyVerses?.forEachIndexed { idx, kv ->
+                        ttsTextMap["devi_mahatmya_ch_${ch.chapter}_kv_${idx + 1}"] = kv.sanskrit
+                    }
+                }
+            }
+            is TextContent.Discourse -> { /* discourses have no audioId */ }
         }
     }
 
@@ -232,15 +374,28 @@ class ReaderViewModel @Inject constructor(
                     audioId = "chalisa_${v.type ?: "verse"}_${v.verse}"
                 )
             }
-            is TextContent.Japji -> content.data.pauris.map { p ->
-                StudyVerse(
-                    reference = "${s(R.string.text_pauri)} ${p.pauri}",
-                    originalText = p.punjabi,
-                    transliteration = p.transliteration,
-                    translation = p.translation(lang),
-                    explanation = null,
-                    audioId = "japji_pauri_${p.pauri}"
-                )
+            is TextContent.Japji -> {
+                val pauris = content.data.pauris.map { p ->
+                    StudyVerse(
+                        reference = "${s(R.string.text_pauri)} ${p.pauri}",
+                        originalText = p.punjabi,
+                        transliteration = p.transliteration,
+                        translation = p.translation(lang),
+                        explanation = null,
+                        audioId = "japji_pauri_${p.pauri}"
+                    )
+                }
+                val salok = content.data.salok?.let { sl ->
+                    StudyVerse(
+                        reference = s(R.string.reader_closing_salok),
+                        originalText = sl.punjabi,
+                        transliteration = sl.transliteration,
+                        translation = sl.translation,
+                        explanation = null,
+                        audioId = "japji_salok"
+                    )
+                }
+                pauris + listOfNotNull(salok)
             }
             is TextContent.Shloka -> {
                 val prefix = textType?.jsonFileName ?: "shloka"

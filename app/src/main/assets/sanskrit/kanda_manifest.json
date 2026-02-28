@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "kandas": [
+    {
+      "id": "kanda_1",
+      "number": 1,
+      "titleSanskrit": "अक्षरम्",
+      "titleTranslit": "Akṣaram",
+      "dataSource": "legacy",
+      "moduleCount": 13,
+      "milestoneId": "aksara_siddhi"
+    },
+    {
+      "id": "kanda_2",
+      "number": 2,
+      "titleSanskrit": "शब्दम्",
+      "titleTranslit": "Śabdam",
+      "dataFile": "sanskrit/kanda_2_shabdam.json",
+      "moduleCount": 5,
+      "milestoneId": "shabda_kosha"
+    },
+    {
+      "id": "kanda_3",
+      "number": 3,
+      "titleSanskrit": "वाक्यम्",
+      "titleTranslit": "Vākyam",
+      "dataFile": "sanskrit/kanda_3_vakyam.json",
+      "moduleCount": 5,
+      "milestoneId": "vakyakara"
+    },
+    {
+      "id": "kanda_4",
+      "number": 4,
+      "titleSanskrit": "सन्धिः",
+      "titleTranslit": "Sandhiḥ",
+      "dataFile": "sanskrit/kanda_4_sandhi.json",
+      "moduleCount": 4,
+      "milestoneId": "sandhi_vaidya"
+    },
+    {
+      "id": "kanda_5",
+      "number": 5,
+      "titleSanskrit": "रूपम्",
+      "titleTranslit": "Rūpam",
+      "dataFile": "sanskrit/kanda_5_rupam.json",
+      "moduleCount": 5,
+      "milestoneId": "rupa_siddhi"
+    },
+    {
+      "id": "kanda_6",
+      "number": 6,
+      "titleSanskrit": "पाठः",
+      "titleTranslit": "Pāṭhaḥ",
+      "dataFile": "sanskrit/kanda_6_pathah.json",
+      "moduleCount": 5,
+      "milestoneId": "gita_pathaka"
+    },
+    {
+      "id": "kanda_7",
+      "number": 7,
+      "titleSanskrit": "स्वाध्यायः",
+      "titleTranslit": "Svādhyāyaḥ",
+      "dataFile": "sanskrit/kanda_7_svadhyayah.json",
+      "moduleCount": 3,
+      "milestoneId": "svadhyaya_siddha"
+    }
+  ]
+}

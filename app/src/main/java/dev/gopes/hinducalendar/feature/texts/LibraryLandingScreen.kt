@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.gopes.hinducalendar.R
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +34,8 @@ import dev.gopes.hinducalendar.core.ui.theme.LocalVibrantMode
 @Composable
 fun LibraryLandingScreen(
     onSelectTexts: () -> Unit = {},
-    onSelectKirtans: () -> Unit = {}
+    onSelectKirtans: () -> Unit = {},
+    onSelectSanskrit: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -147,6 +149,56 @@ fun LibraryLandingScreen(
                         Icons.Filled.ChevronRight,
                         contentDescription = stringResource(R.string.cd_open_text),
                         tint = MaterialTheme.colorScheme.tertiary
+                    )
+                }
+            }
+            }
+
+            // Sanskrit Pathshala card
+            Box(Modifier.entranceAnimation(2, isVibrant)) {
+            SacredHighlightCard(
+                modifier = Modifier.clickable { onSelectSanskrit() }
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .background(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                                CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "\u0950",
+                            fontSize = 26.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            stringResource(R.string.sanskrit_title),
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            stringResource(R.string.sanskrit_subtitle),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 2
+                        )
+                    }
+
+                    Icon(
+                        Icons.Filled.ChevronRight,
+                        contentDescription = stringResource(R.string.cd_open_text),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }

@@ -359,4 +359,224 @@ class PanchangCalculatorTest {
         val result = PanchangCalculator.shakaYear(2025, HinduMonth.VAISHAKHA)
         assertEquals("Shaka year for 2025 Vaishakha should be 1947", 1947, result)
     }
+
+    // ==================== Muhurta System ====================
+
+    @Test
+    fun `calculateMuhurtas returns 15 day and 15 night muhurtas`() {
+        val result = PanchangCalculator.calculateMuhurtas(720.0, 720.0)
+        assertEquals(15, result.daySlots.size)
+        assertEquals(15, result.nightSlots.size)
+    }
+
+    @Test
+    fun `calculateMuhurtas day muhurta duration equals dayDuration divided by 15`() {
+        val dayDur = 720.0
+        val result = PanchangCalculator.calculateMuhurtas(dayDur, 720.0)
+        val expected = dayDur / 15.0
+        result.daySlots.forEach {
+            assertEquals(expected, it.endMinutes - it.startMinutes, 0.01)
+        }
+    }
+
+    @Test
+    fun `calculateMuhurtas night muhurta duration equals nightDuration divided by 15`() {
+        val nightDur = 660.0
+        val result = PanchangCalculator.calculateMuhurtas(720.0, nightDur)
+        val expected = nightDur / 15.0
+        result.nightSlots.forEach {
+            assertEquals(expected, it.endMinutes - it.startMinutes, 0.01)
+        }
+    }
+
+    @Test
+    fun `calculateMuhurtas first day muhurta starts at 0`() {
+        val result = PanchangCalculator.calculateMuhurtas(720.0, 720.0)
+        assertEquals(0.0, result.daySlots.first().startMinutes, 0.01)
+    }
+
+    @Test
+    fun `calculateMuhurtas last day muhurta ends at dayDuration`() {
+        val dayDur = 690.0
+        val result = PanchangCalculator.calculateMuhurtas(dayDur, 720.0)
+        assertEquals(dayDur, result.daySlots.last().endMinutes, 0.01)
+    }
+
+    @Test
+    fun `calculateMuhurtas muhurta numbers are sequential 1-30`() {
+        val result = PanchangCalculator.calculateMuhurtas(720.0, 720.0)
+        val allNumbers = result.daySlots.map { it.muhurtaNumber } +
+                result.nightSlots.map { it.muhurtaNumber }
+        assertEquals((1..30).toList(), allNumbers)
+    }
+
+    @Test
+    fun `calculateMuhurtas with unequal day and night has different slot durations`() {
+        val result = PanchangCalculator.calculateMuhurtas(800.0, 640.0)
+        val daySlotDur = result.daySlots[0].endMinutes - result.daySlots[0].startMinutes
+        val nightSlotDur = result.nightSlots[0].endMinutes - result.nightSlots[0].startMinutes
+        assertTrue("Day and night slot durations should differ",
+            kotlin.math.abs(daySlotDur - nightSlotDur) > 1.0)
+    }
+
+    // ==================== Choghadiya System ====================
+
+    @Test
+    fun `calculateChoghadiyas returns 8 day and 8 night periods`() {
+        val result = PanchangCalculator.calculateChoghadiyas(720.0, 720.0, 1)
+        assertEquals(8, result.daySlots.size)
+        assertEquals(8, result.nightSlots.size)
+    }
+
+    @Test
+    fun `calculateChoghadiyas day segment duration is one-eighth of day`() {
+        val dayDur = 720.0
+        val result = PanchangCalculator.calculateChoghadiyas(dayDur, 720.0, 3)
+        val segDur = result.daySlots[0].endMinutes - result.daySlots[0].startMinutes
+        assertEquals(dayDur / 8.0, segDur, 0.01)
+    }
+
+    @Test
+    fun `calculateChoghadiyas night segment duration is one-eighth of night`() {
+        val nightDur = 660.0
+        val result = PanchangCalculator.calculateChoghadiyas(720.0, nightDur, 1)
+        val segDur = result.nightSlots[0].endMinutes - result.nightSlots[0].startMinutes
+        assertEquals(nightDur / 8.0, segDur, 0.01)
+    }
+
+    @Test
+    fun `calculateChoghadiyas all weekdays produce valid results`() {
+        for (weekday in 1..7) {
+            val result = PanchangCalculator.calculateChoghadiyas(720.0, 720.0, weekday)
+            assertEquals(8, result.daySlots.size)
+            assertEquals(8, result.nightSlots.size)
+            assertTrue(result.daySlots.all { it.position in 0..7 })
+            assertTrue(result.nightSlots.all { it.position in 0..7 })
+        }
+    }
+
+    @Test
+    fun `calculateChoghadiyas first day slot starts at 0`() {
+        val result = PanchangCalculator.calculateChoghadiyas(720.0, 720.0, 1)
+        assertEquals(0.0, result.daySlots.first().startMinutes, 0.01)
+    }
+
+    @Test
+    fun `calculateChoghadiyas last day slot ends at dayDuration`() {
+        val dayDur = 700.0
+        val result = PanchangCalculator.calculateChoghadiyas(dayDur, 720.0, 1)
+        assertEquals(dayDur, result.daySlots.last().endMinutes, 0.01)
+    }
+
+    // ==================== Hora System ====================
+
+    @Test
+    fun `calculateHoras returns 24 horas`() {
+        val result = PanchangCalculator.calculateHoras(720.0, 720.0)
+        assertEquals(24, result.slots.size)
+    }
+
+    @Test
+    fun `calculateHoras first 12 are day horas`() {
+        val result = PanchangCalculator.calculateHoras(720.0, 720.0)
+        assertTrue(result.slots.take(12).all { it.isDay })
+        assertTrue(result.slots.drop(12).all { !it.isDay })
+    }
+
+    @Test
+    fun `calculateHoras day hora duration equals dayDuration divided by 12`() {
+        val dayDur = 720.0
+        val result = PanchangCalculator.calculateHoras(dayDur, 720.0)
+        val dayHora = result.slots[0]
+        assertEquals(dayDur / 12.0, dayHora.endMinutes - dayHora.startMinutes, 0.01)
+    }
+
+    @Test
+    fun `calculateHoras night hora duration equals nightDuration divided by 12`() {
+        val nightDur = 660.0
+        val result = PanchangCalculator.calculateHoras(720.0, nightDur)
+        val nightHora = result.slots[12]
+        assertEquals(nightDur / 12.0, nightHora.endMinutes - nightHora.startMinutes, 0.01)
+    }
+
+    @Test
+    fun `calculateHoras first day hora starts at 0`() {
+        val result = PanchangCalculator.calculateHoras(720.0, 720.0)
+        assertEquals(0.0, result.slots.first().startMinutes, 0.01)
+    }
+
+    @Test
+    fun `calculateHoras horas are contiguous with no gaps`() {
+        val result = PanchangCalculator.calculateHoras(700.0, 660.0)
+        for (i in 0 until 23) {
+            assertEquals("Hora $i end should equal hora ${i + 1} start",
+                result.slots[i].endMinutes, result.slots[i + 1].startMinutes, 0.01)
+        }
+    }
+
+    @Test
+    fun `HoraPlanet atHoraIndex Sunday first hora is Sun`() {
+        assertEquals(HoraPlanet.SUN, HoraPlanet.atHoraIndex(1, 0))
+    }
+
+    @Test
+    fun `HoraPlanet atHoraIndex Monday first hora is Moon`() {
+        assertEquals(HoraPlanet.MOON, HoraPlanet.atHoraIndex(2, 0))
+    }
+
+    @Test
+    fun `HoraPlanet atHoraIndex Saturday first hora is Saturn`() {
+        assertEquals(HoraPlanet.SATURN, HoraPlanet.atHoraIndex(7, 0))
+    }
+
+    @Test
+    fun `HoraPlanet Chaldean order cycles correctly for Sunday`() {
+        // Sun's position in Chaldean order: Saturn(0), Jupiter(1), Mars(2), Sun(3), Venus(4), Mercury(5), Moon(6)
+        // Starting at Sun (index 3), next is Venus(4), Mercury(5), Moon(6), Saturn(0), Jupiter(1), Mars(2)
+        val expected = listOf(
+            HoraPlanet.SUN, HoraPlanet.VENUS, HoraPlanet.MERCURY, HoraPlanet.MOON,
+            HoraPlanet.SATURN, HoraPlanet.JUPITER, HoraPlanet.MARS
+        )
+        val actual = (0 until 7).map { HoraPlanet.atHoraIndex(1, it) }
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `ChoghadiyaType atPosition Sunday day starts with Udvegh`() {
+        assertEquals(ChoghadiyaType.UDVEGH, ChoghadiyaType.atPosition(1, 0, true))
+    }
+
+    @Test
+    fun `ChoghadiyaType atPosition Monday day starts with Amrit`() {
+        assertEquals(ChoghadiyaType.AMRIT, ChoghadiyaType.atPosition(2, 0, true))
+    }
+
+    @Test
+    fun `ChoghadiyaType atPosition Sunday night starts with Shubh`() {
+        assertEquals(ChoghadiyaType.SHUBH, ChoghadiyaType.atPosition(1, 0, false))
+    }
+
+    @Test
+    fun `ChoghadiyaType atPosition Tuesday day starts with Rog`() {
+        assertEquals(ChoghadiyaType.ROG, ChoghadiyaType.atPosition(3, 0, true))
+    }
+
+    @Test
+    fun `Muhurta fromNumber returns correct muhurta`() {
+        assertEquals(Muhurta.RUDRA, Muhurta.fromNumber(1))
+        assertEquals(Muhurta.VIDHI, Muhurta.fromNumber(8))
+        assertEquals(Muhurta.SAMUDRAM, Muhurta.fromNumber(30))
+    }
+
+    @Test
+    fun `Muhurta dayMuhurtas has 15 entries`() {
+        assertEquals(15, Muhurta.dayMuhurtas.size)
+        assertTrue(Muhurta.dayMuhurtas.all { it.isDay })
+    }
+
+    @Test
+    fun `Muhurta nightMuhurtas has 15 entries`() {
+        assertEquals(15, Muhurta.nightMuhurtas.size)
+        assertTrue(Muhurta.nightMuhurtas.all { !it.isDay })
+    }
 }

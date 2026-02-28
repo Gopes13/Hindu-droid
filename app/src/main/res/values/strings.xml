@@ -52,6 +52,7 @@
     <string name="tab_media">Media</string>
     <string name="tab_text">Texts</string>
     <string name="tab_kirtan">Kirtan</string>
+    <string name="tab_sanskrit">Sanskrit</string>
     <string name="text_continue_reading">Continue Reading</string>
     <string name="text_start_reading">Start Reading</string>
     <string name="text_mark_read">Mark as Read</string>
@@ -101,8 +102,74 @@
     <string name="section_panchang">Panchang</string>
     <string name="section_inauspicious_periods">Inauspicious Periods</string>
     <string name="section_auspicious_period">Auspicious Period</string>
+    <string name="section_muhurta">Muhurta</string>
+    <string name="section_choghadiya">Choghadiya</string>
+    <string name="section_hora">Hora</string>
+    <string name="muhurta_day_header">Day Muhurtas (Sunrise to Sunset)</string>
+    <string name="muhurta_night_header">Night Muhurtas (Sunset to Sunrise)</string>
+    <string name="choghadiya_day_header">Day Choghadiya</string>
+    <string name="choghadiya_night_header">Night Choghadiya</string>
+    <string name="hora_day_header">Day Horas</string>
+    <string name="hora_night_header">Night Horas</string>
+    <string name="auspicious_best">Most Auspicious</string>
+    <string name="auspicious_good">Auspicious</string>
+    <string name="auspicious_gain">Beneficial</string>
+    <string name="auspicious_neutral">Neutral</string>
+    <string name="auspicious_bad">Inauspicious</string>
+    <string name="current_period">Current</string>
+    <string name="group_panchang_details">Panchang Details</string>
     <string name="section_today_festivals">Today\'s Festivals</string>
     <string name="festival_major">Major</string>
+
+    <!-- Muhurta Names (30) -->
+    <string name="muhurta_rudra">Rudra</string>
+    <string name="muhurta_ahi">Ahi</string>
+    <string name="muhurta_mitra">Mitra</string>
+    <string name="muhurta_pitru">Pitru</string>
+    <string name="muhurta_vasu">Vasu</string>
+    <string name="muhurta_vara">Vara</string>
+    <string name="muhurta_vishwadeva">Vishwadeva</string>
+    <string name="muhurta_vidhi">Vidhi (Abhijit)</string>
+    <string name="muhurta_satamukhi">Satamukhi</string>
+    <string name="muhurta_puruhuta">Puruhuta</string>
+    <string name="muhurta_vahini">Vahini</string>
+    <string name="muhurta_naktanchara">Naktanchara</string>
+    <string name="muhurta_varuna">Varuna</string>
+    <string name="muhurta_aryaman">Aryaman</string>
+    <string name="muhurta_bhaga">Bhaga</string>
+    <string name="muhurta_girisha">Girisha</string>
+    <string name="muhurta_ajipada">Ajipada</string>
+    <string name="muhurta_ahirbudhnya">Ahirbudhnya</string>
+    <string name="muhurta_pusha">Pusha</string>
+    <string name="muhurta_ashwini">Ashwini</string>
+    <string name="muhurta_yama">Yama</string>
+    <string name="muhurta_agni">Agni</string>
+    <string name="muhurta_vidhata">Vidhata</string>
+    <string name="muhurta_chanda">Chanda</string>
+    <string name="muhurta_aditi">Aditi</string>
+    <string name="muhurta_jiva">Jiva</string>
+    <string name="muhurta_vishnu">Vishnu</string>
+    <string name="muhurta_yumigadyuti">Yumigadyuti</string>
+    <string name="muhurta_brahma">Brahma</string>
+    <string name="muhurta_samudram">Samudram</string>
+
+    <!-- Choghadiya Types (7) -->
+    <string name="choghadiya_udvegh">Udvegh</string>
+    <string name="choghadiya_char">Char</string>
+    <string name="choghadiya_labh">Labh</string>
+    <string name="choghadiya_amrit">Amrit</string>
+    <string name="choghadiya_kaal">Kaal</string>
+    <string name="choghadiya_shubh">Shubh</string>
+    <string name="choghadiya_rog">Rog</string>
+
+    <!-- Hora Planets (7) -->
+    <string name="hora_sun">Sun</string>
+    <string name="hora_moon">Moon</string>
+    <string name="hora_mars">Mars</string>
+    <string name="hora_mercury">Mercury</string>
+    <string name="hora_jupiter">Jupiter</string>
+    <string name="hora_venus">Venus</string>
+    <string name="hora_saturn">Saturn</string>
 
     <!-- Settings Screen -->
     <string name="setting_spiritual_path">Spiritual Path</string>
@@ -226,6 +293,7 @@
     <string name="reader_doha">Doha</string>
     <string name="reader_chaupai">Chaupai</string>
     <string name="reader_closing_doha">Closing Doha</string>
+    <string name="reader_closing_salok">Closing Salok</string>
     <string name="reader_mool_mantar">Mool Mantar</string>
     <string name="reader_namakam">Namakam</string>
     <string name="reader_chamakam">Chamakam</string>

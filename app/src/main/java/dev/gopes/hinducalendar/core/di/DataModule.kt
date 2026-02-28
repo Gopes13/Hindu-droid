@@ -14,6 +14,8 @@ import dev.gopes.hinducalendar.domain.repository.KirtanRepository
 import dev.gopes.hinducalendar.data.repository.KirtanService
 import dev.gopes.hinducalendar.domain.repository.SacredTextRepository
 import dev.gopes.hinducalendar.data.repository.SacredTextService
+import dev.gopes.hinducalendar.domain.repository.SanskritRepository
+import dev.gopes.hinducalendar.data.repository.SanskritCurriculumService
 import javax.inject.Singleton
 
 @Module
@@ -42,5 +44,11 @@ object DataModule {
     @Singleton
     fun provideGamificationService(@ApplicationContext context: Context): GamificationService {
         return GamificationServiceImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSanskritRepository(@ApplicationContext context: Context): SanskritRepository {
+        return SanskritCurriculumService(context)
     }
 }

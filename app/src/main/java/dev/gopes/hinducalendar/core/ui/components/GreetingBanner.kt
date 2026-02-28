@@ -41,7 +41,7 @@ fun GreetingBanner(
     language: AppLanguage = AppLanguage.ENGLISH
 ) {
     val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-    val (sanskrit, english, icon) = when (hour) {
+    val (hindi, localized, icon) = when (hour) {
         in 4..11 -> Triple("\u0936\u0941\u092D \u092A\u094D\u0930\u092D\u093E\u0924", stringResource(R.string.greeting_good_morning), Icons.Filled.WbSunny)
         in 12..16 -> Triple("\u0936\u0941\u092D \u0905\u092A\u0930\u093E\u0939\u094D\u0928", stringResource(R.string.greeting_good_afternoon), Icons.Filled.LightMode)
         in 17..20 -> Triple("\u0936\u0941\u092D \u0938\u0902\u0927\u094D\u092F\u093E", stringResource(R.string.greeting_good_evening), Icons.Filled.WbTwilight)
@@ -81,13 +81,13 @@ fun GreetingBanner(
         ) {
             Column(Modifier.weight(1f)) {
                 Text(
-                    text = sanskrit,
+                    text = localized,
                     style = AppTypography.displayMedium,
                     color = Color.White
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = english,
+                    text = hindi,
                     style = AppTypography.bodyMedium,
                     color = Color.White.copy(alpha = 0.8f)
                 )

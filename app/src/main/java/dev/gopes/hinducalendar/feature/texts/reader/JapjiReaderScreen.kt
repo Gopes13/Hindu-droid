@@ -146,6 +146,54 @@ fun JapjiReaderScreen(
                     audio = audio
                 )
             }
+
+            // Closing Salok
+            japji.salok?.let { salok ->
+                item {
+                    Spacer(Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            stringResource(R.string.reader_closing_salok),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        VerseAudioButton(
+                            audioId = "japji_salok",
+                            audio = audio
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    SacredHighlightCard {
+                        MiniAudioProgressBar(
+                            audioId = "japji_salok",
+                            audio = audio
+                        )
+                        Text(
+                            salok.punjabi,
+                            style = MaterialTheme.typography.bodyLarge,
+                            lineHeight = 28.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            salok.transliteration,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            lineHeight = 22.sp
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            salok.translation,
+                            style = MaterialTheme.typography.bodyMedium,
+                            lineHeight = 22.sp
+                        )
+                    }
+                }
+            }
         }
     }
 }

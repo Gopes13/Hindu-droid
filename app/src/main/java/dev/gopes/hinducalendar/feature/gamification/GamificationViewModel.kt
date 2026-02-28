@@ -54,7 +54,7 @@ class GamificationViewModel @Inject constructor(
             val prefs = preferencesRepository.preferencesFlow.first()
             if (prefs.gamificationData.isEnabled) {
                 processAppOpen()
-                _dailyChallenge.value = gamificationService.generateDailyChallenge()
+                _dailyChallenge.value = gamificationService.generateDailyChallenge(prefs.language.code)
             }
         }
     }
@@ -146,7 +146,8 @@ class GamificationViewModel @Inject constructor(
                 prefs.copy(gamificationData = prefs.gamificationData.copy(isEnabled = enabled))
             }
             if (enabled) {
-                _dailyChallenge.value = gamificationService.generateDailyChallenge()
+                val lang = preferencesRepository.preferencesFlow.first().language.code
+                _dailyChallenge.value = gamificationService.generateDailyChallenge(lang)
                 processAppOpen()
             }
         }

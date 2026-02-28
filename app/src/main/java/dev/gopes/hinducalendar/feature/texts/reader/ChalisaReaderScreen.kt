@@ -86,7 +86,7 @@ fun ChalisaReaderScreen(
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
-                items(chalisa.dohas, key = { it.verse }) { verse ->
+                items(chalisa.dohas, key = { "doha_${it.verse}" }) { verse ->
                     val ref = "${stringResource(R.string.reader_doha)} ${verse.verse}"
                     VerseCard(
                         badge = ref,
@@ -115,7 +115,7 @@ fun ChalisaReaderScreen(
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
-                items(chalisa.chaupais, key = { it.verse }) { verse ->
+                items(chalisa.chaupais, key = { "chaupai_${it.verse}" }) { verse ->
                     val ref = "${stringResource(R.string.reader_chaupai)} ${verse.verse}"
                     VerseCard(
                         badge = ref,

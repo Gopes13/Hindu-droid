@@ -20,10 +20,11 @@ fun SacredCard(
     modifier: Modifier = Modifier,
     accentColor: Color = MaterialTheme.colorScheme.primary,
     isHighlighted: Boolean = false,
+    isInteractive: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
     GlassSurface(
-        modifier = modifier,
+        modifier = if (isInteractive) modifier.sacredPress() else modifier,
         elevation = if (isHighlighted) SurfaceElevation.PROMINENT else SurfaceElevation.STANDARD,
         accentColor = accentColor,
         content = content

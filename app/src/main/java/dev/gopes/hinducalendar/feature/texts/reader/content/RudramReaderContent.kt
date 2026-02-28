@@ -43,7 +43,7 @@ internal fun RudramContent(data: RudramData, lang: AppLanguage, modifier: Modifi
         ) {
             section?.anuvakas?.let { anuvakas ->
                 val sectionName = if (selectedTab == 0) "namakam" else "chamakam"
-                items(anuvakas, key = { it.anuvaka }) { anuvaka ->
+                items(anuvakas, key = { "${sectionName}_${it.anuvaka}" }) { anuvaka ->
                     val theme = anuvaka.theme(lang).ifEmpty { null }
                     val ref = "${stringResource(R.string.text_shloka)} ${anuvaka.anuvaka}"
                     VerseCard(

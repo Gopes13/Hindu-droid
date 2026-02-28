@@ -45,9 +45,7 @@ fun FestivalListScreen(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.festivals_upcoming)) }) }
     ) { padding ->
         if (isLoading) {
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-            }
+            FestivalListSkeleton(modifier = Modifier.padding(padding))
         } else if (festivals.isEmpty()) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                 Text(

@@ -211,9 +211,17 @@ data class MoolMantar(
     fun translation(lang: AppLanguage): String = translations.localized(lang)
 }
 
+data class JapjiSalok(
+    @SerializedName("punjabi") val punjabi: String = "",
+    @SerializedName("hindi") val hindi: String = "",
+    @SerializedName("transliteration") val transliteration: String = "",
+    @SerializedName("translation") val translation: String = ""
+)
+
 data class JapjiData(
     @SerializedName("moolMantar") val moolMantar: MoolMantar? = null,
-    @SerializedName("pauris") val pauris: List<JapjiPauri> = emptyList()
+    @SerializedName("pauris") val pauris: List<JapjiPauri> = emptyList(),
+    @SerializedName("salok") val salok: JapjiSalok? = null
 )
 
 // ── Gurbani ─────────────────────────────────────────────────────────────────

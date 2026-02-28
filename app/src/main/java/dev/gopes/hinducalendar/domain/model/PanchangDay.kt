@@ -32,6 +32,11 @@ data class PanchangDay(
     // Auspicious
     val abhijitMuhurta: TimePeriod? = null,
 
+    // Muhurta / Choghadiya / Hora systems
+    val muhurtas: List<MuhurtaPeriod> = emptyList(),
+    val choghadiyas: List<ChoghadiyaPeriod> = emptyList(),
+    val horas: List<HoraPeriod> = emptyList(),
+
     // Festivals
     val festivals: List<FestivalOccurrence> = emptyList()
 ) {

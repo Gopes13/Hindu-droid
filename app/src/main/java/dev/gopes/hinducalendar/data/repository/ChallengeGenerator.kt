@@ -11,7 +11,10 @@ import kotlin.random.Random
 
 internal class ChallengeGenerator(private val context: Context) {
 
-    fun generateDailyChallenge(): DailyChallenge {
+    private var overrideLanguageCode: String? = null
+
+    fun generateDailyChallenge(languageCode: String? = null): DailyChallenge {
+        this.overrideLanguageCode = languageCode
         val dayOfYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
         val type = ChallengeType.entries[dayOfYear % ChallengeType.entries.size]
         val rng = Random(dayOfYear.toLong())
@@ -59,8 +62,13 @@ internal class ChallengeGenerator(private val context: Context) {
 
     private fun getLocalizedContext(): Context {
         val locales = AppCompatDelegate.getApplicationLocales()
-        if (locales.isEmpty) return context
-        val locale = locales[0] ?: return context
+        val locale = if (!locales.isEmpty) {
+            locales[0]
+        } else {
+            // Fallback: use the language code passed from preferences
+            overrideLanguageCode?.takeIf { it != "en" && it != "hl" }
+                ?.let { java.util.Locale(it) }
+        } ?: return context
         val config = Configuration(context.resources.configuration).apply {
             setLocale(locale)
         }

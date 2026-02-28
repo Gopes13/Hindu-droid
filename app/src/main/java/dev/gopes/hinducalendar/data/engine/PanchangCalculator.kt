@@ -105,6 +105,131 @@ object PanchangCalculator {
         return TimePeriodResult("Gulika Kaal", (seg - 1) * segDur, seg * segDur)
     }
 
+    // ==================== Muhurta System ====================
+
+    data class MuhurtaResult(
+        val daySlots: List<MuhurtaSlot>,    // 15 entries
+        val nightSlots: List<MuhurtaSlot>   // 15 entries
+    )
+
+    data class MuhurtaSlot(
+        val muhurtaNumber: Int,   // 1-30
+        val startMinutes: Double, // minutes from sunrise (day) or sunset (night)
+        val endMinutes: Double
+    )
+
+    /**
+     * Compute all 30 muhurta time slots for a given day.
+     * Day muhurtas (1-15): divide sunrise-to-sunset into 15 equal parts.
+     * Night muhurtas (16-30): divide sunset-to-next-sunrise into 15 equal parts.
+     */
+    fun calculateMuhurtas(dayDurationMinutes: Double, nightDurationMinutes: Double): MuhurtaResult {
+        val daySlotDur = dayDurationMinutes / 15.0
+        val daySlots = (0 until 15).map { i ->
+            MuhurtaSlot(
+                muhurtaNumber = i + 1,
+                startMinutes = i * daySlotDur,
+                endMinutes = (i + 1) * daySlotDur
+            )
+        }
+        val nightSlotDur = nightDurationMinutes / 15.0
+        val nightSlots = (0 until 15).map { i ->
+            MuhurtaSlot(
+                muhurtaNumber = i + 16,
+                startMinutes = i * nightSlotDur,
+                endMinutes = (i + 1) * nightSlotDur
+            )
+        }
+        return MuhurtaResult(daySlots, nightSlots)
+    }
+
+    // ==================== Choghadiya System ====================
+
+    data class ChoghadiyaResult(
+        val daySlots: List<ChoghadiyaSlot>,   // 8 entries
+        val nightSlots: List<ChoghadiyaSlot>  // 8 entries
+    )
+
+    data class ChoghadiyaSlot(
+        val position: Int,        // 0-7
+        val isDay: Boolean,
+        val startMinutes: Double, // from sunrise (day) or sunset (night)
+        val endMinutes: Double
+    )
+
+    /**
+     * Compute all 16 Choghadiya time slots (8 day + 8 night).
+     * Each period = dayDuration/8 (day) or nightDuration/8 (night).
+     */
+    fun calculateChoghadiyas(
+        dayDurationMinutes: Double,
+        nightDurationMinutes: Double,
+        weekday: Int
+    ): ChoghadiyaResult {
+        val daySegDur = dayDurationMinutes / 8.0
+        val daySlots = (0 until 8).map { i ->
+            ChoghadiyaSlot(
+                position = i,
+                isDay = true,
+                startMinutes = i * daySegDur,
+                endMinutes = (i + 1) * daySegDur
+            )
+        }
+        val nightSegDur = nightDurationMinutes / 8.0
+        val nightSlots = (0 until 8).map { i ->
+            ChoghadiyaSlot(
+                position = i,
+                isDay = false,
+                startMinutes = i * nightSegDur,
+                endMinutes = (i + 1) * nightSegDur
+            )
+        }
+        return ChoghadiyaResult(daySlots, nightSlots)
+    }
+
+    // ==================== Hora System ====================
+
+    data class HoraResult(val slots: List<HoraSlot>) // 24 entries
+
+    data class HoraSlot(
+        val horaIndex: Int,       // 0-23
+        val startMinutes: Double, // from sunrise
+        val endMinutes: Double,
+        val isDay: Boolean
+    )
+
+    /**
+     * Compute all 24 Hora time slots for a given day.
+     * First 12 horas span sunrise-to-sunset (day hora = dayDuration / 12).
+     * Next 12 horas span sunset-to-next-sunrise (night hora = nightDuration / 12).
+     */
+    fun calculateHoras(
+        dayDurationMinutes: Double,
+        nightDurationMinutes: Double
+    ): HoraResult {
+        val dayHoraDur = dayDurationMinutes / 12.0
+        val nightHoraDur = nightDurationMinutes / 12.0
+        val slots = (0 until 24).map { i ->
+            if (i < 12) {
+                HoraSlot(
+                    horaIndex = i,
+                    startMinutes = i * dayHoraDur,
+                    endMinutes = (i + 1) * dayHoraDur,
+                    isDay = true
+                )
+            } else {
+                val nightIdx = i - 12
+                HoraSlot(
+                    horaIndex = i,
+                    startMinutes = dayDurationMinutes + nightIdx * nightHoraDur,
+                    endMinutes = dayDurationMinutes + (nightIdx + 1) * nightHoraDur,
+                    isDay = false
+                )
+            }
+        }
+        return HoraResult(slots)
+    }
+
     // ==================== Hindu Month (Lunar) ====================
 
     data class HinduMonthResult(val month: HinduMonth, val isAdhikMaas: Boolean)

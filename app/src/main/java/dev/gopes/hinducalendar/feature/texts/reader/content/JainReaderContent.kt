@@ -71,7 +71,7 @@ internal fun JainContent(data: JainPrayersData, lang: AppLanguage, modifier: Mod
 
             // Line-by-line breakdown
             if (nm.lineByLine.isNotEmpty()) {
-                items(nm.lineByLine, key = { it.line }) { line ->
+                items(nm.lineByLine, key = { "namokar_${it.line}" }) { line ->
                     val ref = "${stringResource(R.string.text_line)} ${line.line}"
                     VerseCard(
                         badge = ref,
@@ -98,7 +98,7 @@ internal fun JainContent(data: JainPrayersData, lang: AppLanguage, modifier: Mod
                 )
             }
 
-            items(data.mahaviraTeachings, key = { it.episode }) { teaching ->
+            items(data.mahaviraTeachings, key = { "teaching_${it.episode}" }) { teaching ->
                 SacredCard {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,

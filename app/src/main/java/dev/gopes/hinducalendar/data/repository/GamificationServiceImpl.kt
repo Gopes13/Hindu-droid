@@ -72,6 +72,6 @@ class GamificationServiceImpl @Inject constructor(
         DailyRewardsCalculator.rewardSanskritVerse(data)
 
     // Challenge
-    override fun generateDailyChallenge() =
-        challenges.generateDailyChallenge()
+    override fun generateDailyChallenge(languageCode: String?) =
+        challenges.generateDailyChallenge(languageCode)
 }

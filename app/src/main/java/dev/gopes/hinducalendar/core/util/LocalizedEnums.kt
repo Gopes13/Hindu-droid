@@ -33,6 +33,65 @@ fun DharmaPath.localizedDescription(): String = when (this) {
     DharmaPath.JAIN -> stringResource(R.string.dharma_jain_desc)
 }
 
+/** Localized display name for [Muhurta]. */
+@Composable
+fun Muhurta.localizedName(): String = when (this) {
+    Muhurta.RUDRA -> stringResource(R.string.muhurta_rudra)
+    Muhurta.AHI -> stringResource(R.string.muhurta_ahi)
+    Muhurta.MITRA -> stringResource(R.string.muhurta_mitra)
+    Muhurta.PITRU -> stringResource(R.string.muhurta_pitru)
+    Muhurta.VASU -> stringResource(R.string.muhurta_vasu)
+    Muhurta.VARA -> stringResource(R.string.muhurta_vara)
+    Muhurta.VISHWADEVA -> stringResource(R.string.muhurta_vishwadeva)
+    Muhurta.VIDHI -> stringResource(R.string.muhurta_vidhi)
+    Muhurta.SATAMUKHI -> stringResource(R.string.muhurta_satamukhi)
+    Muhurta.PURUHUTA -> stringResource(R.string.muhurta_puruhuta)
+    Muhurta.VAHINI -> stringResource(R.string.muhurta_vahini)
+    Muhurta.NAKTANCHARA -> stringResource(R.string.muhurta_naktanchara)
+    Muhurta.VARUNA -> stringResource(R.string.muhurta_varuna)
+    Muhurta.ARYAMAN -> stringResource(R.string.muhurta_aryaman)
+    Muhurta.BHAGA -> stringResource(R.string.muhurta_bhaga)
+    Muhurta.GIRISHA -> stringResource(R.string.muhurta_girisha)
+    Muhurta.AJIPADA -> stringResource(R.string.muhurta_ajipada)
+    Muhurta.AHIRBUDHNYA -> stringResource(R.string.muhurta_ahirbudhnya)
+    Muhurta.PUSHA -> stringResource(R.string.muhurta_pusha)
+    Muhurta.ASHWINI -> stringResource(R.string.muhurta_ashwini)
+    Muhurta.YAMA -> stringResource(R.string.muhurta_yama)
+    Muhurta.AGNI -> stringResource(R.string.muhurta_agni)
+    Muhurta.VIDHATA -> stringResource(R.string.muhurta_vidhata)
+    Muhurta.CHANDA -> stringResource(R.string.muhurta_chanda)
+    Muhurta.ADITI -> stringResource(R.string.muhurta_aditi)
+    Muhurta.JIVA -> stringResource(R.string.muhurta_jiva)
+    Muhurta.VISHNU -> stringResource(R.string.muhurta_vishnu)
+    Muhurta.YUMIGADYUTI -> stringResource(R.string.muhurta_yumigadyuti)
+    Muhurta.BRAHMA -> stringResource(R.string.muhurta_brahma)
+    Muhurta.SAMUDRAM -> stringResource(R.string.muhurta_samudram)
+}
+
+/** Localized display name for [ChoghadiyaType]. */
+@Composable
+fun ChoghadiyaType.localizedName(): String = when (this) {
+    ChoghadiyaType.UDVEGH -> stringResource(R.string.choghadiya_udvegh)
+    ChoghadiyaType.CHAR -> stringResource(R.string.choghadiya_char)
+    ChoghadiyaType.LABH -> stringResource(R.string.choghadiya_labh)
+    ChoghadiyaType.AMRIT -> stringResource(R.string.choghadiya_amrit)
+    ChoghadiyaType.KAAL -> stringResource(R.string.choghadiya_kaal)
+    ChoghadiyaType.SHUBH -> stringResource(R.string.choghadiya_shubh)
+    ChoghadiyaType.ROG -> stringResource(R.string.choghadiya_rog)
+}
+
+/** Localized display name for [HoraPlanet]. */
+@Composable
+fun HoraPlanet.localizedName(): String = when (this) {
+    HoraPlanet.SUN -> stringResource(R.string.hora_sun)
+    HoraPlanet.MOON -> stringResource(R.string.hora_moon)
+    HoraPlanet.MARS -> stringResource(R.string.hora_mars)
+    HoraPlanet.MERCURY -> stringResource(R.string.hora_mercury)
+    HoraPlanet.JUPITER -> stringResource(R.string.hora_jupiter)
+    HoraPlanet.VENUS -> stringResource(R.string.hora_venus)
+    HoraPlanet.SATURN -> stringResource(R.string.hora_saturn)
+}
+
 /** Localized display name for [SacredTextType]. */
 @Composable
 fun SacredTextType.localizedName(): String = when (this) {

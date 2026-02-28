@@ -2,6 +2,7 @@ package dev.gopes.hinducalendar.feature.sanskrit
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -13,9 +14,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,9 @@ import dev.gopes.hinducalendar.domain.model.*
 import dev.gopes.hinducalendar.core.ui.components.ConfettiOverlay
 import dev.gopes.hinducalendar.core.ui.components.SacredCard
 import dev.gopes.hinducalendar.core.ui.components.SacredHighlightCard
+import kotlinx.coroutines.delay
+
+// ── Data models ──────────────────────────────────────────────────────────────
 
 private data class QueuedExercise(
     val exercise: SanskritExercise,
@@ -38,8 +42,119 @@ private data class AnswerOption(
 )
 
 private enum class LessonPhase {
-    CONTEXT_CARD, QUESTION, FEEDBACK, COMPLETE
+    CONTEXT_CARD, TEACH, PRACTICE, QUIZ, QUIZ_FEEDBACK, COMPLETE
 }
+
+/** Normalized teaching item — wraps letter, word, or syllable for the teach UI. */
+private sealed class TeachItem {
+    abstract val displayChar: String
+    abstract val transliteration: String
+    abstract val speakText: String
+    /** Example word for contextual TTS (letter → exampleWord, others null). */
+    abstract val exampleWord: String?
+
+    data class LetterItem(val letter: SanskritLetter) : TeachItem() {
+        override val displayChar = letter.character
+        override val transliteration = letter.transliteration
+        override val speakText = letter.character
+        override val exampleWord = letter.exampleWord
+    }
+    data class WordItem(val word: SanskritWord) : TeachItem() {
+        override val displayChar = word.sanskrit
+        override val transliteration = word.transliteration
+        override val speakText = word.sanskrit
+        override val exampleWord: String? = null
+    }
+    data class SyllableItem(val syllable: SanskritSyllable) : TeachItem() {
+        override val displayChar = syllable.script
+        override val transliteration = syllable.transliteration
+        override val speakText = syllable.script
+        override val exampleWord: String? = null
+    }
+}
+
+/** A step in the teach sequence — either showing an item or a quick check. */
+private sealed class TeachStep {
+    data class ShowItem(val item: TeachItem, val itemIndex: Int, val totalItems: Int) : TeachStep()
+    data class QuickCheck(val target: TeachItem, val distractor: TeachItem) : TeachStep()
+}
+
+/** A 2-choice practice question. */
+private data class PracticeQuestion(
+    val questionText: String,
+    val option1: String,
+    val option2: String,
+    val correctIndex: Int  // 0 or 1
+)
+
+// ── Helper functions ─────────────────────────────────────────────────────────
+
+/** Extract unique teachable items from exercises. */
+private fun extractTeachItems(exercises: List<SanskritExercise>): List<TeachItem> {
+    val seen = mutableSetOf<String>()
+    return exercises.mapNotNull { ex ->
+        when (ex) {
+            is SanskritExercise.LetterToSound -> TeachItem.LetterItem(ex.letter)
+            is SanskritExercise.SoundToLetter -> TeachItem.LetterItem(ex.letter)
+            is SanskritExercise.WordMeaning -> TeachItem.WordItem(ex.word)
+            is SanskritExercise.WordReading -> TeachItem.WordItem(ex.word)
+            is SanskritExercise.SyllableToSound -> TeachItem.SyllableItem(ex.syllable)
+            is SanskritExercise.SoundToSyllable -> TeachItem.SyllableItem(ex.syllable)
+            else -> null
+        }
+    }.filter { seen.add(it.displayChar) }
+}
+
+/** Build teach sequence: show items one at a time, with quick checks after every 2. */
+private fun buildTeachSequence(items: List<TeachItem>): List<TeachStep> {
+    val steps = mutableListOf<TeachStep>()
+    items.forEachIndexed { i, item ->
+        steps.add(TeachStep.ShowItem(item, i, items.size))
+        // After every 2nd item, add a quick check
+        if (i % 2 == 1 && i >= 1) {
+            steps.add(TeachStep.QuickCheck(target = items[i - 1], distractor = items[i]))
+        }
+    }
+    return steps
+}
+
+/** Generate 2-choice practice questions from teach items. */
+private fun buildPracticeQuestions(items: List<TeachItem>): List<PracticeQuestion> {
+    if (items.size < 2) return emptyList()
+    val questions = mutableListOf<PracticeQuestion>()
+
+    fun addPair(a: TeachItem, b: TeachItem) {
+        // Direction 1: show transliteration, pick character
+        val q1Correct = if ((0..1).random() == 0) 0 else 1
+        questions.add(PracticeQuestion(
+            questionText = "Which is '${a.transliteration}'?",
+            option1 = if (q1Correct == 0) a.displayChar else b.displayChar,
+            option2 = if (q1Correct == 0) b.displayChar else a.displayChar,
+            correctIndex = q1Correct
+        ))
+        // Direction 2: show character, pick transliteration
+        val q2Correct = if ((0..1).random() == 0) 0 else 1
+        questions.add(PracticeQuestion(
+            questionText = "What is ${b.displayChar}?",
+            option1 = if (q2Correct == 0) b.transliteration else a.transliteration,
+            option2 = if (q2Correct == 0) a.transliteration else b.transliteration,
+            correctIndex = q2Correct
+        ))
+    }
+
+    // Adjacent pairs: (0,1), (2,3), (4,5)...
+    for (i in 0 until items.size - 1 step 2) {
+        addPair(items[i], items[i + 1])
+    }
+    // Cross pairs for more mixing: (0,2), (1,3)...
+    for (i in 0 until items.size - 2 step 2) {
+        if (i + 2 < items.size) addPair(items[i], items[i + 2])
+    }
+
+    return questions.shuffled()
+}
+
+// ── Main Screen ──────────────────────────────────────────────────────────────
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,22 +162,34 @@ fun SanskritLessonScreen(
     lessonId: String,
     onComplete: (correctCount: Int, totalCount: Int, masteredLetterIds: List<String>) -> Unit,
     onSpeak: (String) -> Unit,
-    onBack: () -> Unit
-) {
-    val lesson = remember {
-        SanskritData.modules.flatMap { it.lessons }.find { it.id == lessonId }
+    onSpeakForTeaching: (character: String, exampleWord: String?) -> Unit,
+    onBack: () -> Unit,
+    lessonResolver: (String) -> SanskritLesson? = { id ->
+        SanskritData.modules.flatMap { it.lessons }.find { it.id == id }
     }
+) {
+    val lesson = remember { lessonResolver(lessonId) }
 
     if (lesson == null) {
         onBack()
         return
     }
 
+    // ── Teach phase state ──
+    val teachItems = remember { extractTeachItems(lesson.exercises) }
+    val teachSteps = remember { buildTeachSequence(teachItems) }
+    var teachIndex by remember { mutableIntStateOf(0) }
+
+    // ── Practice phase state ──
+    val practiceQuestions = remember { buildPracticeQuestions(teachItems) }
+    var practiceIndex by remember { mutableIntStateOf(0) }
+    var practiceAnswer by remember { mutableStateOf<Int?>(null) }
+
+    // ── Quiz phase state ──
     var queue by remember { mutableStateOf(lesson.exercises.map { QueuedExercise(it) }.toMutableList()) }
-    var currentIndex by remember { mutableIntStateOf(0) }
+    var quizIndex by remember { mutableIntStateOf(0) }
     var phase by remember { mutableStateOf(LessonPhase.CONTEXT_CARD) }
     var correctCount by remember { mutableIntStateOf(0) }
-    var consecutiveWrong by remember { mutableIntStateOf(0) }
     var correctLetterIds by remember { mutableStateOf(setOf<String>()) }
     var showConfetti by remember { mutableStateOf(false) }
     var selectedAnswer by remember { mutableStateOf<AnswerOption?>(null) }
@@ -70,8 +197,27 @@ fun SanskritLessonScreen(
     var feedbackExplanation by remember { mutableStateOf("") }
 
     val totalOriginal = lesson.exercises.size
-    val currentExercise = queue.getOrNull(currentIndex)
-    val progress = if (queue.isNotEmpty()) (currentIndex.toFloat() / queue.size).coerceIn(0f, 1f) else 1f
+    val currentExercise = queue.getOrNull(quizIndex)
+
+    // Overall progress across all phases
+    val totalSteps = teachSteps.size + practiceQuestions.size + queue.size
+    val currentStep = when (phase) {
+        LessonPhase.CONTEXT_CARD -> 0
+        LessonPhase.TEACH -> teachIndex
+        LessonPhase.PRACTICE -> teachSteps.size + practiceIndex
+        LessonPhase.QUIZ, LessonPhase.QUIZ_FEEDBACK -> teachSteps.size + practiceQuestions.size + quizIndex
+        LessonPhase.COMPLETE -> totalSteps
+    }
+    val overallProgress = if (totalSteps > 0) (currentStep.toFloat() / totalSteps).coerceIn(0f, 1f) else 0f
+
+    // Phase label for header
+    val phaseLabel = when (phase) {
+        LessonPhase.CONTEXT_CARD -> "Learn"
+        LessonPhase.TEACH -> "Learn"
+        LessonPhase.PRACTICE -> "Practice"
+        LessonPhase.QUIZ, LessonPhase.QUIZ_FEEDBACK -> "Quiz"
+        LessonPhase.COMPLETE -> "Done"
+    }
 
     fun buildOptions(exercise: SanskritExercise): List<AnswerOption> {
         return when (exercise) {
@@ -105,6 +251,7 @@ fun SanskritLessonScreen(
                 val distractors = exercise.distractors.map { AnswerOption(it, null, false) }
                 (listOf(correct) + distractors).shuffled()
             }
+            else -> emptyList()
         }
     }
 
@@ -116,43 +263,40 @@ fun SanskritLessonScreen(
             is SanskritExercise.SyllableToSound -> "How is ${exercise.syllable.script} pronounced?"
             is SanskritExercise.SoundToSyllable -> "Which syllable is '${exercise.syllable.transliteration}'?"
             is SanskritExercise.WordReading -> "Read ${exercise.word.sanskrit} — what does it mean?"
+            else -> ""
         }
     }
 
-    fun handleAnswer(option: AnswerOption) {
+    fun handleQuizAnswer(option: AnswerOption) {
         selectedAnswer = option
         feedbackCorrect = option.isCorrect
-        val item = queue[currentIndex]
+        val item = queue[quizIndex]
 
         if (option.isCorrect) {
             correctCount++
-            consecutiveWrong = 0
             currentExercise?.exercise?.targetLetterId?.let { correctLetterIds = correctLetterIds + it }
             showConfetti = true
             feedbackExplanation = "Correct!"
         } else {
-            consecutiveWrong++
-            feedbackExplanation = "Not quite — the correct answer was highlighted."
-            // Re-queue wrong answers (max 2 times)
+            feedbackExplanation = "Not quite — the correct answer is highlighted."
             if (item.requeueCount < 2) {
                 item.requeueCount++
-                val insertAt = (currentIndex + 2).coerceAtMost(queue.size)
+                val insertAt = (quizIndex + 2).coerceAtMost(queue.size)
                 queue.add(insertAt, item.copy())
             }
         }
-        phase = LessonPhase.FEEDBACK
+        phase = LessonPhase.QUIZ_FEEDBACK
     }
 
-    fun advance() {
+    fun advanceQuiz() {
         selectedAnswer = null
-        currentIndex++
-        if (currentIndex >= queue.size) {
+        quizIndex++
+        if (quizIndex >= queue.size) {
             phase = LessonPhase.COMPLETE
             onComplete(correctCount, totalOriginal, correctLetterIds.toList())
         } else {
-            phase = LessonPhase.QUESTION
-            // Auto-speak for sound exercises
-            val ex = queue[currentIndex].exercise
+            phase = LessonPhase.QUIZ
+            val ex = queue[quizIndex].exercise
             if (ex is SanskritExercise.SoundToLetter) onSpeak(ex.letter.character)
             if (ex is SanskritExercise.SoundToSyllable) onSpeak(ex.syllable.script)
         }
@@ -167,7 +311,7 @@ fun SanskritLessonScreen(
             ) {
                 // Progress bar
                 LinearProgressIndicator(
-                    progress = { progress },
+                    progress = { overallProgress },
                     modifier = Modifier.fillMaxWidth().height(4.dp),
                     color = MaterialTheme.colorScheme.primary,
                     trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
@@ -184,13 +328,20 @@ fun SanskritLessonScreen(
                     IconButton(onClick = onBack) {
                         Icon(Icons.Filled.Close, stringResource(R.string.common_close))
                     }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            lesson.title,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            phaseLabel,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                     Text(
-                        lesson.title,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Text(
-                        "${currentIndex + 1}/${queue.size}",
+                        "${currentStep + 1}/$totalSteps",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -203,34 +354,107 @@ fun SanskritLessonScreen(
                             card = lesson.contextCard,
                             onSpeak = onSpeak,
                             onStart = {
-                                phase = LessonPhase.QUESTION
-                                val ex = queue.firstOrNull()?.exercise
-                                if (ex is SanskritExercise.SoundToLetter) onSpeak(ex.letter.character)
-                                if (ex is SanskritExercise.SoundToSyllable) onSpeak(ex.syllable.script)
+                                if (teachSteps.isNotEmpty()) {
+                                    phase = LessonPhase.TEACH
+                                    // TeachCardView's LaunchedEffect handles auto-speak
+                                } else {
+                                    phase = LessonPhase.QUIZ
+                                }
                             }
                         )
                     }
 
-                    LessonPhase.QUESTION -> {
-                        if (currentExercise != null) {
-                            val options = remember(currentIndex) { buildOptions(currentExercise.exercise) }
-                            QuestionView(
-                                question = questionText(currentExercise.exercise),
-                                options = options,
-                                onAnswer = { handleAnswer(it) }
+                    LessonPhase.TEACH -> {
+                        val step = teachSteps.getOrNull(teachIndex)
+                        if (step != null) {
+                            when (step) {
+                                is TeachStep.ShowItem -> {
+                                    TeachCardView(
+                                        item = step.item,
+                                        itemIndex = step.itemIndex,
+                                        totalItems = step.totalItems,
+                                        onSpeakForTeaching = onSpeakForTeaching,
+                                        onContinue = {
+                                            teachIndex++
+                                            if (teachIndex >= teachSteps.size) {
+                                                // Move to practice
+                                                if (practiceQuestions.isNotEmpty()) {
+                                                    phase = LessonPhase.PRACTICE
+                                                } else {
+                                                    phase = LessonPhase.QUIZ
+                                                }
+                                            }
+                                            // TeachCardView's LaunchedEffect handles auto-speak
+                                        }
+                                    )
+                                }
+                                is TeachStep.QuickCheck -> {
+                                    QuickCheckView(
+                                        target = step.target,
+                                        distractor = step.distractor,
+                                        onSpeak = onSpeak,
+                                        onDone = {
+                                            teachIndex++
+                                            if (teachIndex >= teachSteps.size) {
+                                                if (practiceQuestions.isNotEmpty()) {
+                                                    phase = LessonPhase.PRACTICE
+                                                } else {
+                                                    phase = LessonPhase.QUIZ
+                                                }
+                                            }
+                                            // TeachCardView's LaunchedEffect handles auto-speak
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    LessonPhase.PRACTICE -> {
+                        val question = practiceQuestions.getOrNull(practiceIndex)
+                        if (question != null) {
+                            PracticeView(
+                                question = question,
+                                questionIndex = practiceIndex,
+                                totalQuestions = practiceQuestions.size,
+                                selectedAnswer = practiceAnswer,
+                                onAnswer = { chosen ->
+                                    practiceAnswer = chosen
+                                },
+                                onNext = {
+                                    practiceAnswer = null
+                                    practiceIndex++
+                                    if (practiceIndex >= practiceQuestions.size) {
+                                        phase = LessonPhase.QUIZ
+                                        val ex = queue.firstOrNull()?.exercise
+                                        if (ex is SanskritExercise.SoundToLetter) onSpeak(ex.letter.character)
+                                        if (ex is SanskritExercise.SoundToSyllable) onSpeak(ex.syllable.script)
+                                    }
+                                }
                             )
                         }
                     }
 
-                    LessonPhase.FEEDBACK -> {
+                    LessonPhase.QUIZ -> {
                         if (currentExercise != null) {
-                            val options = remember(currentIndex) { buildOptions(currentExercise.exercise) }
+                            val options = remember(quizIndex) { buildOptions(currentExercise.exercise) }
+                            QuestionView(
+                                question = questionText(currentExercise.exercise),
+                                options = options,
+                                onAnswer = { handleQuizAnswer(it) }
+                            )
+                        }
+                    }
+
+                    LessonPhase.QUIZ_FEEDBACK -> {
+                        if (currentExercise != null) {
+                            val options = remember(quizIndex) { buildOptions(currentExercise.exercise) }
                             FeedbackView(
                                 isCorrect = feedbackCorrect,
                                 explanation = feedbackExplanation,
                                 options = options,
                                 selectedAnswer = selectedAnswer,
-                                onNext = { advance() }
+                                onNext = { advanceQuiz() }
                             )
                         }
                     }
@@ -250,6 +474,8 @@ fun SanskritLessonScreen(
         ConfettiOverlay(isActive = showConfetti, onFinished = { showConfetti = false })
     }
 }
+
+// ── Context Card (existing — overview) ───────────────────────────────────────
 
 @Composable
 private fun ContextCardView(
@@ -309,6 +535,400 @@ private fun ContextCardView(
     }
 }
 
+// ── Teach Card — introduces one item at a time ──────────────────────────────
+
+@Composable
+private fun TeachCardView(
+    item: TeachItem,
+    itemIndex: Int,
+    totalItems: Int,
+    onSpeakForTeaching: (character: String, exampleWord: String?) -> Unit,
+    onContinue: () -> Unit
+) {
+    // Auto-play TTS when this card appears — speaks character, then example word
+    LaunchedEffect(item.speakText) {
+        delay(300)
+        onSpeakForTeaching(item.speakText, item.exampleWord)
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Large character
+        Text(
+            item.displayChar,
+            fontSize = 72.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        // Transliteration
+        Text(
+            item.transliteration,
+            fontSize = 24.sp,
+            fontStyle = FontStyle.Italic,
+            color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        // Type-specific details
+        when (item) {
+            is TeachItem.LetterItem -> {
+                // Pronunciation guide
+                Text(
+                    item.letter.pronunciation,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(16.dp))
+
+                // Example word card
+                SacredCard {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            item.letter.exampleWord,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                item.letter.exampleTranslit,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontStyle = FontStyle.Italic,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                item.letter.exampleMeaning,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+            }
+            is TeachItem.WordItem -> {
+                // Word meaning
+                Text(
+                    "\"${item.word.meaning}\"",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    fontStyle = FontStyle.Italic
+                )
+            }
+            is TeachItem.SyllableItem -> {
+                // Base + mark breakdown
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        item.syllable.base,
+                        fontSize = 28.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        "  +  ",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        item.syllable.markDisplay,
+                        fontSize = 28.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        "  (${item.syllable.markName})",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        // Listen button — speaks character then example word
+        OutlinedButton(onClick = { onSpeakForTeaching(item.speakText, item.exampleWord) }) {
+            Icon(
+                Icons.Filled.VolumeUp,
+                contentDescription = stringResource(R.string.cd_pronounce),
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text("Listen")
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        // Counter
+        Text(
+            "${itemIndex + 1} of $totalItems",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        // Continue button
+        Button(
+            onClick = onContinue,
+            modifier = Modifier.fillMaxWidth(0.6f)
+        ) {
+            Text("Continue")
+            Spacer(Modifier.width(4.dp))
+            Icon(Icons.Filled.ArrowForward, contentDescription = null, modifier = Modifier.size(18.dp))
+        }
+    }
+}
+
+// ── Quick Check — 2-choice inline after teaching a pair ──────────────────────
+
+@Composable
+private fun QuickCheckView(
+    target: TeachItem,
+    distractor: TeachItem,
+    onSpeak: (String) -> Unit,
+    onDone: () -> Unit
+) {
+    var answered by remember { mutableStateOf(false) }
+    var selectedCorrectly by remember { mutableStateOf(false) }
+    val options = remember { listOf(target, distractor).shuffled() }
+    val correctIndex = options.indexOf(target)
+
+    // Auto-advance after feedback
+    LaunchedEffect(answered) {
+        if (answered) {
+            delay(1200)
+            onDone()
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Phase label
+        Surface(
+            shape = RoundedCornerShape(50),
+            color = MaterialTheme.colorScheme.secondaryContainer
+        ) {
+            Text(
+                "Quick Check",
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        Text(
+            "Which is '${target.transliteration}'?",
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Medium
+        )
+
+        Spacer(Modifier.height(32.dp))
+
+        // Two large option buttons
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            options.forEachIndexed { idx, option ->
+                val isCorrectOption = idx == correctIndex
+                val bgColor = when {
+                    !answered -> MaterialTheme.colorScheme.surfaceVariant
+                    isCorrectOption -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                    !isCorrectOption && !selectedCorrectly -> MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
+                    else -> MaterialTheme.colorScheme.surfaceVariant
+                }
+                val borderColor = when {
+                    !answered -> Color.Transparent
+                    isCorrectOption -> MaterialTheme.colorScheme.primary
+                    else -> Color.Transparent
+                }
+
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .then(
+                            if (!answered) Modifier.clickable {
+                                selectedCorrectly = isCorrectOption
+                                answered = true
+                                if (isCorrectOption) onSpeak(option.speakText)
+                            } else Modifier
+                        )
+                        .border(2.dp, borderColor, RoundedCornerShape(16.dp)),
+                    shape = RoundedCornerShape(16.dp),
+                    color = bgColor
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            option.displayChar,
+                            fontSize = 48.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+
+        // Feedback
+        if (answered) {
+            Spacer(Modifier.height(16.dp))
+            Text(
+                if (selectedCorrectly) "Yes!" else "It's ${target.displayChar}",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = if (selectedCorrectly) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.error
+            )
+        }
+    }
+}
+
+// ── Practice View — 2-choice reinforcement questions ─────────────────────────
+
+@Composable
+private fun PracticeView(
+    question: PracticeQuestion,
+    questionIndex: Int,
+    totalQuestions: Int,
+    selectedAnswer: Int?,
+    onAnswer: (Int) -> Unit,
+    onNext: () -> Unit
+) {
+    val isAnswered = selectedAnswer != null
+    val isCorrect = selectedAnswer == question.correctIndex
+
+    // Auto-advance after feedback
+    LaunchedEffect(isAnswered) {
+        if (isAnswered) {
+            delay(1200)
+            onNext()
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Phase label
+        Surface(
+            shape = RoundedCornerShape(50),
+            color = MaterialTheme.colorScheme.tertiaryContainer
+        ) {
+            Text(
+                "Practice ${questionIndex + 1}/$totalQuestions",
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onTertiaryContainer
+            )
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        Text(
+            question.questionText,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Medium
+        )
+
+        Spacer(Modifier.height(32.dp))
+
+        // Two option buttons
+        val options = listOf(question.option1, question.option2)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            options.forEachIndexed { idx, optionText ->
+                val isCorrectOption = idx == question.correctIndex
+                val isSelected = selectedAnswer == idx
+                val bgColor = when {
+                    !isAnswered -> MaterialTheme.colorScheme.surfaceVariant
+                    isCorrectOption -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                    isSelected -> MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
+                    else -> MaterialTheme.colorScheme.surfaceVariant
+                }
+                val borderColor = when {
+                    !isAnswered -> Color.Transparent
+                    isCorrectOption -> MaterialTheme.colorScheme.primary
+                    else -> Color.Transparent
+                }
+
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .then(
+                            if (!isAnswered) Modifier.clickable { onAnswer(idx) }
+                            else Modifier
+                        )
+                        .border(2.dp, borderColor, RoundedCornerShape(16.dp)),
+                    shape = RoundedCornerShape(16.dp),
+                    color = bgColor
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            optionText,
+                            fontSize = 36.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+        }
+
+        // Feedback
+        if (isAnswered) {
+            Spacer(Modifier.height(16.dp))
+            Text(
+                if (isCorrect) "Yes!" else "The answer is ${options[question.correctIndex]}",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = if (isCorrect) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.error
+            )
+        }
+    }
+}
+
+// ── Quiz View — existing 4-choice test ───────────────────────────────────────
+
 @Composable
 private fun QuestionView(
     question: String,
@@ -322,6 +942,22 @@ private fun QuestionView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // Quiz phase label
+        Surface(
+            shape = RoundedCornerShape(50),
+            color = MaterialTheme.colorScheme.primaryContainer
+        ) {
+            Text(
+                "Quiz",
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+
+        Spacer(Modifier.height(24.dp))
+
         Text(
             question,
             style = MaterialTheme.typography.titleMedium,
@@ -368,7 +1004,6 @@ private fun QuestionView(
                             }
                         }
                     }
-                    // Pad if odd number
                     if (row.size < 2) {
                         Spacer(Modifier.weight(1f))
                     }
@@ -377,6 +1012,8 @@ private fun QuestionView(
         }
     }
 }
+
+// ── Feedback View — shows correct/incorrect after quiz answer ────────────────
 
 @Composable
 private fun FeedbackView(
@@ -409,7 +1046,6 @@ private fun FeedbackView(
 
         Spacer(Modifier.height(24.dp))
 
-        // Show options with highlights
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             for (option in options) {
                 val bgColor = when {
@@ -456,6 +1092,8 @@ private fun FeedbackView(
     }
 }
 
+// ── Completion View — results ────────────────────────────────────────────────
+
 @Composable
 private fun CompletionView(
     correctCount: Int,
@@ -473,7 +1111,7 @@ private fun CompletionView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(if (isPerfect) "\\uD83C\\uDF1F" else "\\uD83D\\uDC4F", fontSize = 48.sp)
+        Text(if (isPerfect) "\uD83C\uDF1F" else "\uD83D\uDC4F", fontSize = 48.sp)
         Spacer(Modifier.height(16.dp))
         Text(
             if (isPerfect) stringResource(R.string.sanskrit_perfect) else stringResource(R.string.sanskrit_well_done),

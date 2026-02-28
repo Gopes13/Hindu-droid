@@ -32,7 +32,6 @@ import dev.gopes.hinducalendar.core.util.*
 fun SacredTextsScreen(
     onTextClick: (SacredTextType) -> Unit = {},
     onBookmarksClick: () -> Unit = {},
-    onSanskritClick: () -> Unit = {},
     onBack: () -> Unit = {},
     viewModel: SacredTextsViewModel = hiltViewModel()
 ) {
@@ -93,59 +92,21 @@ fun SacredTextsScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                // 1. Sanskrit Pathshala card (matches iOS order)
-                item(key = "sanskrit") {
-                    Box(Modifier.entranceAnimation(0, isVibrant)) {
-                        SacredCard(
-                            modifier = Modifier.clickable { onSanskritClick() }
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    "\uD83D\uDD49",
-                                    fontSize = 30.sp,
-                                    modifier = Modifier.size(32.dp)
-                                )
-                                Spacer(Modifier.width(16.dp))
-                                Column(Modifier.weight(1f)) {
-                                    Text(
-                                        stringResource(R.string.sanskrit_title),
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                    Text(
-                                        stringResource(R.string.sanskrit_subtitle),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                                Icon(
-                                    Icons.Filled.ChevronRight,
-                                    contentDescription = stringResource(R.string.cd_open_text),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
-
-                // 2. Continue Reading hero card
+                // 1. Continue Reading hero card
                 val primaryText = uiState.availableTexts.firstOrNull { it.hasStarted }
                     ?: uiState.availableTexts.firstOrNull()
                 if (primaryText != null) {
                     item(key = "continue_reading") {
-                        Box(Modifier.entranceAnimation(1, isVibrant)) {
+                        Box(Modifier.entranceAnimation(0, isVibrant)) {
                             ContinueReadingCard(primaryText, onTextClick)
                         }
                     }
                 }
 
-                // 3. Bookmarks quick access
+                // 2. Bookmarks quick access
                 if (uiState.bookmarkCount > 0) {
                     item(key = "bookmarks") {
-                        Box(Modifier.entranceAnimation(2, isVibrant)) {
+                        Box(Modifier.entranceAnimation(1, isVibrant)) {
                             SacredCard(
                                 modifier = Modifier.clickable { onBookmarksClick() }
                             ) {
@@ -183,9 +144,9 @@ fun SacredTextsScreen(
                     }
                 }
 
-                // 4. "Your Path" section header — localized path name
+                // 3. "Your Path" section header — localized path name
                 item(key = "path_header") {
-                    Box(Modifier.entranceAnimation(3, isVibrant)) {
+                    Box(Modifier.entranceAnimation(2, isVibrant)) {
                         Column {
                             Text(
                                 stringResource(R.string.your_path_texts, uiState.dharmaPath.localizedName()),
@@ -204,7 +165,7 @@ fun SacredTextsScreen(
 
                 // 4. Path-specific text cards
                 items(uiState.availableTexts, key = { "path_${it.textType.name}" }) { textItem ->
-                    Box(Modifier.entranceAnimation(4, isVibrant)) {
+                    Box(Modifier.entranceAnimation(3, isVibrant)) {
                         SacredTextCard(textItem, isPathText = true, onTextClick = onTextClick)
                     }
                 }
@@ -212,7 +173,7 @@ fun SacredTextsScreen(
                 // 5. "All Sacred Texts" section
                 if (uiState.allOtherTexts.isNotEmpty()) {
                     item(key = "all_header") {
-                        Box(Modifier.entranceAnimation(5, isVibrant)) {
+                        Box(Modifier.entranceAnimation(4, isVibrant)) {
                             Column {
                                 Spacer(Modifier.height(8.dp))
                                 Text(
@@ -225,7 +186,7 @@ fun SacredTextsScreen(
                     }
 
                     items(uiState.allOtherTexts, key = { "other_${it.textType.name}" }) { textItem ->
-                        Box(Modifier.entranceAnimation(6, isVibrant)) {
+                        Box(Modifier.entranceAnimation(5, isVibrant)) {
                             SacredTextCard(textItem, isPathText = false, onTextClick = onTextClick)
                         }
                     }

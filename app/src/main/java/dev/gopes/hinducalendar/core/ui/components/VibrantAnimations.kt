@@ -40,7 +40,8 @@ fun Modifier.entranceAnimation(
     if (reduceMotionEnabled() || DeviceCapabilities.isBasic) return@composed this
 
     var appeared by remember { mutableStateOf(false) }
-    val delay = (index * 80).coerceAtMost(800) // 80ms per index, max 800ms
+    // Logarithmic stagger: front-loads visible items, total cascade ~300ms instead of ~880ms
+    val delay = (kotlin.math.ln((index + 1).toDouble()) * 120).toInt().coerceAtMost(500)
 
     LaunchedEffect(Unit) {
         kotlinx.coroutines.delay(delay.toLong())

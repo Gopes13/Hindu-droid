@@ -11,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.foundation.layout.Row
@@ -80,11 +81,13 @@ fun NavGraph(windowSizeClass: WindowSizeClass? = null) {
 
     val isMainScreen = screens.any { it.route == currentRoute }
         || currentRoute == "sacred_texts" || currentRoute == "kirtans"
+        || currentRoute == "sanskrit_home"
 
     // Derive library section from current route for dynamic tab label/icon
     val librarySection = when {
+        currentRoute?.startsWith("sanskrit") == true -> "sanskrit"
         currentRoute == "sacred_texts" || currentRoute?.startsWith("reader/") == true
-            || currentRoute == "bookmarks" || currentRoute?.startsWith("sanskrit") == true -> "texts"
+            || currentRoute == "bookmarks" -> "texts"
         currentRoute == "kirtans" || currentRoute?.startsWith("kirtan/") == true -> "kirtans"
         else -> "landing"
     }
@@ -101,6 +104,7 @@ fun NavGraph(windowSizeClass: WindowSizeClass? = null) {
             when (librarySection) {
                 "texts" -> stringResource(R.string.tab_text)
                 "kirtans" -> stringResource(R.string.tab_kirtan)
+                "sanskrit" -> stringResource(R.string.tab_sanskrit)
                 else -> stringResource(R.string.tab_media)
             }
         } else {
@@ -110,6 +114,7 @@ fun NavGraph(windowSizeClass: WindowSizeClass? = null) {
             when (librarySection) {
                 "texts" -> Icons.AutoMirrored.Filled.MenuBook
                 "kirtans" -> Icons.Filled.MusicNote
+                "sanskrit" -> Icons.Filled.Translate
                 else -> Icons.Filled.VideoLibrary
             }
         } else {
@@ -188,7 +193,8 @@ fun NavGraph(windowSizeClass: WindowSizeClass? = null) {
             composable(Screen.Texts.route) {
                 LibraryLandingScreen(
                     onSelectTexts = { navController.navigate("sacred_texts") },
-                    onSelectKirtans = { navController.navigate("kirtans") }
+                    onSelectKirtans = { navController.navigate("kirtans") },
+                    onSelectSanskrit = { navController.navigate("sanskrit") }
                 )
             }
             composable("sacred_texts") {
@@ -197,7 +203,6 @@ fun NavGraph(windowSizeClass: WindowSizeClass? = null) {
                         navController.navigate("reader/${textType.name}")
                     },
                     onBookmarksClick = { navController.navigate("bookmarks") },
-                    onSanskritClick = { navController.navigate("sanskrit") },
                     onBack = { navController.popBackStack() }
                 )
             }
@@ -276,7 +281,11 @@ fun NavGraph(windowSizeClass: WindowSizeClass? = null) {
                             sanskritViewModel.recordLessonCompletion(lessonId, correct, total, letters)
                         },
                         onSpeak = { sanskritViewModel.speak(it) },
-                        onBack = { navController.popBackStack() }
+                        onSpeakForTeaching = { char, word ->
+                            sanskritViewModel.speakForTeaching(char, word)
+                        },
+                        onBack = { navController.popBackStack() },
+                        lessonResolver = { sanskritViewModel.lessonById(it) }
                     )
                 }
 

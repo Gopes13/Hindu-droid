@@ -183,6 +183,34 @@ object AtmosphereEngine {
         DayPeriod.NIGHT          -> 0.15f
     }
 
+    // ── Smooth Transition ──────────────────────────────────────────────────
+
+    /**
+     * Linearly interpolate between two atmospheres for smooth period transitions.
+     */
+    fun lerpAtmosphere(from: DayAtmosphere, to: DayAtmosphere, fraction: Float): DayAtmosphere {
+        val f = fraction.coerceIn(0f, 1f)
+        return DayAtmosphere(
+            period = to.period,
+            progress = to.progress,
+            meshColors = from.meshColors.zip(to.meshColors) { a, b ->
+                Color(
+                    red = a.red + (b.red - a.red) * f,
+                    green = a.green + (b.green - a.green) * f,
+                    blue = a.blue + (b.blue - a.blue) * f,
+                    alpha = 1f
+                )
+            },
+            accentTint = Color(
+                red = from.accentTint.red + (to.accentTint.red - from.accentTint.red) * f,
+                green = from.accentTint.green + (to.accentTint.green - from.accentTint.green) * f,
+                blue = from.accentTint.blue + (to.accentTint.blue - from.accentTint.blue) * f,
+                alpha = 1f
+            ),
+            ambientOpacity = from.ambientOpacity + (to.ambientOpacity - from.ambientOpacity) * f
+        )
+    }
+
     // ── Gradient Brush Builders ──────────────────────────────────────────────
 
     /**

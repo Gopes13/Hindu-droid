@@ -60,5 +60,5 @@ interface GamificationService {
     fun checkSanskritBadges(data: GamificationData, progress: SanskritProgress): GamificationData
 
     // Daily challenge
-    fun generateDailyChallenge(): DailyChallenge
+    fun generateDailyChallenge(languageCode: String? = null): DailyChallenge
 }

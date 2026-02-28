@@ -63,12 +63,94 @@ data class SanskritShloka(
 
 // ── Exercise Types ───────────────────────────────────────────────────────────
 sealed class SanskritExercise {
+    // Existing exercise types (Kāṇḍa 1)
     data class LetterToSound(val letter: SanskritLetter, val distractors: List<SanskritLetter>) : SanskritExercise()
     data class SoundToLetter(val letter: SanskritLetter, val distractors: List<SanskritLetter>) : SanskritExercise()
     data class WordMeaning(val word: SanskritWord, val distractors: List<SanskritWord>) : SanskritExercise()
     data class SyllableToSound(val syllable: SanskritSyllable, val distractors: List<SanskritSyllable>) : SanskritExercise()
     data class SoundToSyllable(val syllable: SanskritSyllable, val distractors: List<SanskritSyllable>) : SanskritExercise()
     data class WordReading(val word: SanskritWord, val distractors: List<String>) : SanskritExercise()
+
+    // ── New exercise types (Kāṇḍas 2-7) ────────────────────────────────────
+
+    /** Kāṇḍa 2: Guess which derivative word comes from a dhātu root. */
+    data class WordDetective(
+        val dhatuRoot: String,
+        val dhatuDevanagari: String,
+        val dhatuMeaning: Map<String, String>,
+        val correctWord: String,
+        val correctWordMeaning: Map<String, String>,
+        val distractors: List<String>
+    ) : SanskritExercise()
+
+    /** Kāṇḍa 3: Identify the vibhakti (case) of a highlighted word in a sentence. */
+    data class CaseDetective(
+        val sentence: AnnotatedSentence,
+        val targetWordIndex: Int,
+        val correctVibhakti: String,
+        val distractors: List<String>
+    ) : SanskritExercise()
+
+    /** Kāṇḍa 3: Arrange scrambled words into the correct sentence order. */
+    data class BuildShloka(
+        val correctOrder: List<String>,
+        val translation: Map<String, String>
+    ) : SanskritExercise()
+
+    /** Kāṇḍa 3: Select the correct vibhakti ending for a blank in a sentence. */
+    data class FillInVibhakti(
+        val sentenceTemplate: String,
+        val blankPosition: Int,
+        val correctEnding: String,
+        val distractors: List<String>,
+        val hint: Map<String, String>
+    ) : SanskritExercise()
+
+    /** Kāṇḍa 4: Split a sandhi-combined form into its component words. */
+    data class SandhiSplit(
+        val combined: String,
+        val combinedTranslit: String,
+        val correctParts: List<String>,
+        val rule: SandhiType,
+        val distractorParts: List<List<String>>
+    ) : SanskritExercise()
+
+    /** Kāṇḍa 4: Join two words by applying the correct sandhi rule. */
+    data class SandhiJoin(
+        val word1: String,
+        val word2: String,
+        val correctResult: String,
+        val rule: SandhiType,
+        val distractors: List<String>
+    ) : SanskritExercise()
+
+    /** Kāṇḍa 5: Fill in missing cells of a declension or conjugation table. */
+    data class ParadigmFill(
+        val paradigmLabel: String,
+        val table: List<List<String?>>,
+        val headers: List<String>,
+        val rowLabels: List<String>,
+        val blankIndices: List<Pair<Int, Int>>,
+        val answers: Map<String, String>
+    ) : SanskritExercise()
+
+    /** Kāṇḍa 5: Break apart a samāsa (compound word) into its components. */
+    data class CompoundCracker(
+        val compound: String,
+        val compoundTranslit: String,
+        val correctParts: List<String>,
+        val compoundType: String,
+        val distractorParts: List<List<String>>
+    ) : SanskritExercise()
+
+    /** Kāṇḍa 6-7: Attempt a translation of a verse, then reveal the reference. */
+    data class TranslationAttempt(
+        val verse: String,
+        val transliteration: String,
+        val wordByWord: List<ShlokaWord>,
+        val referenceTranslation: Map<String, String>,
+        val hints: List<Map<String, String>>
+    ) : SanskritExercise()
 
     /** Returns the ID of the target letter/syllable for mastery tracking */
     val targetLetterId: String? get() = when (this) {
@@ -92,7 +174,10 @@ data class SanskritLesson(
     val id: String,
     val title: String,
     val contextCard: SanskritContextCard,
-    val exercises: List<SanskritExercise>
+    val exercises: List<SanskritExercise>,
+    val titles: Map<String, String> = emptyMap(),
+    val grammarCard: GrammarCard? = null,
+    val lessonType: LessonType = LessonType.QUIZ
 )
 
 data class SanskritModule(
@@ -100,7 +185,9 @@ data class SanskritModule(
     val title: String,
     val titleSanskrit: String,
     val emoji: String,
-    val lessons: List<SanskritLesson>
+    val lessons: List<SanskritLesson>,
+    val titles: Map<String, String> = emptyMap(),
+    val kandaId: String = ""
 )
 
 // ── Verse Category ───────────────────────────────────────────────────────────
@@ -118,18 +205,18 @@ object SanskritData {
 
     // ── All Letters ──────────────────────────────────────────────────────────
     val vowels = listOf(
-        SanskritLetter("a", "अ", "a", "like 'u' in 'but'", "अग्नि", "agni", "fire", SanskritLetterGroup.VOWEL),
-        SanskritLetter("aa", "आ", "\u0101", "like 'a' in 'father'", "आत्मा", "\u0101tm\u0101", "soul", SanskritLetterGroup.VOWEL),
-        SanskritLetter("i", "इ", "i", "like 'i' in 'pin'", "इन्द्र", "indra", "Indra", SanskritLetterGroup.VOWEL),
-        SanskritLetter("ee", "ई", "\u012B", "like 'ee' in 'seen'", "ईश्वर", "\u012B\u015Bvara", "God", SanskritLetterGroup.VOWEL),
-        SanskritLetter("u", "उ", "u", "like 'u' in 'put'", "उपनिषद्", "upani\u1E63ad", "Upanishad", SanskritLetterGroup.VOWEL),
-        SanskritLetter("oo", "ऊ", "\u016B", "like 'oo' in 'moon'", "ऊर्जा", "\u016Brj\u0101", "energy", SanskritLetterGroup.VOWEL),
+        SanskritLetter("a", "अ", "a", "short 'a' — like 'a' in 'about'", "अग्नि", "agni", "fire", SanskritLetterGroup.VOWEL),
+        SanskritLetter("aa", "आ", "\u0101", "long 'aa' — like 'a' in 'father'", "आत्मा", "\u0101tm\u0101", "soul", SanskritLetterGroup.VOWEL),
+        SanskritLetter("i", "इ", "i", "short 'i' — like 'i' in 'pin'", "इन्द्र", "indra", "Indra", SanskritLetterGroup.VOWEL),
+        SanskritLetter("ee", "ई", "\u012B", "long 'ee' — like 'ee' in 'seen'", "ईश्वर", "\u012B\u015Bvara", "God", SanskritLetterGroup.VOWEL),
+        SanskritLetter("u", "उ", "u", "short 'u' — like 'u' in 'put'", "उपनिषद्", "upani\u1E63ad", "Upanishad", SanskritLetterGroup.VOWEL),
+        SanskritLetter("oo", "ऊ", "\u016B", "long 'oo' — like 'oo' in 'moon'", "ऊर्जा", "\u016Brj\u0101", "energy", SanskritLetterGroup.VOWEL),
         SanskritLetter("e", "ए", "e", "like 'ay' in 'say'", "एकम्", "ekam", "one", SanskritLetterGroup.VOWEL),
         SanskritLetter("ai", "ऐ", "ai", "like 'ai' in 'aisle'", "ऐश्वर्य", "ai\u015Bvarya", "glory", SanskritLetterGroup.VOWEL),
         SanskritLetter("o", "ओ", "o", "like 'o' in 'go'", "ओम्", "om", "Om", SanskritLetterGroup.VOWEL),
         SanskritLetter("au", "औ", "au", "like 'ow' in 'how'", "औषधि", "au\u1E63adhi", "herb", SanskritLetterGroup.VOWEL),
-        SanskritLetter("am", "अं", "a\u1E43", "nasal 'm'", "संस्कृत", "sa\u1E43sk\u1E5Bta", "Sanskrit", SanskritLetterGroup.VOWEL),
-        SanskritLetter("ah", "अः", "a\u1E25", "soft breath 'h'", "नमः", "nama\u1E25", "salutation", SanskritLetterGroup.VOWEL)
+        SanskritLetter("am", "अं", "a\u1E43", "nasal hum — 'm' with closed lips", "संस्कृत", "sa\u1E43sk\u1E5Bta", "Sanskrit", SanskritLetterGroup.VOWEL),
+        SanskritLetter("ah", "अः", "a\u1E25", "soft breath — 'h' after a vowel", "नमः", "nama\u1E25", "salutation", SanskritLetterGroup.VOWEL)
     )
 
     val velars = listOf(
@@ -509,7 +596,7 @@ object SanskritData {
     val modules: List<SanskritModule> by lazy {
         listOf(
             // Module 1: Vowels (Swaras)
-            SanskritModule("module1", "Vowels (Swaras)", "स्वर", "~", listOf(
+            SanskritModule("module1", "Vowels (Swaras)", "स्वर", "अ", listOf(
                 SanskritLesson("module1_l1", "First Vowels",
                     SanskritContextCard("अ आ इ ई", "a \u0101 i \u012B", "The building blocks of Sanskrit — every word begins with these sounds."),
                     letterExercises(vowels.take(4), vowels)),
@@ -528,7 +615,7 @@ object SanskritData {
             )),
 
             // Module 2: Consonants I
-            SanskritModule("module2", "Consonants I", "व्यंजन १", "A", listOf(
+            SanskritModule("module2", "Consonants I", "व्यंजन १", "क", listOf(
                 SanskritLesson("module2_l1", "Velars",
                     SanskritContextCard("क ख ग घ", "ka kha ga gha", "Throat sounds — like the 'k' in karma and 'g' in guru."),
                     letterExercises(velars, velars + palatals)),
@@ -544,7 +631,7 @@ object SanskritData {
             )),
 
             // Module 3: Consonants II
-            SanskritModule("module3", "Consonants II", "व्यंजन २", "B", listOf(
+            SanskritModule("module3", "Consonants II", "व्यंजन २", "य", listOf(
                 SanskritLesson("module3_l1", "Semivowels",
                     SanskritContextCard("य र ल व", "ya ra la va", "Flowing sounds — yoga, r\u0101ma, love, and Vishnu."),
                     letterExercises(semivowels, semivowels + sibilants)),
@@ -557,7 +644,7 @@ object SanskritData {
             )),
 
             // Module 4: Sacred Words
-            SanskritModule("module4", "Sacred Words", "पवित्र शब्द", "P", listOf(
+            SanskritModule("module4", "Sacred Words", "पवित्र शब्द", "ॐ", listOf(
                 SanskritLesson("module4_l1", "Greeting & Dharma",
                     SanskritContextCard("नमस्ते धर्म कर्म सत्य", "namaste dharma karma satya", "Words of virtue and cosmic order."),
                     wordExercises(sacredWords.filter { it.id in listOf("namaste", "dharma", "karma", "satya", "ahimsa") }, sacredWords)),
@@ -573,7 +660,7 @@ object SanskritData {
             )),
 
             // Module 5: Mantras
-            SanskritModule("module5", "Mantras", "मंत्र", "O", listOf(
+            SanskritModule("module5", "Mantras", "मंत्र", "\uD83D\uDE4F", listOf(
                 SanskritLesson("module5_l1", "Om Namah Shivaya",
                     SanskritContextCard("ॐ नमः शिवाय", "o\u1E43 nama\u1E25 \u015Biv\u0101ya", "The five-syllable mantra to Lord Shiva — each syllable represents an element."),
                     wordExercises(listOf(
@@ -600,7 +687,7 @@ object SanskritData {
             )),
 
             // Module 6: Vowel Signs (Matras)
-            SanskritModule("module6", "Vowel Signs (Matras)", "मात्रा", "M", listOf(
+            SanskritModule("module6", "Vowel Signs (Matras)", "मात्रा", "ा", listOf(
                 SanskritLesson("module6_l1", "\u0101-matra",
                     SanskritContextCard("का ना मा रा", "k\u0101 n\u0101 m\u0101 r\u0101", "The long '\u0101' sign — a vertical stroke added to the right."),
                     syllableExercises(syllables.filter { it.markName == "\u0101-matra" }.take(6), syllables)),
@@ -619,7 +706,7 @@ object SanskritData {
             )),
 
             // Module 7: Conjunct Consonants
-            SanskritModule("module7", "Conjunct Consonants", "संयुक्त व्यंजन", "L", listOf(
+            SanskritModule("module7", "Conjunct Consonants", "संयुक्त व्यंजन", "श्र", listOf(
                 SanskritLesson("module7_l1", "r-forms & Sri",
                     SanskritContextCard("प्र त्र श्र श्री", "pra tra \u015Bra \u015Br\u012B", "Consonant combinations with 'r' — seen in pra\u1E47\u0101ma, mantra, and \u015Br\u012B."),
                     letterExercises(conjuncts.take(4), conjuncts)),
@@ -632,7 +719,7 @@ object SanskritData {
             )),
 
             // Module 8: Reading Sanskrit Words
-            SanskritModule("module8", "Reading Sanskrit Words", "शब्द पाठ", "R", listOf(
+            SanskritModule("module8", "Reading Sanskrit Words", "शब्द पाठ", "शब्द", listOf(
                 SanskritLesson("module8_l1", "Two-syllable words",
                     SanskritContextCard("देव योग पूजा गुरु", "deva yoga p\u016Bj\u0101 guru", "Begin reading complete words — two syllables at a time."),
                     wordExercises(sacredWords.filter { it.sanskrit.length <= 4 }.take(8), sacredWords)),
@@ -645,7 +732,7 @@ object SanskritData {
             )),
 
             // Module 9: Gita & Upanishad Words
-            SanskritModule("module9", "Gita & Upanishad Words", "गीता शब्द", "G", listOf(
+            SanskritModule("module9", "Gita & Upanishad Words", "गीता शब्द", "गी", listOf(
                 SanskritLesson("module9_l1", "Field & Three Qualities",
                     SanskritContextCard("सत्त्व रजस् तमस्", "sattva rajas tamas", "The three gu\u1E47as that govern all of nature."),
                     wordExercises(gitaWords.filter { it.id in listOf("kshetra", "prakriti", "purusha", "guna", "sattva", "rajas", "tamas") }, gitaWords)),
@@ -658,7 +745,7 @@ object SanskritData {
             )),
 
             // Module 10: Vishnu Sahasranama & Rudram
-            SanskritModule("module10", "Vishnu Sahasranama & Rudram", "सहस्रनाम", "V", listOf(
+            SanskritModule("module10", "Vishnu Sahasranama & Rudram", "सहस्रनाम", "\uD83D\uDD31", listOf(
                 SanskritLesson("module10_l1", "Names of Vishnu",
                     SanskritContextCard("अनन्त अच्युत गोविन्द", "ananta acyuta govinda", "The thousand names — each an aspect of the Preserver."),
                     wordExercises(stotrasWords.filter { it.context == "vishnu" }.take(6), stotrasWords)),
@@ -671,7 +758,7 @@ object SanskritData {
             )),
 
             // Module 11: Devotional Texts
-            SanskritModule("module11", "Devotional Texts", "भक्ति ग्रन्थ", "H", listOf(
+            SanskritModule("module11", "Devotional Texts", "भक्ति ग्रन्थ", "भक्ति", listOf(
                 SanskritLesson("module11_l1", "Hanuman Chalisa",
                     SanskritContextCard("हनुमान् प्रसाद", "hanum\u0101n pras\u0101da", "Words from the beloved prayer to Hanuman."),
                     wordExercises(devotionalWords.filter { it.id in listOf("hanuman", "prasad") }, devotionalWords + sacredWords)),
@@ -684,7 +771,7 @@ object SanskritData {
             )),
 
             // Module 12: Mantra Reading Practice
-            SanskritModule("module12", "Mantra Reading Practice", "मंत्र पाठ", "S", listOf(
+            SanskritModule("module12", "Mantra Reading Practice", "मंत्र पाठ", "\uD83D\uDCFF", listOf(
                 SanskritLesson("module12_l1", "Gita Shlokas",
                     SanskritContextCard("कर्मण्येवाधिकारस्ते", "karma\u1E47y ev\u0101dhik\u0101ras te", "Read and understand key Gita verses word by word."),
                     wordExercises(shlokas[0].words.map { SanskritWord(it.sanskrit, it.sanskrit, it.transliteration, it.meaning, "shloka") }, sacredWords + gitaWords)),
@@ -697,7 +784,7 @@ object SanskritData {
             )),
 
             // Module 13: Reading the Texts
-            SanskritModule("module13", "Reading the Texts", "ग्रन्थ पाठ", "T", listOf(
+            SanskritModule("module13", "Reading the Texts", "ग्रन्थ पाठ", "\uD83D\uDCDA", listOf(
                 SanskritLesson("module13_l1", "Bhagavad Gita — The Soul",
                     SanskritContextCard("न जायते म्रियते वा कदाचित्", "na j\u0101yate mriyate v\u0101 kad\u0101cit", "The immortal soul verse from Chapter 2."),
                     wordExercises(shlokas[1].words.map { SanskritWord(it.sanskrit, it.sanskrit, it.transliteration, it.meaning, "shloka") }, sacredWords + gitaWords)),
